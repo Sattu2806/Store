@@ -17,6 +17,7 @@ const Navbar = (props: Props) => {
             <Link href='/categories' className='font-medium hover:opacity-60'>Categories</Link>
             <Link href='/item' className='font-medium hover:opacity-60'>Item</Link>
             <Link href='/variants' className='font-medium hover:opacity-60'>Variants</Link>
+            <Link href='/dashboard' className='font-medium hover:opacity-60'>Dashbord</Link>
           </div>
         </div>
         <Separator/>
