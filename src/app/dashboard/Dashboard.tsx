@@ -133,7 +133,7 @@ const Dashboard = () => {
   return (
     <div >
         <Dialog open={opendialogue.excavation || opendialogue.formWork || opendialogue.rebar || opendialogue.concrete}>
-            <DialogContent className='h-[400px]'>
+            <DialogContent className='h-[600px] max-w-[800px]'>
             <Select value={selectedArea} onValueChange={(value) => setSelectedArea(value)}>
                 <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Sort By" />
@@ -176,12 +176,12 @@ const Dashboard = () => {
                     </TableRow>
                     ))}
                 </TableBody>
-                <TableFooter>
+                {/* <TableFooter>
                     <TableRow>
                     <TableCell colSpan={3}>Total</TableCell>
                     <TableCell className="text-right">{totals.Excavation.toFixed(2)} Cubic Meter</TableCell>
                     </TableRow>
-                </TableFooter>
+                </TableFooter> */}
                 </Table>
             </DialogContent>
         </Dialog>
