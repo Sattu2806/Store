@@ -157,7 +157,7 @@ const Dashboard = () => {
                 <span className="sr-only">Close</span>
             </div>
             <Table className='mt-3'>
-                <TableHeader>
+                <TableHeader className='w-full'>
                     <TableRow>
                         <TableHead>Area</TableHead>
                         <TableHead>Date</TableHead>
