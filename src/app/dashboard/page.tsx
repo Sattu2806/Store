@@ -5,7 +5,7 @@ type Props = {}
 
 const page = (props: Props) => {
   return (
-    <div className='max-w-[1280px] mx-auto mt-5'>
+    <div className='max-w-[1280px] mx-auto mt-2'>
         <Dashboard/>
     </div>
   )

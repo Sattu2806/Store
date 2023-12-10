@@ -1,55 +1,55 @@
 export const manpower = [
     {
-        "Trade": "Helper",
-        "Nos": 26
+        "name": "Helper",
+        "total": 26
     },
     {
-        "Trade": "Mason",
-        "Nos": 11
+        "name": "Mason",
+        "total": 11
     },
     {
-        "Trade": "Carpenter",
-        "Nos": 25
+        "name": "Carpenter",
+        "total": 25
     },
     {
-        "Trade": "Steelfixer",
-        "Nos": 34
+        "name": "Steelfixer",
+        "total": 34
     },
     {
-        "Trade": "Opt./Driver",
-        "Nos": 10
+        "name": "Opt./Driver",
+        "total": 10
     },
     {
-        "Trade": "Foreman",
-        "Nos": 5
+        "name": "Foreman",
+        "total": 5
     },
     {
-        "Trade": "WPR",
-        "Nos": 5
+        "name": "WPR",
+        "total": 5
     },
     {
-        "Trade": "Welders",
-        "Nos": 10
+        "name": "Welders",
+        "total": 10
     },
     {
-        "Trade": "Pipe Fitter",
-        "Nos": 15
+        "name": "Pipe Fitter",
+        "total": 15
     },
     {
-        "Trade": "Fabricator",
-        "Nos": 12
+        "name": "Fabricator",
+        "total": 12
     },
     {
-        "Trade": "Hdpe Technician",
-        "Nos": 5
+        "name": "Hdpe Technician",
+        "total": 5
     },
     {
-        "Trade": "Rigger",
-        "Nos": 2
+        "name": "Rigger",
+        "total": 2
     },
     {
-        "Trade": "Scaffolder",
-        "Nos": 5
+        "name": "Scaffolder",
+        "total": 5
     }
 ]
 export const data = [

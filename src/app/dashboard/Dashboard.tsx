@@ -80,7 +80,7 @@ const Dashboard = () => {
   const concreteData: Data[] = [];
   
   data.forEach(item => {
-    const month = item.Date.split('-')[1]; // Extract month from Date
+    const month = item.Date.split('-')[1];
   
     if (item.Excavation > 0) {
       const existingEntry = excavationData.find(entry => entry.name === month);
@@ -185,8 +185,8 @@ const Dashboard = () => {
                 </Table>
             </DialogContent>
         </Dialog>
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-        <Card onClick={() => setopenDialogue({ ...opendialogue, excavation: true })}>
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 sticky top-0 z-20 py-2 bg-white '>
+        <Card onClick={() => setopenDialogue({ ...opendialogue, excavation: true })} className='cursor-pointer'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
                 Total Excavation
@@ -207,10 +207,10 @@ const Dashboard = () => {
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{totals.Excavation.toFixed(2)} Cubic Meter</div>
+            <div className="text-2xl font-bold">{totals.Excavation.toFixed(2)} M<sup>3</sup></div>
             </CardContent>
         </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, formWork: true})}>
+        <Card onClick={() => setopenDialogue({...opendialogue, formWork: true})} className='cursor-pointer'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
                 Total FormWork
@@ -231,10 +231,10 @@ const Dashboard = () => {
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{totals.FormWork.toFixed(2)} Square Meter</div>
+            <div className="text-2xl font-bold">{totals.FormWork.toFixed(2)} M<sup>2</sup></div>
             </CardContent>
         </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, rebar: true})}>
+        <Card onClick={() => setopenDialogue({...opendialogue, rebar: true})} className='cursor-pointer'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
                 Total Rebar
@@ -255,10 +255,10 @@ const Dashboard = () => {
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{totals.Rebar.toFixed(2)} Metric Ton</div>
+            <div className="text-2xl font-bold">{totals.Rebar.toFixed(2)} MT</div>
             </CardContent>
         </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, concrete: true})}>
+        <Card onClick={() => setopenDialogue({...opendialogue, concrete: true})} className='cursor-pointer'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
             Total Concrete
@@ -279,39 +279,19 @@ const Dashboard = () => {
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{totals.Concrete.toFixed(2)} Cubic Meter</div>
+            <div className="text-2xl font-bold">{totals.Concrete.toFixed(2)} M<sup>3</sup></div>
             </CardContent>
         </Card>
         </div>
         <div className='grid md:grid-cols-2 gap-10 mt-10'>
-            <Charts data={excavationData} label='Excavatio' color='#FF8080'/>
-            <Charts data={formWorkData} label='FormWork' color='#BC7AF9'/>
-            <Charts data={rebarData} label='Rebar' color='#FA7070'/>
-            <Charts data={concreteData} label='Concrete' color='#29ADB2'/>
+            <Charts data={excavationData} label='Excavation Productivity By Month' color='#FF8080'/>
+            <Charts data={formWorkData} label='Formwork Productivity By Month' color='#BC7AF9'/>
+            <Charts data={rebarData} label='Rebar Productivity By Month' color='#FA7070'/>
+            <Charts data={concreteData} label='Concrete Productivity By Month' color='#29ADB2'/>
         </div>
-        <div className='relative my-10'>
-            <Label className='absolute left-20 '>ManPower</Label>
-            <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={manpower}>
-                <XAxis
-                dataKey="Trade"
-                stroke="#888888"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                />
-                <YAxis
-                stroke="#888888"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => `$${value}`}
-                />
-                <Tooltip />
-                <Bar dataKey="Nos" fill="#65B741" radius={[4, 4, 0, 0]} />
-            </BarChart>
-            </ResponsiveContainer>
-    </div>
+        <div className='my-10'>
+        <Charts data={manpower} label='ManPower' color='#65B741'/>
+        </div>
     </div>
   );
 };
