@@ -1,13 +1,13 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { data } from '@/lib/data/formdata';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent} from '@/components/ui/dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableFooter,
     TableHead,
@@ -16,13 +16,18 @@ import {
   } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Charts from './Charts';
-import { Label } from '@/components/ui/label';
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { manpower } from '@/lib/data/formdata';
+import { Label } from '@/components/ui/label';
 
 type Data =  {
     name:string, 
     total:number
+}
+
+type filteredData = {
+    Area: string;
+    Date: string;
+    Value: number; 
 }
 
 const Dashboard = () => {
@@ -32,6 +37,7 @@ const Dashboard = () => {
         rebar: false,
         concrete: false,
     })
+    const [selectedOption, setSelectedOption] = useState('day');
     const [selectedArea, setSelectedArea] = useState<string>('All');
     const filteredData = data
     .filter((item) => selectedArea === 'All' || item.Area === selectedArea)
@@ -43,24 +49,115 @@ const Dashboard = () => {
       } = {
         Area: item.Area,
         Date: item.Date,
-        Value: 0,
+        Value: 0
       };
+
   
       if (opendialogue.excavation) {
-        newDataItem.Value = item.Excavation;
+        newDataItem.Value = parseFloat(item.Excavation.toFixed(2));
       } else if (opendialogue.formWork) {
-        newDataItem.Value = item.FormWork;
+        newDataItem.Value = parseFloat(item.FormWork.toFixed(2));
       } else if (opendialogue.rebar) {
-        newDataItem.Value = item.Rebar;
+        newDataItem.Value = parseFloat(item.Rebar.toFixed(2));
       } else if (opendialogue.concrete) {
-        newDataItem.Value = item.Concrete;
-      }
-  
+        newDataItem.Value = parseFloat(item.Concrete.toFixed(2));
+      }  
       return newDataItem;
     });
-  
+    const [displayedData, setDisplayedData] = useState(filteredData);
 
-    console.log(filteredData)
+    
+
+    const getISOWeek = (date: Date): number => {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+        const yearStart: Date = new Date(d.getFullYear(), 0, 1);
+        return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+    };
+
+
+    const filterDataByWeek = (data:filteredData[]) => {
+        const weeks: { [key: string]: number } = {};
+        data.forEach((item) => {
+            const dateParts = item.Date.split('-');
+            const date = new Date(`${dateParts[1]} ${dateParts[0]}, ${new Date().getFullYear()}`);
+            const weekNumber = getISOWeek(date);
+            const key = `${item.Area}-${weekNumber}`;
+            weeks[key] = (weeks[key] || 0) + item.Value;
+        });
+
+        const result: filteredData[] = Object.keys(weeks).map((key) => {
+            const [area, weekNumber] = key.split('-');
+            return {
+                Area: area,
+                Date: `Week ${weekNumber}`,
+                Value: parseFloat(weeks[key].toFixed(2)),
+            };
+        });
+
+        result.sort((a, b) => {
+            if (a.Area !== b.Area) {
+                return a.Area.localeCompare(b.Area);
+            }
+            const weekA = parseInt(a.Date.replace('Week ', ''));
+            const weekB = parseInt(b.Date.replace('Week ', ''));
+            return weekA - weekB;
+        });
+
+        return result
+    }
+
+    const filterDataByMonth = (data: filteredData[]) => {
+        const months: { [key: string]: number } = {};
+    
+        // Loop over the data
+        data.forEach((item) => {
+            const dateParts = item.Date.split('-');
+            const monthKey = `${item.Area}-${dateParts[1]}`;
+            months[monthKey] = (months[monthKey] || 0) + item.Value;
+        });
+    
+        const result: filteredData[] = Object.keys(months).map((key) => {
+            const [area, month] = key.split('-');
+            return {
+                Area: area,
+                Date: `${month}`,
+                Value: parseFloat(months[key].toFixed(2)),
+            };
+        });
+    
+        result.sort((a, b) => {
+            if (a.Area !== b.Area) {
+                return a.Area.localeCompare(b.Area);
+            }
+            const monthA = parseInt(a.Date.replace('Month ', ''));
+            const monthB = parseInt(b.Date.replace('Month ', ''));
+            return monthA - monthB;
+        });
+    
+        return result;
+    };
+    
+
+    const setData = () => {
+        if (selectedOption === 'day') {
+            setDisplayedData(filteredData);
+        } else if (selectedOption === 'week') {
+            setDisplayedData(filterDataByWeek(filteredData));
+        }
+        else if (selectedOption === 'month') {
+            setDisplayedData(filterDataByMonth(filteredData));
+        }
+        return
+    }
+
+    useEffect(() => {
+        setData()
+    }, [selectedOption, opendialogue,selectedArea]);
+
+
+
   const totals = data.reduce(
     (accumulator, currentItem) => {
       accumulator.Excavation += currentItem.Excavation;
@@ -72,14 +169,13 @@ const Dashboard = () => {
     { Excavation: 0, FormWork: 0, Rebar: 0, Concrete: 0 }
   );
 
-    
-
   const excavationData: Data[] = [];
   const formWorkData: Data[] = [];
   const rebarData: Data[] = [];
   const concreteData: Data[] = [];
   
   data.forEach(item => {
+
     const month = item.Date.split('-')[1];
   
     if (item.Excavation > 0) {
@@ -103,12 +199,12 @@ const Dashboard = () => {
     }
   
     if (item.Rebar > 0) {
-      const existingEntry = rebarData.find(entry => entry.name === month);
+      const existingEntry = rebarData.find(entry => entry.name === month)
   
       if (existingEntry) {
         existingEntry.total += Math.floor(item.Rebar)
       } else {
-        rebarData.push({ name: month, total: Math.floor(item.Rebar) });
+        rebarData.push({ name: month, total: Math.floor(item.Rebar) })
       }
     }
   
@@ -122,42 +218,58 @@ const Dashboard = () => {
       }
     }
   });
-  
-  console.log('Excavation Data:', excavationData);
-  console.log('FormWork Data:', formWorkData);
-  console.log('Rebar Data:', rebarData);
-  console.log('Concrete Data:', concreteData);
-  
 
+  const totalSum = filteredData.reduce((sum, invoice) => sum + invoice.Value, 0);
 
+  const handleChange = (event: string) => {
+    setSelectedOption(event);
+  };
+
+  
   return (
     <div >
         <Dialog open={opendialogue.excavation || opendialogue.formWork || opendialogue.rebar || opendialogue.concrete}>
             <DialogContent className='h-[600px] max-w-[800px]'>
-            <Select value={selectedArea} onValueChange={(value) => setSelectedArea(value)}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Sort By" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="All">All</SelectItem>
-                    <SelectItem value="Tank Form Arear">Tank Form Arear</SelectItem>
-                    <SelectItem value="Building Area">Building Area</SelectItem>
-                    <SelectItem value="Sleeper Area">Sleeper Area</SelectItem>
-                </SelectContent>
-            </Select>
+            <div className='flex items-center space-x-6'>
+                <Select value={selectedArea} onValueChange={(value) => setSelectedArea(value)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Sort By" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="All">All</SelectItem>
+                        <SelectItem value="Tank Form Arear">Tank Form Arear</SelectItem>
+                        <SelectItem value="Building Area">Building Area</SelectItem>
+                        <SelectItem value="Sleeper Area">Sleeper Area</SelectItem>
+                    </SelectContent>
+                </Select>
+                <RadioGroup value={selectedOption} onValueChange={handleChange} className='flex items-center justify-between'>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="day" id="option-one" />
+                        <Label htmlFor="day">Day</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="week" id="option-two" />
+                        <Label htmlFor="week">Week</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="month" id="option-three" />
+                        <Label htmlFor="month">Month</Label>
+                    </div>
+                </RadioGroup>
+            </div>
             <div
             onClick={() => setopenDialogue({
                 excavation: false,
                 formWork: false,
                 rebar: false,
                 concrete: false,
-              })}               
+              })}
              className="absolute right-4 top-4 mb-2 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                 <Cross2Icon className="h-4 w-4" />
                 <span className="sr-only">Close</span>
             </div>
             <Table className='mt-3'>
-                <TableHeader className='w-full'>
+                <TableHeader className='w-full sticky top-0 bg-white'>
                     <TableRow>
                         <TableHead>Area</TableHead>
                         <TableHead>Date</TableHead>
@@ -168,7 +280,7 @@ const Dashboard = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {filteredData.map((invoice, index) => (
+                    {displayedData.map((invoice, index) => (
                     <TableRow key={index}>
                         <TableCell className="font-medium">{invoice.Area}</TableCell>
                         <TableCell>{invoice.Date}</TableCell>
@@ -176,12 +288,16 @@ const Dashboard = () => {
                     </TableRow>
                     ))}
                 </TableBody>
-                {/* <TableFooter>
+                <TableFooter>
                     <TableRow>
-                    <TableCell colSpan={3}>Total</TableCell>
-                    <TableCell className="text-right">{totals.Excavation.toFixed(2)} Cubic Meter</TableCell>
+                    <TableCell colSpan={1}>Total</TableCell>
+                    <TableCell colSpan={2} className="text-right">{totalSum.toFixed(2)}
+                    {opendialogue.excavation || opendialogue.concrete ? <p className='inline'> M<sup>3</sup></p> : ''}
+                    {opendialogue.formWork ?  <p className='inline'> M<sup>2</sup></p> : ""}
+                    {opendialogue.rebar ? " MT" : ""}
+                    </TableCell>
                     </TableRow>
-                </TableFooter> */}
+                </TableFooter>
                 </Table>
             </DialogContent>
         </Dialog>
