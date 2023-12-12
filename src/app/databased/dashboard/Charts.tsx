@@ -4,7 +4,7 @@ import React from 'react'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
 type Data =  {
-    name:string, 
+    month:string, 
     total:number
 }
 
@@ -22,7 +22,7 @@ const Charts = ({data, label,color}: Props) => {
             <ResponsiveContainer width="100%" height={350}>
             <BarChart data={data}>
                 <XAxis
-                dataKey="name"
+                dataKey="month"
                 stroke="#888888"
                 fontSize={12}
                 tickLine={false}
@@ -49,3 +49,4 @@ const Charts = ({data, label,color}: Props) => {
 }
 
 export default Charts
+
