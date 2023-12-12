@@ -34,8 +34,16 @@ const page = async (props: Props) => {
     }
   })
 
+  const groupedTradeData = await prisma.tradeData.findMany({
+    where:{
+      Month:'Jan'
+    }
+  })
+  
+  console.log(groupedTradeData);
+  
 
-  console.log(monthlydataDirect)
+
   return (
     <div className='max-w-[1280px] mx-auto px-4'>
       <Dashboard data={projects} monthlydataDirect={monthlydataDirect} monthlydataInDirect={monthlydataInDirect} monthlydataEquipment={monthlydataEquipment}/>

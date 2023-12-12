@@ -42,6 +42,9 @@ const Navbar = (props: Props) => {
                     <DropdownMenuItem>
                         <Link href='/databased/uploadmonthlydata'>Upload Monthly Data</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link href='/databased/uploadbytrade'>Upload Trade Data</Link>
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
           </div>

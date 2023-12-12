@@ -28,3 +28,11 @@ model MonthlyData {
   Month  String
   Value  Int
 }
+
+model TradeData {
+  id     Int      @id @default(autoincrement())
+  Type   String
+  Trade  String
+  Month  String
+  Value  Int
+}

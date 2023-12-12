@@ -1,4 +1,3 @@
-// Assuming you're using TypeScript
 
 import prisma from "@/app/prismadb";
 import { NextResponse} from "next/server";
@@ -20,8 +19,8 @@ export async function POST(request: Request) {
         Month,
         Value
       }
-    });
-
+    })
+    
     return NextResponse.json(createdMonthlyData, { status: 201 });
   } catch (error) {
     console.error("Error:", error);

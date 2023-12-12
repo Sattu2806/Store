@@ -1,4 +1,3 @@
-// Assuming you're using TypeScript
 
 import prisma from "@/app/prismadb";
 import { NextResponse} from "next/server";

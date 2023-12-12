@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress"
 
 type Props = {};
 
-const UploadProjectData = (props: Props) => {
+const UploadTrade = (props: Props) => {
   const [jsonContent, setJsonContent] = useState<string | null>(null);
   const [startUploading, setStartUpload] = useState<boolean>(false)
   const [completeUploading, setCompleteUploading] = useState<boolean>(false)
@@ -69,14 +69,11 @@ const UploadProjectData = (props: Props) => {
       await Promise.all(
         parsedJsonContent.map(async (data: any) => {
           try {
-            const response = await axios.post('/api/uploadproject', {
-                Discipline: data.Discipline,
-                Area: data.Area,
-                Date: data.Date,
-                Excavation: data.Excavation,
-                FormWork: data.FormWork,
-                Rebar: data.Rebar,
-                Concrete: data.Concrete
+            const response = await axios.post('/api/uploadtrade', {
+                Type:data.Trade,
+                Trade:data.Trade,
+                Month:data.Month,
+                Value:data.Value
             });
 
             uploadeddata++;
@@ -138,7 +135,7 @@ const UploadProjectData = (props: Props) => {
             htmlFor="jsonFileInput"
         >
             <span>
-            Upload Project Data
+            Upload Trade Data
             </span>
             <FiUpload/>
         </label>
@@ -164,4 +161,4 @@ const UploadProjectData = (props: Props) => {
   );
 };
 
-export default UploadProjectData
+export default UploadTrade
