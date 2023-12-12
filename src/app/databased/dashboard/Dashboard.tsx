@@ -30,11 +30,19 @@ type filteredData = {
     Value: number; 
 }
 
-type Props = {
-    data: Project[]
+type Monthlydata = {
+    Month:string,
+    Value:number
 }
 
-const Dashboard = ({data}:Props) => {
+type Props = {
+    data: Project[],
+    monthlydataDirect : Monthlydata[],
+     monthlydataInDirect: Monthlydata[], 
+     monthlydataEquipment: Monthlydata[]
+}
+
+const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEquipment}:Props) => {
     const [opendialogue, setopenDialogue] = useState({
         excavation: false,
         formWork: false,
@@ -60,8 +68,8 @@ const Dashboard = ({data}:Props) => {
         Area: item.Area,
         Date: item.Date.toISOString(),
         Value: 0
-      };
-  
+      }
+
       if (opendialogue.excavation) {
         newDataItem.Value = parseFloat(item.Excavation.toFixed(2));
       } else if (opendialogue.formWork) {
@@ -74,8 +82,6 @@ const Dashboard = ({data}:Props) => {
       return newDataItem;
     });
     const [displayedData, setDisplayedData] = useState(filteredData);
-
-    
 
     const getISOWeek = (date: Date): number => {
         const d = new Date(date);
@@ -236,6 +242,10 @@ const Dashboard = ({data}:Props) => {
   const handleChange = (event: string) => {
     setSelectedOption(event);
   };
+
+  const Direct = monthlydataDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
+  const Indirect = monthlydataInDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
+  const Equipment = monthlydataEquipment.map(({ Month, Value }) => ({ month: Month, total: Value }));
 
   
   return (
@@ -416,9 +426,11 @@ const Dashboard = ({data}:Props) => {
             <Charts data={formWorkData} label='Formwork Productivity By Month' color='#BC7AF9'/>
             <Charts data={rebarData} label='Rebar Productivity By Month' color='#FA7070'/>
             <Charts data={concreteData} label='Concrete Productivity By Month' color='#29ADB2'/>
+            <Charts data={Direct} label='Direct' color='#65B741'/>
+            <Charts data={Indirect} label='InDirect' color='#7071E8'/>
+            <Charts data={Equipment} label='Equipment' color='#DF826C'/>
         </div>
         <div className='my-10'>
-        {/* <Charts data={manpower} label='ManPower' color='#65B741'/> */}
         </div>
     </div>
   );

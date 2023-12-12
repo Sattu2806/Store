@@ -21,7 +21,7 @@ const Navbar = (props: Props) => {
   const pathname = usePathname()
   return (
     <div>
-        <div className='py-5 max-w-[1280px] mx-auto grid grid-cols-2 gap-10'>
+        <div className='py-5 max-w-[1280px] mx-auto grid grid-cols-2 gap-10 px-3'>
           <div className='flex items-center space-x-5'>
             <Link href='/' className='font-medium hover:opacity-60'>Home</Link>
             <Link href='/categories' className='font-medium hover:opacity-60'>Categories</Link>
@@ -37,7 +37,10 @@ const Navbar = (props: Props) => {
                         <Link href='/databased/dashboard'>Dashboard</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <Link href='/databased/uploaddata'>Upload Data</Link>
+                        <Link href='/databased/uploaddata'>Upload Project Data</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link href='/databased/uploadmonthlydata'>Upload Monthly Data</Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

@@ -12,7 +12,7 @@ import CodeBlock from '@/components/codeblock';
 
 type Props = {};
 
-const UploadProjectData = (props: Props) => {
+const UploadMonthlyData = (props: Props) => {
   const jsonFileInputRef = useRef<HTMLInputElement | null>(null);
   const [jsonContent, setJsonContent] = useState<string | null>(null);
   const [startUploading, setStartUpload] = useState<boolean>(false)
@@ -79,14 +79,10 @@ const UploadProjectData = (props: Props) => {
       await Promise.all(
         parsedJsonContent.map(async (data: any) => {
           try {
-            const response = await axios.post('/api/uploadproject', {
-                Discipline: data.Discipline,
-                Area: data.Area,
-                Date: data.Date,
-                Excavation: data.Excavation,
-                FormWork: data.FormWork,
-                Rebar: data.Rebar,
-                Concrete: data.Concrete
+            const response = await axios.post('/api/uploadmonthlydata', {
+                Type:data.Type,
+                Month:data.Month,
+                Value:data.Value
             });
 
             uploadeddata++;
@@ -143,7 +139,7 @@ const UploadProjectData = (props: Props) => {
             htmlFor="jsonFileInput"
         >
             <span>
-            Upload Project Data
+            Upload Monthly Data
             </span>
             <FiUpload/>
         </label>
@@ -169,4 +165,4 @@ const UploadProjectData = (props: Props) => {
   );
 };
 
-export default UploadProjectData
+export default UploadMonthlyData
