@@ -21,13 +21,22 @@ import { Project } from '@prisma/client';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 
+type AggregatedData = {
+    _sum: {
+      FormWork: number | null;
+      Concrete: number | null;
+      Excavation: number | null;
+      Rebar: number | null;
+    };
+  };
+
 type Monthlydata = {
     Month:string,
     Value:number
 }
 
 type Props = {
-    data: Project[],
+    total: AggregatedData,
     monthlydataDirect : Monthlydata[],
      monthlydataInDirect: Monthlydata[], 
      monthlydataEquipment: Monthlydata[]
@@ -66,7 +75,7 @@ type TableDataItem = {
   };
 };
 
-const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEquipment}:Props) => {
+const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEquipment}:Props) => {
 
     const [selectedOption, setSelectedOption] = useState('day');
     const [selectedArea, setSelectedArea] = useState<string>('All');
@@ -106,21 +115,6 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
         refetchTablehData()
     },[opendialogue, selectedArea,selectedOption])
 
-    console.log(TableData)
-
-    
-
-
-    const totals = data.reduce(
-        (accumulator, currentItem) => {
-        accumulator.Excavation += currentItem.Excavation;
-        accumulator.FormWork += currentItem.FormWork;
-        accumulator.Rebar += currentItem.Rebar;
-        accumulator.Concrete += currentItem.Concrete;
-        return accumulator;
-        },
-        { Excavation: 0, FormWork: 0, Rebar: 0, Concrete: 0 }
-    );
 
     const totalSum = TableData
     ? TableData.reduce((sum, invoice) => {
@@ -142,6 +136,9 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
     const Indirect = monthlydataInDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
     const Equipment = monthlydataEquipment.map(({ Month, Value }) => ({ month: Month, total: Value }));
 
+    if(!total){
+        return <div>No data</div>
+    }
 
     if(!quantitymonthData){
         return <div>No data</div>
@@ -266,7 +263,7 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{totals.Excavation.toFixed(2)} M<sup>3</sup></div>
+            <div className="text-2xl font-bold">{total._sum.Excavation?.toFixed(2)} M<sup>3</sup></div>
             </CardContent>
         </Card>
         <Card onClick={() => setopenDialogue({...opendialogue, FormWork: true})} className='cursor-pointer'>
@@ -290,7 +287,7 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{totals.FormWork.toFixed(2)} M<sup>2</sup></div>
+            <div className="text-2xl font-bold">{total._sum.FormWork?.toFixed(2)} M<sup>2</sup></div>
             </CardContent>
         </Card>
         <Card onClick={() => setopenDialogue({...opendialogue, Rebar: true})} className='cursor-pointer'>
@@ -314,7 +311,7 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{totals.Rebar.toFixed(2)} MT</div>
+            <div className="text-2xl font-bold">{total._sum.Rebar?.toFixed(2)} MT</div>
             </CardContent>
         </Card>
         <Card onClick={() => setopenDialogue({...opendialogue, Concrete: true})} className='cursor-pointer'>
@@ -338,7 +335,7 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
             </svg>
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{totals.Concrete.toFixed(2)} M<sup>3</sup></div>
+            <div className="text-2xl font-bold">{total._sum.Concrete?.toFixed(2)} M<sup>3</sup></div>
             </CardContent>
         </Card>
         </div>

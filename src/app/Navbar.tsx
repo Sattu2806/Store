@@ -30,7 +30,7 @@ const Navbar = (props: Props) => {
             <Link href='/dashboard' className='font-medium hover:opacity-60'>Dashbord</Link>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <DropdownMenuLabel className='text-base flex items-center font-medium hover:opacity-60'>Data <ChevronDown className="h-[1.2rem] w-[1.2rem]" /></DropdownMenuLabel>
+                    <DropdownMenuLabel className='text-base flex items-center font-medium hover:opacity-60 cursor-pointer'>Data <ChevronDown className="h-[1.2rem] w-[1.2rem]" /></DropdownMenuLabel>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem>
