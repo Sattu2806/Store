@@ -18,17 +18,8 @@ import Charts from './Charts';
 import { manpower } from '@/lib/data/formdata';
 import { Label } from '@/components/ui/label';
 import { Project } from '@prisma/client';
-
-type Data =  {
-    month:string, 
-    total:number
-}
-
-type filteredData = {
-    Area: string;
-    Date: string;
-    Value: number; 
-}
+import { useQuery } from 'react-query';
+import axios from 'axios';
 
 type Monthlydata = {
     Month:string,
@@ -42,215 +33,138 @@ type Props = {
      monthlydataEquipment: Monthlydata[]
 }
 
-const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEquipment}:Props) => {
-    const [opendialogue, setopenDialogue] = useState({
-        excavation: false,
-        formWork: false,
-        rebar: false,
-        concrete: false,
-    })
-    const [selectedOption, setSelectedOption] = useState('day');
-    const [selectedArea, setSelectedArea] = useState<string>('All');
-    const filteredData = data
-    .filter((item) => selectedArea === 'All' || item.Area === selectedArea)
-    .sort((a, b) => {
-        const dateA = new Date(a.Date);
-        const dateB = new Date(b.Date);
-      
-        return dateA.getTime() - dateB.getTime()
-    })
-    .map((item) => {
-      const newDataItem: {
-        Area: string;
-        Date: string;
-        Value: number; 
-      } = {
-        Area: item.Area,
-        Date: item.Date.toISOString(),
-        Value: 0
-      }
-
-      if (opendialogue.excavation) {
-        newDataItem.Value = parseFloat(item.Excavation.toFixed(2));
-      } else if (opendialogue.formWork) {
-        newDataItem.Value = parseFloat(item.FormWork.toFixed(2));
-      } else if (opendialogue.rebar) {
-        newDataItem.Value = parseFloat(item.Rebar.toFixed(2));
-      } else if (opendialogue.concrete) {
-        newDataItem.Value = parseFloat(item.Concrete.toFixed(2));
-      }  
-      return newDataItem;
-    });
-    const [displayedData, setDisplayedData] = useState(filteredData);
-
-    const getISOWeek = (date: Date): number => {
-        const d = new Date(date);
-        d.setHours(0, 0, 0, 0);
-        d.setDate(d.getDate() + 4 - (d.getDay() || 7));
-        const yearStart: Date = new Date(d.getFullYear(), 0, 1);
-        return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+type WeeklyDataItem = {
+    WeekNumber: number;
+    _sum: {
+      FormWork: number;
+      Concrete: number;
+      Excavation: number;
+      Rebar: number;
     };
-
-
-    const filterDataByWeek = (data:filteredData[]) => {
-        const weeks: { [key: string]: number } = {};
-        data.forEach((item,index) => {
-            const date = new Date(`${item.Date}`);
-            const weekNumber = getISOWeek(date);
-            if(Number.isNaN(weekNumber)){
-            console.log(weekNumber, item.Date, date, index, item.Area, item.Value)
-            }
-            const key = `${item.Area}-${weekNumber}`;
-            weeks[key] = (weeks[key] || 0) + item.Value;
-        });
-
-        const result: filteredData[] = Object.keys(weeks).map((key) => {
-            const [area, weekNumber] = key.split('-');
-            return {
-                Area: area,
-                Date: `Week ${weekNumber}`,
-                Value: parseFloat(weeks[key].toFixed(2)),
-            };
-        });
-
-        result.sort((a, b) => {
-            if (a.Area !== b.Area) {
-                return a.Area.localeCompare(b.Area);
-            }
-            const weekNumberA = Number(a.Date.split(' ')[1]);
-            const weekNumberB = Number(b.Date.split(' ')[1]);
-        
-            return weekNumberA - weekNumberB;
-        });
-
-        return result
-    }
-
-    const filterDataByMonth = (data: filteredData[]) => {
-        const months: { [key: string]: number } = {};
-    
-        // Loop over the data
-        data.forEach((item) => {
-            const month = new Date(item.Date).toLocaleString('en', { month: 'long'});
-            const monthKey = `${item.Area}-${month}`;
-            months[monthKey] = (months[monthKey] || 0) + item.Value;
-        });
-    
-        const result: filteredData[] = Object.keys(months).map((key) => {
-            const [area, month] = key.split('-');
-            return {
-                Area: area,
-                Date: `${month}`,
-                Value: parseFloat(months[key].toFixed(2)),
-            };
-        });
-    
-        result.sort((a, b) => {
-            if (a.Area !== b.Area) {
-                return a.Area.localeCompare(b.Area);
-            }
-            const monthA = parseInt(a.Date.replace('Month ', ''));
-            const monthB = parseInt(b.Date.replace('Month ', ''));
-            return monthA - monthB;
-        });
-    
-        return result;
-    };
-    
-
-    const setData = () => {
-        if (selectedOption === 'day') {
-            setDisplayedData(filteredData);
-        } else if (selectedOption === 'week') {
-            setDisplayedData(filterDataByWeek(filteredData));
-        }
-        else if (selectedOption === 'month') {
-            setDisplayedData(filterDataByMonth(filteredData));
-        }
-        return
-    }
-
-    useEffect(() => {
-        setData()
-    }, [selectedOption, opendialogue,selectedArea]);
-
-
-
-  const totals = data.reduce(
-    (accumulator, currentItem) => {
-      accumulator.Excavation += currentItem.Excavation;
-      accumulator.FormWork += currentItem.FormWork;
-      accumulator.Rebar += currentItem.Rebar;
-      accumulator.Concrete += currentItem.Concrete;
-      return accumulator;
-    },
-    { Excavation: 0, FormWork: 0, Rebar: 0, Concrete: 0 }
-  );
-
-  const excavationData: Data[] = [];
-  const formWorkData: Data[] = [];
-  const rebarData: Data[] = [];
-  const concreteData: Data[] = [];
-  
-  data.forEach(item => {
-
-    const month = new Date(item.Date).toLocaleString('en', { month: 'short'});
-  
-    if (item.Excavation > 0) {
-      const existingEntry = excavationData.find(entry => entry.month === month);
-  
-      if (existingEntry) {
-        existingEntry.total += Math.floor(item.Excavation)
-      } else {
-        excavationData.push({ month: month, total: Math.floor(item.Excavation) });
-      }
-    }
-  
-    if (item.FormWork > 0) {
-      const existingEntry = formWorkData.find(entry => entry.month === month);
-  
-      if (existingEntry) {
-        existingEntry.total += Math.floor(item.FormWork)
-      } else {
-        formWorkData.push({ month: month, total: Math.floor(item.FormWork) });
-      }
-    }
-  
-    if (item.Rebar > 0) {
-      const existingEntry = rebarData.find(entry => entry.month === month)
-  
-      if (existingEntry) {
-        existingEntry.total += Math.floor(item.Rebar)
-      } else {
-        rebarData.push({ month: month, total: Math.floor(item.Rebar) })
-      }
-    }
-  
-    if (item.Concrete > 0) {
-      const existingEntry = concreteData.find(entry => entry.month === month);
-  
-      if (existingEntry) {
-        existingEntry.total += Math.floor(item.Concrete)
-      } else {
-        concreteData.push({ month: month, total: Math.floor(item.Concrete) });
-      }
-    }
-  });
-
-  const totalSum = filteredData.reduce((sum, invoice) => sum + invoice.Value, 0);
-
-  const handleChange = (event: string) => {
-    setSelectedOption(event);
   };
 
-  const Direct = monthlydataDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
-  const Indirect = monthlydataInDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
-  const Equipment = monthlydataEquipment.map(({ Month, Value }) => ({ month: Month, total: Value }));
+type MonthlyDataItem = {
+  MonthName: string;
+  _sum: {
+    FormWork: number;
+    Concrete: number;
+    Excavation: number;
+    Rebar: number;
+  };
+};
+
+type TableDataItem = {
+  Area:string
+  MonthName: string;
+  WeekNumber: number;
+  Date: string
+  _sum: {
+    FormWork: number;
+    Concrete: number;
+    Excavation: number;
+    Rebar: number;
+  };
+};
+
+const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEquipment}:Props) => {
+
+    const [selectedOption, setSelectedOption] = useState('day');
+    const [selectedArea, setSelectedArea] = useState<string>('All');
+    const {data: quantityweekData, error: quantityweekDatanError, isLoading: isquantityweekDataLoading, refetch:refetchquantityweekData} = useQuery<WeeklyDataItem[]>({
+        queryKey:'quantityweekData',
+        queryFn: ()=> axios.get('/api/quantitybyweek').then((res) => res.data),
+        staleTime:60 * 1000,
+        retry:3,
+    })
+
+    const {data: quantitymonthData, error: quantitymonthDatanError, isLoading: isquantitymonthDataLoading, refetch:refetchquantitymonthData} = useQuery<MonthlyDataItem[]>({
+        queryKey:'quantitymonthData',
+        queryFn: ()=> axios.get('/api/quantitybymonth').then((res) => res.data),
+        staleTime:60 * 1000,
+        retry:3,
+    })
+
+    const [opendialogue, setopenDialogue] = useState({
+        Excavation: false,
+        FormWork: false,
+        Rebar: false,
+        Concrete: false,
+    })
+
+    const {data: TableData, error: TableDatanError, isLoading: isTableDataLoading, refetch:refetchTablehData} = useQuery<TableDataItem[]>({
+        queryKey:'TableData',
+        queryFn: ()=> axios.get('/api/quantitybyarea', {params: {
+            Type: Object.entries(opendialogue).find(([key, value]) => value)?.[0] || '', // Find the first truthy value in opendialogue and use its key as Type
+            option:selectedOption,
+            Area: selectedArea
+        }}).then((res) => res.data),
+        staleTime:60 * 1000,
+        retry:3,
+    })
+
+    useEffect(() => {
+        refetchTablehData()
+    },[opendialogue, selectedArea,selectedOption])
+
+    console.log(TableData)
+
+    
+
+
+    const totals = data.reduce(
+        (accumulator, currentItem) => {
+        accumulator.Excavation += currentItem.Excavation;
+        accumulator.FormWork += currentItem.FormWork;
+        accumulator.Rebar += currentItem.Rebar;
+        accumulator.Concrete += currentItem.Concrete;
+        return accumulator;
+        },
+        { Excavation: 0, FormWork: 0, Rebar: 0, Concrete: 0 }
+    );
+
+    const totalSum = TableData!.reduce((sum, invoice) => {
+        if (invoice._sum) {
+        sum += invoice._sum.FormWork || 0;
+        sum += invoice._sum.Concrete || 0;
+        sum += invoice._sum.Excavation || 0;
+        sum += invoice._sum.Rebar || 0;
+        }
+        return sum;
+    }, 0);
+    const handleChange = (event: string) => {
+        setSelectedOption(event);
+    };
+
+    const Direct = monthlydataDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
+    const Indirect = monthlydataInDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
+    const Equipment = monthlydataEquipment.map(({ Month, Value }) => ({ month: Month, total: Value }));
+
+
+    if(!quantitymonthData){
+        return <div>No data</div>
+    }
+
+    const FormWorkMonthlyData = quantitymonthData.map((item) => ({
+        month: item.MonthName,
+        total: item._sum.FormWork,
+    }))
+    const ExcavationMonthlyData = quantitymonthData.map((item) => ({
+        month: item.MonthName,
+        total: item._sum.Excavation,
+    }))
+    const RebarMonthlyData = quantitymonthData.map((item) => ({
+        month: item.MonthName,
+        total: item._sum.Rebar
+    }))
+    const ConcreteMonthlyData = quantitymonthData.map((item) => ({
+        month: item.MonthName,
+        total: item._sum.Concrete,
+    }))
 
   
   return (
     <div >
-        <Dialog open={opendialogue.excavation || opendialogue.formWork || opendialogue.rebar || opendialogue.concrete}>
+        <Dialog open={opendialogue.Excavation || opendialogue.FormWork || opendialogue.Rebar || opendialogue.Concrete}>
             <DialogContent className='h-[600px] max-w-[800px]'>
             <div className='flex items-center space-x-6'>
                 <Select value={selectedArea} onValueChange={(value) => setSelectedArea(value)}>
@@ -281,32 +195,35 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
             </div>
             <div
             onClick={() => setopenDialogue({
-                excavation: false,
-                formWork: false,
-                rebar: false,
-                concrete: false,
+                Excavation: false,
+                FormWork: false,
+                Rebar: false,
+                Concrete: false,
               })}
              className="absolute right-4 top-4 mb-2 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                 <Cross2Icon className="h-4 w-4" />
                 <span className="sr-only">Close</span>
             </div>
-            <Table className='mt-3'>
+            {isTableDataLoading ? (
+                <p className=''>Loading Data...</p>
+            ):(
+                <Table className='mt-3'>
                 <TableHeader className='w-full sticky top-0 bg-white'>
                     <TableRow>
                         <TableHead>Area</TableHead>
                         <TableHead>Date</TableHead>
-                        {opendialogue.excavation && <TableHead>Excavation</TableHead>}
-                        {opendialogue.formWork && <TableHead>FormWork</TableHead>}
-                        {opendialogue.rebar && <TableHead>Rebar</TableHead>}
-                        {opendialogue.concrete && <TableHead>Concrete</TableHead>}
+                        {opendialogue.Excavation && <TableHead>Excavation</TableHead>}
+                        {opendialogue.FormWork && <TableHead>FormWork</TableHead>}
+                        {opendialogue.Rebar && <TableHead>Rebar</TableHead>}
+                        {opendialogue.Concrete && <TableHead>Concrete</TableHead>}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {displayedData.map((item, index) => (
+                    {  TableData && TableData.map((item, index) => (
                     <TableRow key={index}>
                         <TableCell className="font-medium">{item.Area}</TableCell>
-                        <TableCell>{selectedOption === 'day' ? new Date(item.Date).toLocaleDateString() :  item.Date}</TableCell>
-                        <TableCell>{item.Value}</TableCell>
+                        <TableCell>{selectedOption === 'day' ? new Date(item.Date).toLocaleDateString() :  item.Date}{item.MonthName}{item.WeekNumber ? `Week ${item.WeekNumber}`: ''}</TableCell>
+                        <TableCell>{item._sum.Concrete}{item._sum.Excavation}{item._sum.FormWork}{item._sum.Rebar}</TableCell>
                     </TableRow>
                     ))}
                 </TableBody>
@@ -314,17 +231,18 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
                     <TableRow>
                     <TableCell colSpan={1}>Total</TableCell>
                     <TableCell colSpan={2} className="text-right">{totalSum.toFixed(2)}
-                    {opendialogue.excavation || opendialogue.concrete ? <p className='inline'> M<sup>3</sup></p> : ''}
-                    {opendialogue.formWork ?  <p className='inline'> M<sup>2</sup></p> : ""}
-                    {opendialogue.rebar ? " MT" : ""}
+                    {opendialogue.Excavation || opendialogue.Concrete ? <p className='inline'> M<sup>3</sup></p> : ''}
+                    {opendialogue.FormWork ?  <p className='inline'> M<sup>2</sup></p> : ""}
+                    {opendialogue.Rebar ? " MT" : ""}
                     </TableCell>
                     </TableRow>
                 </TableFooter>
                 </Table>
+            )}
             </DialogContent>
         </Dialog>
         <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 sticky top-0 z-20 py-2 bg-white '>
-        <Card onClick={() => setopenDialogue({ ...opendialogue, excavation: true })} className='cursor-pointer'>
+        <Card onClick={() => setopenDialogue({ ...opendialogue, Excavation: true })} className='cursor-pointer'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
                 Total Excavation
@@ -348,7 +266,7 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
             <div className="text-2xl font-bold">{totals.Excavation.toFixed(2)} M<sup>3</sup></div>
             </CardContent>
         </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, formWork: true})} className='cursor-pointer'>
+        <Card onClick={() => setopenDialogue({...opendialogue, FormWork: true})} className='cursor-pointer'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
                 Total FormWork
@@ -372,7 +290,7 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
             <div className="text-2xl font-bold">{totals.FormWork.toFixed(2)} M<sup>2</sup></div>
             </CardContent>
         </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, rebar: true})} className='cursor-pointer'>
+        <Card onClick={() => setopenDialogue({...opendialogue, Rebar: true})} className='cursor-pointer'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
                 Total Rebar
@@ -396,7 +314,7 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
             <div className="text-2xl font-bold">{totals.Rebar.toFixed(2)} MT</div>
             </CardContent>
         </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, concrete: true})} className='cursor-pointer'>
+        <Card onClick={() => setopenDialogue({...opendialogue, Concrete: true})} className='cursor-pointer'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
             Total Concrete
@@ -422,10 +340,10 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
         </Card>
         </div>
         <div className='grid md:grid-cols-2 gap-10 mt-10'>
-            <Charts data={excavationData} label='Excavation Productivity By Month' color='#FF8080'/>
-            <Charts data={formWorkData} label='Formwork Productivity By Month' color='#BC7AF9'/>
-            <Charts data={rebarData} label='Rebar Productivity By Month' color='#FA7070'/>
-            <Charts data={concreteData} label='Concrete Productivity By Month' color='#29ADB2'/>
+            <Charts data={ExcavationMonthlyData} label='Excavation Productivity By Month' color='#FF8080'/>
+            <Charts data={FormWorkMonthlyData} label='Formwork Productivity By Month' color='#BC7AF9'/>
+            <Charts data={RebarMonthlyData} label='Rebar Productivity By Month' color='#FA7070'/>
+            <Charts data={ConcreteMonthlyData} label='Concrete Productivity By Month' color='#29ADB2'/>
             <Charts data={Direct} label='Direct' color='#65B741'/>
             <Charts data={Indirect} label='InDirect' color='#7071E8'/>
             <Charts data={Equipment} label='Equipment' color='#DF826C'/>

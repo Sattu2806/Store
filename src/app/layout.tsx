@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/app/Navbar'
 import { Toaster } from "@/components/ui/toaster"
-
+import QueryClientProvider from './QueryClientProvider'
 
 
 
@@ -22,9 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+          <QueryClientProvider>
           <Toaster/>
           <Navbar/>
             {children}
+          </QueryClientProvider>
         </body>
     </html>
   )

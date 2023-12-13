@@ -20,6 +20,8 @@ model Project {
   FormWork   Float
   Rebar      Float
   Concrete  Float
+  WeekNumber Int
+  MonthName String
 }
 
 model MonthlyData {

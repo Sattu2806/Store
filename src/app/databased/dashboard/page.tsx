@@ -1,38 +1,13 @@
 import React from 'react'
 import prisma from "@/app/prismadb"
 import Dashboard from './Dashboard'
+import { useQuery } from 'react-query'
 
 type Props = {}
 
 const page = async (props: Props) => {
   const projects = await prisma.project.findMany({})
-  const monthlydataInDirect = await prisma.monthlyData.findMany({
-    where:{
-      Type:"Indirect"
-    },
-    select: {
-      Month: true,
-      Value: true
-    }
-  })
-  const monthlydataDirect = await prisma.monthlyData.findMany({
-    where:{
-      Type:"Direct"
-    },
-    select: {
-      Month: true,
-      Value: true
-    }
-  })
-  const monthlydataEquipment = await prisma.monthlyData.findMany({
-    where:{
-      Type:"Equipment"
-    },
-    select: {
-      Month: true,
-      Value: true
-    }
-  })
+
 
   const groupedTradeData = await prisma.tradeData.findMany({
     where:{
@@ -40,7 +15,21 @@ const page = async (props: Props) => {
     }
   })
   
-  console.log(groupedTradeData);
+  const getMonthlyData = async (type:string) => {
+    return await prisma.monthlyData.findMany({
+      where: {
+        Type: type,
+      },
+      select: {
+        Month: true,
+        Value: true,
+      },
+    });
+  };
+  
+  const monthlydataInDirect = await getMonthlyData("Indirect");
+  const monthlydataDirect = await getMonthlyData("Direct");
+  const monthlydataEquipment = await getMonthlyData("Equipment");
   
 
 

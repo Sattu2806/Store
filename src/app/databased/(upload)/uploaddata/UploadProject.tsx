@@ -22,6 +22,15 @@ const UploadProjectData = (props: Props) => {
   const [Error,setError] = useState<boolean>(false)
   const { toast } = useToast()
 
+  const getISOWeek = (date: Date): number => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+    const yearStart: Date = new Date(d.getFullYear(), 0, 1);
+    return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  };
+
+
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
@@ -31,7 +40,17 @@ const UploadProjectData = (props: Props) => {
       const fileContent = await file.text();
       try {
         const parsedData = JSON.parse(fileContent);
-        setJsonContent(JSON.stringify(parsedData, null, 2));
+        // Add WeekNumber and MonthName to each data item
+        const processedData = parsedData.map((data: any) => {
+          const weekNumber = getISOWeek(new Date(data.Date));
+          const monthName = new Date(data.Date).toLocaleString('en', { month: 'short' });
+          return {
+            ...data,
+            WeekNumber: weekNumber,
+            MonthName: monthName,
+          };
+        });
+        setJsonContent(JSON.stringify(processedData, null, 2));
         console.log('Parsed JSON data:', parsedData);
       } catch (error) {
         console.error('Error parsing JSON file:', error);
@@ -76,7 +95,9 @@ const UploadProjectData = (props: Props) => {
                 Excavation: data.Excavation,
                 FormWork: data.FormWork,
                 Rebar: data.Rebar,
-                Concrete: data.Concrete
+                Concrete: data.Concrete,
+                WeekNumber: data.WeekNumber,
+                MonthName: data.MonthName,
             });
 
             uploadeddata++;

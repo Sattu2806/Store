@@ -10,12 +10,14 @@ type Project = {
   FormWork: number;
   Rebar: number;
   Concrete: number;
+  WeekNumber: number,
+  MonthName: string
 };
 
 export async function POST(request: Request) {
   try {
     const body: Project = await request.json();
-    const { Discipline, Area, Date, Excavation, FormWork, Rebar, Concrete} = body
+    const { Discipline, Area, Date, Excavation, FormWork, Rebar, Concrete, WeekNumber,MonthName} = body
 
     const createdProject = await prisma.project.create({
       data: {
@@ -25,7 +27,9 @@ export async function POST(request: Request) {
         Excavation,
         FormWork,
         Rebar,
-        Concrete
+        Concrete,
+        WeekNumber,
+        MonthName
       }
     });
 
