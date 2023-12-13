@@ -122,15 +122,18 @@ const Dashboard = ({data, monthlydataDirect, monthlydataInDirect, monthlydataEqu
         { Excavation: 0, FormWork: 0, Rebar: 0, Concrete: 0 }
     );
 
-    const totalSum = TableData!.reduce((sum, invoice) => {
+    const totalSum = TableData
+    ? TableData.reduce((sum, invoice) => {
         if (invoice._sum) {
-        sum += invoice._sum.FormWork || 0;
-        sum += invoice._sum.Concrete || 0;
-        sum += invoice._sum.Excavation || 0;
-        sum += invoice._sum.Rebar || 0;
+          sum += invoice._sum.FormWork || 0;
+          sum += invoice._sum.Concrete || 0;
+          sum += invoice._sum.Excavation || 0;
+          sum += invoice._sum.Rebar || 0;
         }
         return sum;
-    }, 0);
+      }, 0)
+    : 0;
+  
     const handleChange = (event: string) => {
         setSelectedOption(event);
     };
