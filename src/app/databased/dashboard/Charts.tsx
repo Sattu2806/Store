@@ -49,4 +49,3 @@ const Charts = ({data, label,color}: Props) => {
 }
 
 export default Charts
-

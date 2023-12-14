@@ -14,84 +14,50 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import Charts from './Charts';
 import { manpower } from '@/lib/data/formdata';
 import { Label } from '@/components/ui/label';
 import { Project } from '@prisma/client';
 import { useQuery } from 'react-query';
 import axios from 'axios';
+import Charts from './Charts';
 
-type AggregatedData = {
-    _sum: {
-      FormWork: number | null;
-      Concrete: number | null;
-      Excavation: number | null;
-      Rebar: number | null;
-    };
-  };
-
-type Monthlydata = {
-    Month:string,
-    Value:number
-}
+import { AggregatedData, ManpowerItem, MonthlyChartData, Monthlydata, TableDataItem,} from '@/lib/types';
+import ComposedCharts from './ComposedCharts';
+import ManpowerCharts from './ManpowerChart';
+import CardComponent from './CardComponent';
 
 type Props = {
     total: AggregatedData,
     monthlydataDirect : Monthlydata[],
      monthlydataInDirect: Monthlydata[], 
-     monthlydataEquipment: Monthlydata[]
+     monthlydataEquipment: Monthlydata[],
+     manpowerdata:ManpowerItem[]
 }
 
-type WeeklyDataItem = {
-    WeekNumber: number;
-    _sum: {
-      FormWork: number;
-      Concrete: number;
-      Excavation: number;
-      Rebar: number;
-    };
-  };
+type monthdata = {
+    month:string
+    total:number
+}
 
-type MonthlyDataItem = {
-  MonthName: string;
-  _sum: {
-    FormWork: number;
-    Concrete: number;
-    Excavation: number;
-    Rebar: number;
-  };
-};
+type QuantityMonthData = {
+    formWorkMonthData : monthdata[], 
+    concreteMonthData : monthdata[], 
+    excavationMonthData : monthdata[], 
+    rebarMonthData : monthdata[], 
+}
 
-type TableDataItem = {
-  Area:string
-  MonthName: string;
-  WeekNumber: number;
-  Date: string
-  _sum: {
-    FormWork: number;
-    Concrete: number;
-    Excavation: number;
-    Rebar: number;
-  };
-};
-
-const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEquipment}:Props) => {
+const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEquipment, manpowerdata}:Props) => {
 
     const [selectedOption, setSelectedOption] = useState('day');
     const [selectedArea, setSelectedArea] = useState<string>('All');
-    const {data: quantityweekData, error: quantityweekDatanError, isLoading: isquantityweekDataLoading, refetch:refetchquantityweekData} = useQuery<WeeklyDataItem[]>({
-        queryKey:'quantityweekData',
-        queryFn: ()=> axios.get('/api/quantitybyweek').then((res) => res.data),
-        staleTime:60 * 1000,
-        retry:3,
-    })
 
-    const {data: quantitymonthData, error: quantitymonthDatanError, isLoading: isquantitymonthDataLoading, refetch:refetchquantitymonthData} = useQuery<MonthlyDataItem[]>({
+    const {data: quantitymonthData = {}, error: quantitymonthDatanError, isLoading: isquantitymonthDataLoading, refetch:refetchquantitymonthData} = useQuery<QuantityMonthData>({
         queryKey:'quantitymonthData',
         queryFn: ()=> axios.get('/api/quantitybymonth').then((res) => res.data),
         staleTime:60 * 1000,
         retry:3,
     })
+    const {formWorkMonthData, concreteMonthData, excavationMonthData, rebarMonthData}  = quantitymonthData
 
     const [opendialogue, setopenDialogue] = useState({
         Excavation: false,
@@ -140,26 +106,10 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
         return <div>No data</div>
     }
 
+
     if(!quantitymonthData){
         return <div>No data</div>
     }
-
-    const FormWorkMonthlyData = quantitymonthData.map((item) => ({
-        month: item.MonthName,
-        total: item._sum.FormWork,
-    }))
-    const ExcavationMonthlyData = quantitymonthData.map((item) => ({
-        month: item.MonthName,
-        total: item._sum.Excavation,
-    }))
-    const RebarMonthlyData = quantitymonthData.map((item) => ({
-        month: item.MonthName,
-        total: item._sum.Rebar
-    }))
-    const ConcreteMonthlyData = quantitymonthData.map((item) => ({
-        month: item.MonthName,
-        total: item._sum.Concrete,
-    }))
 
   
   return (
@@ -219,13 +169,21 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {  TableData && TableData.map((item, index) => (
+                    {  TableData && TableData.map((item, index) => {
+                        const sumValue = (
+                            (item._sum.Concrete ? item._sum.Concrete : 0) +
+                            (item._sum.Excavation ? item._sum.Excavation : 0) +
+                            (item._sum.FormWork ? item._sum.FormWork : 0) +
+                            (item._sum.Rebar ? item._sum.Rebar : 0)
+                        );
+                    return (
                     <TableRow key={index}>
                         <TableCell className="font-medium">{item.Area}</TableCell>
                         <TableCell>{selectedOption === 'day' ? new Date(item.Date).toLocaleDateString() :  item.Date}{item.MonthName}{item.WeekNumber ? `Week ${item.WeekNumber}`: ''}</TableCell>
-                        <TableCell>{item._sum.Concrete}{item._sum.Excavation}{item._sum.FormWork}{item._sum.Rebar}</TableCell>
+                        <TableCell>{sumValue.toFixed(2)}</TableCell>
                     </TableRow>
-                    ))}
+                    )
+                })}
                 </TableBody>
                 <TableFooter>
                     <TableRow>
@@ -241,113 +199,30 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             )}
             </DialogContent>
         </Dialog>
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 sticky top-0 z-20 py-2 bg-white '>
-        <Card onClick={() => setopenDialogue({ ...opendialogue, Excavation: true })} className='cursor-pointer'>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-                Total Excavation
-            </CardTitle>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-            >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            </CardHeader>
-            <CardContent>
-            <div className="text-2xl font-bold">{total._sum.Excavation?.toFixed(2)} M<sup>3</sup></div>
-            </CardContent>
-        </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, FormWork: true})} className='cursor-pointer'>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-                Total FormWork
-            </CardTitle>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-            >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            </CardHeader>
-            <CardContent>
-            <div className="text-2xl font-bold">{total._sum.FormWork?.toFixed(2)} M<sup>2</sup></div>
-            </CardContent>
-        </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, Rebar: true})} className='cursor-pointer'>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-                Total Rebar
-            </CardTitle>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-            >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            </CardHeader>
-            <CardContent>
-            <div className="text-2xl font-bold">{total._sum.Rebar?.toFixed(2)} MT</div>
-            </CardContent>
-        </Card>
-        <Card onClick={() => setopenDialogue({...opendialogue, Concrete: true})} className='cursor-pointer'>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-            Total Concrete
-            </CardTitle>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-            >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            </CardHeader>
-            <CardContent>
-            <div className="text-2xl font-bold">{total._sum.Concrete?.toFixed(2)} M<sup>3</sup></div>
-            </CardContent>
-        </Card>
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 md:sticky top-0 z-20 py-2 bg-white '>
+        <div onClick={() => setopenDialogue({ ...opendialogue, Excavation: true })}>
+            <CardComponent total={total} label='Total Excavation' unit = {<>M<sup>3</sup></>} />
+        </div>
+        <div onClick={() => setopenDialogue({...opendialogue, FormWork: true})}>
+            <CardComponent total={total} label='Total FormWork' unit = {<>M<sup>2</sup></>} />
+        </div>
+        <div onClick={() => setopenDialogue({...opendialogue, Rebar: true})}>
+            <CardComponent total={total} label='Total Rebar' unit = {<>MT</>} />
+        </div>
+        <div onClick={() => setopenDialogue({...opendialogue, Concrete: true})}>
+            <CardComponent total={total} label='Total Concrete' unit = {<>M<sup>3</sup></>} />
+        </div>
         </div>
         <div className='grid md:grid-cols-2 gap-10 mt-10'>
-            <Charts data={ExcavationMonthlyData} label='Excavation Productivity By Month' color='#FF8080'/>
-            <Charts data={FormWorkMonthlyData} label='Formwork Productivity By Month' color='#BC7AF9'/>
-            <Charts data={RebarMonthlyData} label='Rebar Productivity By Month' color='#FA7070'/>
-            <Charts data={ConcreteMonthlyData} label='Concrete Productivity By Month' color='#29ADB2'/>
-            <Charts data={Direct} label='Direct' color='#65B741'/>
-            <Charts data={Indirect} label='InDirect' color='#7071E8'/>
-            <Charts data={Equipment} label='Equipment' color='#DF826C'/>
+            <Charts data={excavationMonthData} label='Excavation Productivity By Month' color='#FF8080'/>
+            <Charts data={formWorkMonthData} label='Formwork Productivity By Month' color='#BC7AF9'/>
+            <Charts data={rebarMonthData} label='Rebar Productivity By Month' color='#FA7070'/>
+            <Charts data={concreteMonthData} label='Concrete Productivity By Month' color='#29ADB2'/>
+            <ManpowerCharts data={Direct} label='Direct ManPower Histogram' color='#65B741'/>
+            <ManpowerCharts data={Indirect} label='InDirect ManPower Histogram' color='#7071E8'/>
+            <ManpowerCharts data={Equipment} label='Equipment Histogram' color='#DF826C'/>
         </div>
+            <ComposedCharts manpowerdata={manpowerdata} />
         <div className='my-10'>
         </div>
     </div>
@@ -355,6 +230,3 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
 };
 
 export default Dashboard;
-
-
-
