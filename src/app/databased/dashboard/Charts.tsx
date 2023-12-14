@@ -1,7 +1,7 @@
 import { Card, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import React from 'react'
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
 type Data =  {
     month:string, 
@@ -19,8 +19,14 @@ const Charts = ({data, label,color}: Props) => {
     <div className='relative'>
         <Card className='px-2'>
             <CardHeader className='text-lg text-center font-semibold'>{label}</CardHeader>
-            <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={data}>
+            <ResponsiveContainer width="100%"
+             height={350}
+            >
+            <BarChart data={data}
+                    margin={{
+                    top: 20,
+                }}
+                >
                 <XAxis
                 dataKey="month"
                 stroke="#888888"
@@ -40,7 +46,9 @@ const Charts = ({data, label,color}: Props) => {
                 tickFormatter={(value) => `${value}`}
                 />
                 <Tooltip />
-                <Bar dataKey="total" fill={color} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="total" fill={color} radius={[4, 4, 0, 0]} >
+                <LabelList dataKey="total" position="top" className='text-sm' />
+                </Bar>
             </BarChart>
             </ResponsiveContainer>
         </Card>

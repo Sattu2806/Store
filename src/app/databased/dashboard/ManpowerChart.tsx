@@ -1,7 +1,7 @@
 import { Card, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import React from 'react'
-import { Bar, BarChart, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, ComposedChart, LabelList, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
 type Data = {
     month: string,
@@ -63,7 +63,9 @@ const ManpowerCharts = ({ data, label, color }: Props) => {
                         yAxisId="right" orientation="right" />
                         <Legend />
                         <Tooltip contentStyle={{ borderRadius: '10px', background: '#fff', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderColor: "none" }} />
-                        <Bar yAxisId="left" dataKey="total" fill={color} radius={[4, 4, 0, 0]} />
+                        <Bar yAxisId="left" dataKey="total" fill={color} radius={[4, 4, 0, 0]} >
+                            <LabelList dataKey="total" position="top" className='text-sm' />
+                        </Bar>
                         <Line yAxisId="right" type="monotone" dataKey="cumulative_value" stroke="#ff7300" />
                     </ComposedChart>
                 </ResponsiveContainer>

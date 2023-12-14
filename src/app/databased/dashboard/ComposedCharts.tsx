@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Bar,  Line, XAxis, YAxis,  ComposedChart, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
+import { Bar,  Line, XAxis, YAxis,  ComposedChart, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList} from 'recharts';
 import { ManpowerItem } from '@/lib/types';
 import { Card, CardHeader } from '@/components/ui/card';
 
@@ -103,8 +103,12 @@ const ComposedCharts = ({manpowerdata}: Props) => {
            yAxisId="right" orientation="right" />
           <Tooltip cursor={{ stroke: 'red', strokeWidth: 2 }}  contentStyle={{borderRadius:'10px', background:'#fff', boxShadow:'0 4px 8px rgba(0, 0, 0, 0.1)', borderColor:"none"}}/>
           <Legend />
-          <Bar yAxisId="left" dataKey="Indirect_Value"  fill="#413ea0" radius={[4, 4, 0, 0]} />
-          <Bar yAxisId="left" dataKey="Direct_Value"  fill="#8884d8" radius={[4, 4, 0, 0]} />
+          <Bar yAxisId="left" dataKey="Indirect_Value"  fill="#413ea0" radius={[4, 4, 0, 0]} >
+            <LabelList dataKey="Indirect_Value" position="top" className='text-sm' />
+          </Bar>
+          <Bar yAxisId="left" dataKey="Direct_Value"  fill="#8884d8" radius={[4, 4, 0, 0]} >
+            <LabelList dataKey="Direct_Value" position="top" className='text-sm' />
+          </Bar>
           <Line yAxisId="right" type="monotone" dataKey="Cumulative_Indirect_Value" stroke="#ff7300" />
           <Line yAxisId="right" type="monotone" dataKey="Cumulative_Direct_Value" stroke="#82ca9d" />
           </ComposedChart>

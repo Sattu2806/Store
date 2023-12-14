@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent} from '@/components/ui/dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -14,9 +13,7 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { manpower } from '@/lib/data/formdata';
 import { Label } from '@/components/ui/label';
-import { Project } from '@prisma/client';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import Charts from './Charts';
@@ -213,7 +210,7 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             <CardComponent total={total} label='Total Concrete' unit = {<>M<sup>3</sup></>} />
         </div>
         </div>
-        <div className='grid md:grid-cols-2 gap-10 mt-10'>
+        <div className='grid md:grid-cols-2 gap-10 mt-5'>
             <Charts data={excavationMonthData} label='Excavation Productivity By Month' color='#FF8080'/>
             <Charts data={formWorkMonthData} label='Formwork Productivity By Month' color='#BC7AF9'/>
             <Charts data={rebarMonthData} label='Rebar Productivity By Month' color='#FA7070'/>
@@ -223,7 +220,7 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             <ManpowerCharts data={Equipment} label='Equipment Histogram' color='#DF826C'/>
         </div>
             <ComposedCharts manpowerdata={manpowerdata} />
-        <div className='my-10'>
+        <div className='my-5'>
         </div>
     </div>
   );

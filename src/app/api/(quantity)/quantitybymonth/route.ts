@@ -76,25 +76,28 @@ export async function GET(request: Request) {
       },
     });
 
-    const simplifiedFormWorkData = formWorkData.map(item => ({
+    const roundToWholeNumber = (value:number | null) => Math.round(value || 0);
+
+    const simplifiedFormWorkData = formWorkData.map((item) => ({
       month: item.MonthName,
-      total: item._sum.FormWork || 0,
+      total: roundToWholeNumber(item._sum.FormWork),
     }));
 
-    const simplifiedConcreteData = concreteData.map(item => ({
+    const simplifiedConcreteData = concreteData.map((item) => ({
       month: item.MonthName,
-      total: item._sum.Concrete || 0,
+      total: roundToWholeNumber(item._sum.Concrete),
     }));
 
-    const simplifiedExcavationData = excavationData.map(item => ({
+    const simplifiedExcavationData = excavationData.map((item) => ({
       month: item.MonthName,
-      total: item._sum.Excavation || 0,
+      total: roundToWholeNumber(item._sum.Excavation),
     }));
 
-    const simplifiedRebarData = rebarData.map(item => ({
+    const simplifiedRebarData = rebarData.map((item) => ({
       month: item.MonthName,
-      total: item._sum.Rebar || 0,
+      total: roundToWholeNumber(item._sum.Rebar),
     }));
+
 
     return NextResponse.json({
       formWorkMonthData: simplifiedFormWorkData,
