@@ -18,13 +18,14 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import Charts from './Charts';
 
-import { AggregatedData, ManpowerItem, MonthlyChartData, Monthlydata, TableDataItem,} from '@/lib/types';
+import { AggregatedData, ManpowerItem, MonthlyChartData, Monthlydata, TableDataItem, sumQuantityData,} from '@/lib/types';
 import ComposedCharts from './ComposedCharts';
 import ManpowerCharts from './ManpowerChart';
 import CardComponent from './CardComponent';
 import ActualVsPallnedChart from './ActualvsPlannedChart';
 import { sCurveData, NCRTable, ConcretePlannedVsActual } from '@/lib/data/formdata';
 import ThreeBarChart from './ThreeBarChart';
+import { Category, Group } from '@prisma/client';
 
 type Props = {
     total: AggregatedData,
@@ -49,58 +50,79 @@ type QuantityMonthData = {
 const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEquipment, manpowerdata}:Props) => {
 
     const [selectedOption, setSelectedOption] = useState('day');
-    const [selectedArea, setSelectedArea] = useState<string>('All');
+    const [selectedGroup, setSelectedGroup] = useState<string | undefined>(undefined);
+    const [selectedCategory, setSelectedCatefory] = useState<string | undefined>(undefined);
 
     const {data: quantitymonthData =[], error: quantitymonthDatanError, isLoading: isquantitymonthDataLoading, refetch:refetchquantitymonthData} = useQuery<QuantityMonthData>({
         queryKey:'quantitymonthData',
-        queryFn: ()=> axios.get('/api/quantitybymonth').then((res) => res.data),
+        queryFn: ()=> axios.get('/api/chartquantityapi').then((res) => res.data),
         staleTime:60 * 1000,
         retry:3,
     })
     const {formWorkMonthData, concreteMonthData, excavationMonthData, rebarMonthData}  = quantitymonthData
 
-    const [opendialogue, setopenDialogue] = useState({
-        Excavation: false,
-        FormWork: false,
-        Rebar: false,
-        Concrete: false,
-    })
-
-    const {data: TableData, error: TableDatanError, isLoading: isTableDataLoading, refetch:refetchTablehData} = useQuery<TableDataItem[]>({
-        queryKey:'TableData',
-        queryFn: ()=> axios.get('/api/quantitybyarea', {params: {
-            Type: Object.entries(opendialogue).find(([key, value]) => value)?.[0] || '', // Find the first truthy value in opendialogue and use its key as Type
-            option:selectedOption,
-            Area: selectedArea
-        }}).then((res) => res.data),
+    const {data: groupData = [], error: groupDataError, isLoading: groupDataLoading, refetch:refetchgroupData} = useQuery<Group[]>({
+        queryKey:'groupdata',
+        queryFn: ()=> axios.get('/api/group').then((res) => res.data),
         staleTime:60 * 1000,
         retry:3,
+      })
+      const {data: categoryData = [], error: categoryDataError, isLoading: categoryDataLoading, refetch:refetchcategoryData} = useQuery<Category[]>({
+        queryKey:'categorydata',
+        queryFn: ()=> axios.get('/api/category').then((res) => res.data),
+        staleTime:60 * 1000,
+        retry:3,
+      })
+      const {data: sumData = [], error: sumDataError, isLoading: sumDataLoading, refetch:refetchsumData} = useQuery<sumQuantityData[]>({
+        queryKey:'sumdata',
+        queryFn: ()=> axios.get('/api/sumquantityapi').then((res) => res.data),
+        staleTime:60 * 1000,
+        retry:3,
+      })
+      console.log(sumData)
+
+    const [opendialogue, setopenDialogue] = useState({
+        excavationQty :false,
+        formWorkQty  :false,
+        rebarQty       :false,
+        concreteQty   :false
     })
-    const {data: Table1Data, error: Table1DatanError, isLoading: isTable1DataLoading, refetch:refetch1TablehData} = useQuery({
+
+    // const {data: TableData, error: TableDatanError, isLoading: isTableDataLoading, refetch:refetchTablehData} = useQuery<TableDataItem[]>({
+    //     queryKey:'TableData',
+    //     queryFn: ()=> axios.get('/api/quantitybyarea', {params: {
+    //         Type: Object.entries(opendialogue).find(([key, value]) => value)?.[0] || '', // Find the first truthy value in opendialogue and use its key as Type
+    //         option:selectedOption,
+    //         Area: selectedArea
+    //     }}).then((res) => res.data),
+    //     staleTime:60 * 1000,
+    //     retry:3,
+    // })
+    const {data: Table1Data, error: Table1DatanError, isLoading: isTable1DataLoading, refetch:refetch1TablehData} = useQuery<TableDataItem[]>({
         queryKey:'Table1Data',
         queryFn: ()=> axios.get('/api/tablequantityapi', {params: {
-            Type: 'formWorkQty', // Find the first truthy value in opendialogue and use its key as Type
-            option:'week',
-            groupId:null,
-            categoryId:null
+            Type: Object.entries(opendialogue).find(([key, value]) => value)?.[0] || '',
+            option:selectedOption,
+            groupId: selectedGroup === undefined ? null : selectedGroup,
+            categoryId:selectedCategory === undefined ? null : selectedCategory,
         }}).then((res) => res.data),
         staleTime:60 * 1000,
         retry:3,
     })
-    console.log(Table1Data)
+
 
     useEffect(() => {
-        refetchTablehData()
-    },[opendialogue, selectedArea,selectedOption])
+        refetch1TablehData()
+    },[opendialogue, ,selectedOption,selectedCategory,selectedGroup])
 
 
-    const totalSum = TableData
-    ? TableData.reduce((sum, invoice) => {
+    const totalSum = Table1Data
+    ? Table1Data.reduce((sum, invoice) => {
         if (invoice._sum) {
-          sum += invoice._sum.FormWork || 0;
-          sum += invoice._sum.Concrete || 0;
-          sum += invoice._sum.Excavation || 0;
-          sum += invoice._sum.Rebar || 0;
+          sum += invoice._sum.formWorkQty || 0;
+          sum += invoice._sum.concreteQty || 0;
+          sum += invoice._sum.excavationQty || 0;
+          sum += invoice._sum.rebarQty || 0;
         }
         return sum;
       }, 0)
@@ -126,18 +148,27 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
   
   return (
     <div >
-        <Dialog open={opendialogue.Excavation || opendialogue.FormWork || opendialogue.Rebar || opendialogue.Concrete}>
+        <Dialog open={opendialogue.excavationQty || opendialogue.formWorkQty || opendialogue.rebarQty || opendialogue.concreteQty}>
             <DialogContent className='h-[600px] max-w-[800px]'>
             <div className='flex items-center space-x-6'>
-                <Select value={selectedArea} onValueChange={(value) => setSelectedArea(value)}>
+                <Select value={selectedGroup} onValueChange={(value) => setSelectedGroup(value)}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Sort By" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="All">All</SelectItem>
-                        <SelectItem value="Tank Form Arear">Tank Form Arear</SelectItem>
-                        <SelectItem value="Building Area">Building Area</SelectItem>
-                        <SelectItem value="Sleeper Area">Sleeper Area</SelectItem>
+                        {groupData?.map((group,index) => (
+                            <SelectItem value={group.id.toString()}>{group.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <Select value={selectedCategory} onValueChange={(value) => setSelectedCatefory(value)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Sort By" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {categoryData?.map((category,index) => (
+                            <SelectItem value={category.id.toString()}>{category.name}</SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
                 <RadioGroup value={selectedOption} onValueChange={handleChange} className='flex items-center justify-between'>
@@ -157,41 +188,39 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             </div>
             <div
             onClick={() => setopenDialogue({
-                Excavation: false,
-                FormWork: false,
-                Rebar: false,
-                Concrete: false,
+                excavationQty :false,
+                formWorkQty  :false,
+                rebarQty       :false,
+                concreteQty   :false
               })}
              className="absolute right-4 top-4 mb-2 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                 <Cross2Icon className="h-4 w-4" />
                 <span className="sr-only">Close</span>
             </div>
-            {isTableDataLoading ? (
+            {isTable1DataLoading ? (
                 <p className=''>Loading Data...</p>
             ):(
                 <Table className='mt-3'>
                 <TableHeader className='w-full sticky top-0 bg-white'>
                     <TableRow>
-                        <TableHead>Area</TableHead>
                         <TableHead>Date</TableHead>
-                        {opendialogue.Excavation && <TableHead>Excavation</TableHead>}
-                        {opendialogue.FormWork && <TableHead>FormWork</TableHead>}
-                        {opendialogue.Rebar && <TableHead>Rebar</TableHead>}
-                        {opendialogue.Concrete && <TableHead>Concrete</TableHead>}
+                        {opendialogue.excavationQty && <TableHead>Excavation</TableHead>}
+                        {opendialogue.formWorkQty && <TableHead>FormWork</TableHead>}
+                        {opendialogue.rebarQty && <TableHead>Rebar</TableHead>}
+                        {opendialogue.concreteQty && <TableHead>Concrete</TableHead>}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {  TableData && TableData.map((item, index) => {
+                    {  Table1Data && Table1Data.map((item, index) => {
                         const sumValue = (
-                            (item._sum.Concrete ? item._sum.Concrete : 0) +
-                            (item._sum.Excavation ? item._sum.Excavation : 0) +
-                            (item._sum.FormWork ? item._sum.FormWork : 0) +
-                            (item._sum.Rebar ? item._sum.Rebar : 0)
+                            (item._sum.concreteQty ? item._sum.concreteQty: 0) +
+                            (item._sum.excavationQty ? item._sum.excavationQty : 0) +
+                            (item._sum.formWorkQty ? item._sum.formWorkQty : 0) +
+                            (item._sum.rebarQty ? item._sum.rebarQty : 0)
                         );
                     return (
                     <TableRow key={index}>
-                        <TableCell className="font-medium">{item.Area}</TableCell>
-                        <TableCell>{selectedOption === 'day' ? new Date(item.Date).toLocaleDateString() :  item.Date}{item.MonthName}{item.WeekNumber ? `Week ${item.WeekNumber}`: ''}</TableCell>
+                        <TableCell>{selectedOption === 'day' ? new Date(item.date).toLocaleDateString() :  item.date}{item.MonthName}{item.WeekNumber ? `Week ${item.WeekNumber}`: ''}</TableCell>
                         <TableCell>{sumValue.toFixed(2)}</TableCell>
                     </TableRow>
                     )
@@ -201,9 +230,9 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
                     <TableRow>
                     <TableCell colSpan={1}>Total</TableCell>
                     <TableCell colSpan={2} className="text-right">{totalSum.toFixed(2)}
-                    {opendialogue.Excavation || opendialogue.Concrete ? <p className='inline'> M<sup>3</sup></p> : ''}
-                    {opendialogue.FormWork ?  <p className='inline'> M<sup>2</sup></p> : ""}
-                    {opendialogue.Rebar ? " MT" : ""}
+                    {opendialogue.excavationQty || opendialogue.concreteQty ? <p className='inline'> M<sup>3</sup></p> : ''}
+                    {opendialogue.formWorkQty ?  <p className='inline'> M<sup>2</sup></p> : ""}
+                    {opendialogue.rebarQty ? " MT" : ""}
                     </TableCell>
                     </TableRow>
                 </TableFooter>
@@ -212,16 +241,16 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             </DialogContent>
         </Dialog>
         <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:sticky top-0 z-20 py-2 bg-white '>
-            <div onClick={() => setopenDialogue({ ...opendialogue, Excavation: true })}>
+            <div onClick={() => setopenDialogue({ ...opendialogue, excavationQty: true })}>
                 <CardComponent total={total} label='Excavation' unit = {<>M<sup>3</sup></>} />
             </div>
             {/* <div onClick={() => setopenDialogue({...opendialogue, FormWork: true})}>
                 <CardComponent total={total} label='Total FormWork' unit = {<>M<sup>2</sup></>} />
             </div> */}
-            <div onClick={() => setopenDialogue({...opendialogue, Rebar: true})}>
+            <div onClick={() => setopenDialogue({...opendialogue, rebarQty: true})}>
                 <CardComponent total={total} label='Rebar' unit = {<>MT</>} />
             </div>
-            <div onClick={() => setopenDialogue({...opendialogue, Concrete: true})}>
+            <div onClick={() => setopenDialogue({...opendialogue, concreteQty: true})}>
                 <CardComponent total={total} label='Concrete' unit = {<>M<sup>3</sup></>} />
             </div>
         </div>

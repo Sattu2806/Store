@@ -11,7 +11,7 @@ type Props = {
 const CardComponent = ({total, label, unit}: Props) => {
   return (
     <Card className='cursor-pointer hover:bg-orange-50 hover:shadow-lg duration-100 ease-in-out hover:border-black py-3 px-4 text-neutral-800 hover:scale-105'>
-        <CardTitle className='text-center p-0'><p className='text-center bg-[#363062] p-[6px] text-white rounded-md text-xl'>{label}</p></CardTitle>
+        <CardTitle className='text-center p-0'><p className='text-center bg-[#363062] p-[6px] text-white rounded-md text-[18px]'>{label}</p></CardTitle>
         <div className='flex items-center justify-between mt-2'>
             <CardContent className='p-0'>
                 <CardTitle className="text-sm font-medium p-0 text-center">

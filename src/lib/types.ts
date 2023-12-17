@@ -49,11 +49,30 @@ export type TableDataItem = {
   Area:string
   MonthName: string;
   WeekNumber: number;
-  Date: string
+  date: string
   _sum: {
-    FormWork: number;
-    Concrete: number;
-    Excavation: number;
-    Rebar: number;
+    excavationQty :number
+    formWorkQty   :number
+    rebarQty      :number
+    concreteQty   :number
   };
 };
+
+export type sumQuantityData = {
+    totalquantitysum: {
+      _sum: {
+        totalFoundations: number;
+        concreteQty: number;
+        excavationQty: number;
+        rebarQty: number;
+      };
+    };
+    dailyquantitysum: {
+      _sum: {
+        formWorkQty: number;
+        concreteQty: number;
+        excavationQty: number;
+        rebarQty: number;
+      };
+    };
+  };
