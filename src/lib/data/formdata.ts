@@ -1,3 +1,50 @@
+export const sCurveData = [
+    { month: 'Jan', planned: 100, actual: 80 },
+    { month: 'Feb', planned: 150, actual: 120 },
+    { month: 'Mar', planned: 200, actual: 180 },
+    { month: 'Apr', planned: 250, actual: 220 },
+    { month: 'May', planned: 300, actual: 280 },
+    { month: 'Jun', planned: 350, actual: 320 },
+    { month: 'Jul', planned: 400, actual: 380 },
+    { month: 'Aug', planned: 450, actual: 420 },
+    { month: 'Sep', planned: 500, actual: 480 },
+    { month: 'Oct', planned: 550, actual: 520 },
+    { month: 'Nov', planned: 600, actual: 580 },
+    { month: 'Dec', planned: 650, actual: 620 },
+]
+
+
+export const ConcretePlannedVsActual = [
+    {
+        "name":"Planned",
+        value:5500
+    },
+    {
+        "name":"Actual",
+        value:4500
+    },
+    {
+        "name":"Variance",
+        value:1000
+    }
+]
+
+export const NCRTable = [
+    {
+        "name":"Observed",
+        value:160
+    },
+    {
+        "name":"Closed",
+        value:90
+    },
+    {
+        "name":"Open",
+        value:70
+    }
+]
+
+
 export const manpower = [
     {
         "name": "Helper",

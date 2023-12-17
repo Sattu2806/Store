@@ -38,3 +38,52 @@ model TradeData {
   Month  String
   Value  Int
 }
+
+
+model Group {
+  id             Int       @id @default(autoincrement())
+  name           String    @unique
+  Category       Category[]
+  totalQuantities TotalQuantity[]
+  dailyQuantities DailyQuantity[]
+}
+
+model Category {
+  id             Int       @id @default(autoincrement())
+  name           String    @unique
+  groupId        Int
+  group  Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  totalQuantities TotalQuantity[]
+  dailyQuantities DailyQuantity[]
+}
+
+model TotalQuantity {
+  id             Int      @id @default(autoincrement())
+  groupId        Int
+  categoryId     Int
+  foundationType String
+  totalFoundations Int
+  excavationQty  Float
+  rebarQty       Float
+  concreteQty    Float
+
+  group          Group    @relation(fields: [groupId], references: [id])
+  category       Category @relation(fields: [categoryId], references: [id])
+
+}
+
+model DailyQuantity {
+  id             Int      @id @default(autoincrement())
+  groupId        Int
+  categoryId     Int
+  date           DateTime
+  excavationQty  Float
+  formWorkQty    Float
+  rebarQty       Float
+  concreteQty    Float
+  WeekNumber      Int
+  MonthName       String
+
+  group          Group    @relation(fields: [groupId], references: [id])
+  category       Category @relation(fields: [categoryId], references: [id])
+}

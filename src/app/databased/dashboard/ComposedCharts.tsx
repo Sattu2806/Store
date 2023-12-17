@@ -64,7 +64,7 @@ const ComposedCharts = ({manpowerdata}: Props) => {
   
   console.log(result);
   return (
-    <div className='relative mt-10'>
+    <div className='relative'>
     <Card className='px-2'>
       <CardHeader className='text-lg text-center font-semibold'>Indirect Direct Histogram</CardHeader>
       <ResponsiveContainer width="100%" height={350}>
@@ -109,8 +109,8 @@ const ComposedCharts = ({manpowerdata}: Props) => {
           <Bar yAxisId="left" dataKey="Direct_Value"  fill="#8884d8" radius={[4, 4, 0, 0]} >
             <LabelList dataKey="Direct_Value" position="top" className='text-sm' />
           </Bar>
-          <Line yAxisId="right" type="monotone" dataKey="Cumulative_Indirect_Value" stroke="#ff7300" />
-          <Line yAxisId="right" type="monotone" dataKey="Cumulative_Direct_Value" stroke="#82ca9d" />
+          <Line yAxisId="right" type="monotone" dataKey="Cumulative_Indirect_Value" stroke="#ff7300" dot={false} />
+          <Line yAxisId="right" type="monotone" dataKey="Cumulative_Direct_Value" stroke="#82ca9d" dot={false} />
           </ComposedChart>
     </ResponsiveContainer>
   </Card>

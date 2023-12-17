@@ -22,6 +22,9 @@ import { AggregatedData, ManpowerItem, MonthlyChartData, Monthlydata, TableDataI
 import ComposedCharts from './ComposedCharts';
 import ManpowerCharts from './ManpowerChart';
 import CardComponent from './CardComponent';
+import ActualVsPallnedChart from './ActualvsPlannedChart';
+import { sCurveData, NCRTable, ConcretePlannedVsActual } from '@/lib/data/formdata';
+import ThreeBarChart from './ThreeBarChart';
 
 type Props = {
     total: AggregatedData,
@@ -196,31 +199,36 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             )}
             </DialogContent>
         </Dialog>
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 md:sticky top-0 z-20 py-2 bg-white '>
-        <div onClick={() => setopenDialogue({ ...opendialogue, Excavation: true })}>
-            <CardComponent total={total} label='Total Excavation' unit = {<>M<sup>3</sup></>} />
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:sticky top-0 z-20 py-2 bg-white '>
+            <div onClick={() => setopenDialogue({ ...opendialogue, Excavation: true })}>
+                <CardComponent total={total} label='Excavation' unit = {<>M<sup>3</sup></>} />
+            </div>
+            {/* <div onClick={() => setopenDialogue({...opendialogue, FormWork: true})}>
+                <CardComponent total={total} label='Total FormWork' unit = {<>M<sup>2</sup></>} />
+            </div> */}
+            <div onClick={() => setopenDialogue({...opendialogue, Rebar: true})}>
+                <CardComponent total={total} label='Rebar' unit = {<>MT</>} />
+            </div>
+            <div onClick={() => setopenDialogue({...opendialogue, Concrete: true})}>
+                <CardComponent total={total} label='Concrete' unit = {<>M<sup>3</sup></>} />
+            </div>
         </div>
-        <div onClick={() => setopenDialogue({...opendialogue, FormWork: true})}>
-            <CardComponent total={total} label='Total FormWork' unit = {<>M<sup>2</sup></>} />
-        </div>
-        <div onClick={() => setopenDialogue({...opendialogue, Rebar: true})}>
-            <CardComponent total={total} label='Total Rebar' unit = {<>MT</>} />
-        </div>
-        <div onClick={() => setopenDialogue({...opendialogue, Concrete: true})}>
-            <CardComponent total={total} label='Total Concrete' unit = {<>M<sup>3</sup></>} />
-        </div>
-        </div>
-        <div className='grid md:grid-cols-2 gap-10 mt-5'>
+        <div className='grid md:grid-cols-2 gap-10 mt-3'>
+            <div className='space-y-3 flex flex-col'>
             <Charts data={excavationMonthData} label='Excavation Productivity By Month' color='#FF8080'/>
             <Charts data={formWorkMonthData} label='Formwork Productivity By Month' color='#BC7AF9'/>
             <Charts data={rebarMonthData} label='Rebar Productivity By Month' color='#FA7070'/>
             <Charts data={concreteMonthData} label='Concrete Productivity By Month' color='#29ADB2'/>
+            <ThreeBarChart data={ConcretePlannedVsActual} label='Comulative Concrete Actual Vs Planned' color='#FF6C22'/>
+            <ThreeBarChart data={NCRTable} label='Comulative Non Complaince Report (NCR)' color='#9A4444'/>
+            </div>
+            <div className='space-y-3 flex flex-col'>
             <ManpowerCharts data={Direct} label='Direct ManPower Histogram' color='#65B741'/>
             <ManpowerCharts data={Indirect} label='InDirect ManPower Histogram' color='#7071E8'/>
-            <ManpowerCharts data={Equipment} label='Equipment Histogram' color='#DF826C'/>
-        </div>
+            <ManpowerCharts data={Equipment} label='Equipment Histogram' color='#9ADE7B'/>
+            <ActualVsPallnedChart data={sCurveData} label='Cumulative Actual Vs Planned' color='#D0A2F7' />
             <ComposedCharts manpowerdata={manpowerdata} />
-        <div className='my-5'>
+            </div>
         </div>
     </div>
   );

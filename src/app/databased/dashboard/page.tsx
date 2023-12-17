@@ -1,7 +1,6 @@
 import React from 'react'
 import prisma from "@/app/prismadb"
 import Dashboard from './Dashboard'
-import { useQuery } from 'react-query'
 
 type Props = {}
 
@@ -31,7 +30,8 @@ const page = async (props: Props) => {
       Concrete:true,
       Excavation:true,
       Rebar:true
-    }
+    },
+
   });
 
   const ManpowerData = await prisma.monthlyData.findMany()

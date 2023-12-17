@@ -5,12 +5,8 @@ import { Bar, BarChart, ComposedChart, LabelList, Legend, Line, ResponsiveContai
 
 type Data = {
     month: string,
-    total: number,
-}
-type TransformedData = {
-    month: string,
-    value1: number,
-    value2: number
+    planned: number,
+    actual:number
 }
 
 type Props = {
@@ -19,28 +15,14 @@ type Props = {
     color: string
 }
 
-const ManpowerCharts = ({ data, label, color }: Props) => {
-    let cumulativeSum = 0;
-    const dataWithCumulative: TransformedData[] = data.map((entry) => {
-        cumulativeSum += entry.total;
-        return {
-            ...entry,
-            value1: entry.total,
-            value2: parseFloat(cumulativeSum.toFixed(2)),
-        };
-    });
+const ActualVsPallnedChart = ({ data, label, color }: Props) => {
 
-    console.log(dataWithCumulative)
     return (
         <div className='relative'>
             <Card className='px-2'>
                 <CardHeader className='text-lg text-center font-semibold'>{label}</CardHeader>
                 <ResponsiveContainer width="100%" height={350}>
-                    <ComposedChart data={dataWithCumulative}
-                              margin={{
-                                top: 20,
-                            }}
-                    >
+                    <ComposedChart data={data}>
                         <XAxis
                             dataKey="month"
                             stroke="#888888"
@@ -66,12 +48,14 @@ const ManpowerCharts = ({ data, label, color }: Props) => {
                             axisLine={false}
                             tickFormatter={(value) => `${value}`}
                         yAxisId="right" orientation="right" />
-                        <Legend />
                         <Tooltip contentStyle={{ borderRadius: '10px', background: '#fff', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderColor: "none" }} />
-                        <Bar yAxisId="left" dataKey="value1" fill={color} radius={[4, 4, 0, 0]} >
-                            <LabelList dataKey="value1" position="top" className='text-sm' />
+                        <Legend />
+                        <Bar yAxisId="left" dataKey="planned"  fill="#413ea0" radius={[4, 4, 0, 0]} >
+                            <LabelList dataKey="planned" position="top" className='text-xs' />
                         </Bar>
-                        <Line yAxisId="right" type="monotone" dataKey="value2" stroke="#ff7300" dot={false} />
+                        <Bar yAxisId="left" dataKey="actual"  fill="#8884d8" radius={[4, 4, 0, 0]} >
+                            <LabelList dataKey="actual" position="top" className='text-xs' />
+                        </Bar>
                     </ComposedChart>
                 </ResponsiveContainer>
             </Card>
@@ -79,4 +63,4 @@ const ManpowerCharts = ({ data, label, color }: Props) => {
     )
 }
 
-export default ManpowerCharts
+export default ActualVsPallnedChart

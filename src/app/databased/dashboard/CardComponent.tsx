@@ -10,49 +10,42 @@ type Props = {
 
 const CardComponent = ({total, label, unit}: Props) => {
   return (
-    <Card className='cursor-pointer hover:bg-slate-100 hover:shadow-lg duration-100 ease-in-out hover:border-black py-2 px-2 text-neutral-800'>
-        <div className='flex items-center justify-between'>
+    <Card className='cursor-pointer hover:bg-orange-50 hover:shadow-lg duration-100 ease-in-out hover:border-black py-3 px-4 text-neutral-800 hover:scale-105'>
+        <CardTitle className='text-center p-0'><p className='text-center bg-[#363062] p-[6px] text-white rounded-md text-xl'>{label}</p></CardTitle>
+        <div className='flex items-center justify-between mt-2'>
             <CardContent className='p-0'>
-                <CardTitle className="text-sm font-medium p-0">
-                    {label}
+                <CardTitle className="text-sm font-medium p-0 text-center">
+                    Total
                 </CardTitle>
-                <div className="text-lg font-medium text-center">
-                    {label === 'Total Excavation' ? total._sum.Excavation?.toFixed(0) : null}
-                    {label === 'Total FormWork' ? total._sum.FormWork?.toFixed(0) : null}
-                    {label === 'Total Rebar' ? total._sum.Rebar?.toFixed(0) : null}
-                    {label === 'Total Concrete' ? total._sum.Concrete?.toFixed(0) : null}
+                <div className="text-md font-medium text-center">
+                    {label === 'Excavation' ? total._sum.Excavation?.toFixed(0) : null}
+                    {label === 'FormWork' ? total._sum.FormWork?.toFixed(0) : null}
+                    {label === 'Rebar' ? total._sum.Rebar?.toFixed(0) : null}
+                    {label === 'Concrete' ? total._sum.Concrete?.toFixed(0) : null}
                     {unit}
                 </div>
             </CardContent>
             <CardContent className='p-0'>
-            <CardTitle className="text-sm font-medium p-0">
-                {label === 'Total Excavation' ? 'Completed Excavation' : null}
-                {label === 'Total FormWork' ? 'Completed Formwork' : null}
-                {label === 'Total Rebar' ? 'Completed Rebar' : null}
-                {label === 'Total Concrete' ? 'Completed Concrete' : null}
+            <CardTitle className="text-sm font-medium p-0 text-center">
+                Completed
             </CardTitle>
             <div className="text-md font-semibold whitespace-pre text-center">
-                {label === 'Total Excavation' ? '500000' : null}
-                {label === 'Total FormWork' ? '4000' : null}
-                {label === 'Total Rebar' ? '62330' : null}
-                {label === 'Total Concrete' ? '43000' : null}
+                {label === 'Excavation' ? '500000' : null}
+                {label === 'FormWork' ? '4000' : null}
+                {label === 'Rebar' ? '62330' : null}
+                {label === 'Concrete' ? '43000' : null}
                 {unit}
             </div>
             </CardContent>
-        </div>
-        <div className='flex items-center justify-center mt-2'>
-        <CardContent className='p-0 flex items-center justify-around opacity-70 space-x-1'>
-            <CardTitle className="text-sm font-medium p-0">
-                {label === 'Total Excavation' ? 'Balance Excavation : ' : null}
-                {label === 'Total FormWork' ? 'Balance Formwork : ' : null}
-                {label === 'Total Rebar' ? 'Balance Rebar : ' : null}
-                {label === 'Total Concrete' ? 'Balance Concrete : ' : null}
+        <CardContent className='p-0 '>
+            <CardTitle className="text-sm font-medium p-0 text-center">
+                Balance
             </CardTitle>
-            <div className="text-sm font-semibold">
-                {label === 'Total Excavation' ? ' 240000' : null}
-                {label === 'Total FormWork' ? ' 32000' : null}
-                {label === 'Total Rebar' ? ' 62330' : null}
-                {label === 'Total Concrete' ? ' 29000' : null}
+            <div className="text-md font-semibold">
+                {label === 'Excavation' ? ' 240000' : null}
+                {label === 'FormWork' ? ' 32000' : null}
+                {label === 'Rebar' ? ' 62330' : null}
+                {label === 'Concrete' ? ' 29000' : null}
                 {unit}
             </div>
         </CardContent>
