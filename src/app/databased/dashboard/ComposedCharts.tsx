@@ -62,7 +62,6 @@ const ComposedCharts = ({manpowerdata}: Props) => {
     };
   });
   
-  console.log(result);
   return (
     <div className='relative'>
     <Card className='px-2'>

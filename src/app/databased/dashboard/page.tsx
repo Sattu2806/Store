@@ -22,7 +22,6 @@ const page = async (props: Props) => {
   const monthlydataDirect = await getMonthlyData("Direct");
   const monthlydataEquipment = await getMonthlyData("Equipment");
 
-  console.log(monthlydataDirect)
 
   const totalValues = await prisma.project.aggregate({
     _sum:{
@@ -36,7 +35,6 @@ const page = async (props: Props) => {
 
   const ManpowerData = await prisma.monthlyData.findMany()
 
-  console.log(ManpowerData)
 
 
   return (

@@ -11,7 +11,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/components/ui/table"
+} from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useQuery } from 'react-query';
@@ -76,6 +76,18 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
         staleTime:60 * 1000,
         retry:3,
     })
+    const {data: Table1Data, error: Table1DatanError, isLoading: isTable1DataLoading, refetch:refetch1TablehData} = useQuery({
+        queryKey:'Table1Data',
+        queryFn: ()=> axios.get('/api/tablequantityapi', {params: {
+            Type: 'formWorkQty', // Find the first truthy value in opendialogue and use its key as Type
+            option:'week',
+            groupId:null,
+            categoryId:null
+        }}).then((res) => res.data),
+        staleTime:60 * 1000,
+        retry:3,
+    })
+    console.log(Table1Data)
 
     useEffect(() => {
         refetchTablehData()

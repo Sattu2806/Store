@@ -30,7 +30,6 @@ const ManpowerCharts = ({ data, label, color }: Props) => {
         };
     });
 
-    console.log(dataWithCumulative)
     return (
         <div className='relative'>
             <Card className='px-2'>

@@ -63,7 +63,7 @@ export async function GET(request: Request) {
         },
       },
     });
-
+    
     const rebarData = await prisma.project.groupBy({
       by: ['MonthName'],
       _sum: {
