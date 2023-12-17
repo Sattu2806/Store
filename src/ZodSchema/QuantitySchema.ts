@@ -24,8 +24,6 @@ const DailyQuantitySchema = z.object({
   groupId: z.number(),
   categoryId: z.number(),
   date: z.date(),
-  WeekNumber:z.number(),
-  MonthName:z.string(),
   excavationQty: z.number(),
   formWorkQty: z.number(),
   rebarQty: z.number(),

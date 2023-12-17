@@ -78,7 +78,7 @@ const TotalQuantityForm = (props: Props) => {
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Group</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+                    <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a Group" />
@@ -100,7 +100,7 @@ const TotalQuantityForm = (props: Props) => {
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+                    <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a Category" />

@@ -15,9 +15,12 @@ export async function GET(request: Request) {
 
 export async function POST(request:NextRequest, response:NextResponse){
     const body = await request.json()
-    if(!DailyQuantitySchema.safeParse(body).success){
-        return NextResponse.json('Invlaid data', {status:400})
-    }
+    console.log(body)
+    // if(DailyQuantitySchema.safeParse(body).success === false){
+    //     console.log('Invalid data', DailyQuantitySchema.safeParse(body))
+    //     return NextResponse.json('Invlaid data', {status:400})
+    // }
+    
 
     try {
         const dailyQuantity = await prisma.dailyQuantity.create({

@@ -51,7 +51,7 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
     const [selectedOption, setSelectedOption] = useState('day');
     const [selectedArea, setSelectedArea] = useState<string>('All');
 
-    const {data: quantitymonthData = {}, error: quantitymonthDatanError, isLoading: isquantitymonthDataLoading, refetch:refetchquantitymonthData} = useQuery<QuantityMonthData>({
+    const {data: quantitymonthData =[], error: quantitymonthDatanError, isLoading: isquantitymonthDataLoading, refetch:refetchquantitymonthData} = useQuery<QuantityMonthData>({
         queryKey:'quantitymonthData',
         queryFn: ()=> axios.get('/api/quantitybymonth').then((res) => res.data),
         staleTime:60 * 1000,

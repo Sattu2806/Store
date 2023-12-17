@@ -29,10 +29,12 @@ import {
   } from "@/components/ui/popover"
 import { useQuery } from 'react-query'
 import { Category, Group } from '@prisma/client'
+import { useToast } from '@/components/ui/use-toast'
 
 type Props = {}
 
 const DailyQuantityForm = (props: Props) => {
+    const {toast} = useToast()
     const form = useForm<z.infer<typeof DailyQuantitySchema>>({
         resolver: zodResolver(DailyQuantitySchema),
         defaultValues: {
@@ -51,6 +53,9 @@ const DailyQuantityForm = (props: Props) => {
         staleTime:60 * 1000,
         retry:3,
       })
+
+      
+
       async function onSubmit (values: z.infer<typeof DailyQuantitySchema>) {
         console.log(values)
         try {
@@ -64,6 +69,9 @@ const DailyQuantityForm = (props: Props) => {
                 concreteQty: values.concreteQty
           })
           console.log(response)
+          toast({
+            description: "Created Successfully",
+          })
         } catch (error) {
           console.log('Errore', error)
         }
@@ -81,7 +89,7 @@ const DailyQuantityForm = (props: Props) => {
         render={({ field }) => (
             <FormItem>
             <FormLabel>Group</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+            <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
                 <FormControl>
                 <SelectTrigger>
                     <SelectValue placeholder="Select a Group" />
@@ -103,7 +111,7 @@ const DailyQuantityForm = (props: Props) => {
         render={({ field }) => (
             <FormItem>
             <FormLabel>Category</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+            <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
                 <FormControl>
                 <SelectTrigger>
                     <SelectValue placeholder="Select a Category" />
@@ -170,7 +178,7 @@ const DailyQuantityForm = (props: Props) => {
             <FormItem>
             <FormLabel className="text-base">Exacation Quantity</FormLabel>
             <FormControl>
-                <Input type='number' autoComplete="off" placeholder="quantity" {...field} />
+                <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
             </FormControl>
             <FormMessage />
             </FormItem>
@@ -183,7 +191,7 @@ const DailyQuantityForm = (props: Props) => {
             <FormItem>
             <FormLabel className="text-base">Form Work Quantity</FormLabel>
             <FormControl>
-                <Input type='number' autoComplete="off" placeholder="quantity" {...field} />
+                <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
             </FormControl>
             <FormMessage />
             </FormItem>
@@ -196,7 +204,7 @@ const DailyQuantityForm = (props: Props) => {
             <FormItem>
             <FormLabel className="text-base">Rebar Quantity</FormLabel>
             <FormControl>
-                <Input type='number' autoComplete="off" placeholder="quantity" {...field} />
+                <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
             </FormControl>
             <FormMessage />
             </FormItem>
@@ -209,7 +217,7 @@ const DailyQuantityForm = (props: Props) => {
             <FormItem>
             <FormLabel className="text-base">Concrete</FormLabel>
             <FormControl>
-                <Input type='number' autoComplete="off" placeholder="quantity" {...field} />
+                <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
             </FormControl>
             <FormMessage />
             </FormItem>
