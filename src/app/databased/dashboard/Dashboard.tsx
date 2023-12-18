@@ -69,7 +69,11 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
       })
       const {data: categoryData = [], error: categoryDataError, isLoading: categoryDataLoading, refetch:refetchcategoryData} = useQuery<Category[]>({
         queryKey:'categorydata',
-        queryFn: ()=> axios.get('/api/category').then((res) => res.data),
+        queryFn: ()=> axios.get('/api/categorybyparams',{
+          params:{
+            groupId:selectedGroup
+          }
+        }).then((res) => res.data),
         staleTime:60 * 1000,
         retry:3,
       })
@@ -132,6 +136,10 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
         setSelectedOption(event);
     };
 
+    useEffect(() => {
+        refetchcategoryData()
+    },[selectedGroup])
+
     const Direct = monthlydataDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
     const Indirect = monthlydataInDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
     const Equipment = monthlydataEquipment.map(({ Month, Value }) => ({ month: Month, total: Value }));
@@ -139,8 +147,6 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
     if(!total){
         return <div>No data</div>
     }
-
-
     if(!quantitymonthData){
         return <div>No data</div>
     }
@@ -153,7 +159,7 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             <div className='flex items-center space-x-6'>
                 <Select value={selectedGroup} onValueChange={(value) => setSelectedGroup(value)}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Sort By" />
+                        <SelectValue placeholder="Select Group" />
                     </SelectTrigger>
                     <SelectContent>
                         {groupData?.map((group,index) => (
@@ -163,7 +169,7 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
                 </Select>
                 <Select value={selectedCategory} onValueChange={(value) => setSelectedCatefory(value)}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Sort By" />
+                        <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
                     <SelectContent>
                         {categoryData?.map((category,index) => (
@@ -174,15 +180,15 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
                 <RadioGroup value={selectedOption} onValueChange={handleChange} className='flex items-center justify-between'>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="day" id="option-one" />
-                        <Label htmlFor="day">Day</Label>
+                        <Label htmlFor="day">Daily Report</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="week" id="option-two" />
-                        <Label htmlFor="week">Week</Label>
+                        <Label htmlFor="week">Weekly Report</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="month" id="option-three" />
-                        <Label htmlFor="month">Month</Label>
+                        <Label htmlFor="month">Monthly Report</Label>
                     </div>
                 </RadioGroup>
             </div>
