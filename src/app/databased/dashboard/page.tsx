@@ -35,11 +35,20 @@ const page = async (props: Props) => {
 
   const ManpowerData = await prisma.monthlyData.findMany()
 
+  const ManpowerApiData = await prisma.manpowerData.groupBy({
+    by:['Month', 'Year', 'category'],
+      _sum:{
+        Nos:true
+      }
+    })
+
+  console.log(ManpowerApiData)
+
 
 
   return (
     <div className='max-w-[1280px] mx-auto px-4'>
-      <Dashboard manpowerdata={ManpowerData} total={totalValues} monthlydataDirect={monthlydataDirect} monthlydataInDirect={monthlydataInDirect} monthlydataEquipment={monthlydataEquipment}/>
+      <Dashboard ManpowerApiData={ManpowerApiData} manpowerdata={ManpowerData} total={totalValues} monthlydataDirect={monthlydataDirect} monthlydataInDirect={monthlydataInDirect} monthlydataEquipment={monthlydataEquipment}/>
     </div>
   )
 }

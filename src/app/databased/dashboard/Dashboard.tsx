@@ -26,13 +26,15 @@ import ActualVsPallnedChart from './ActualvsPlannedChart';
 import { sCurveData, NCRTable, ConcretePlannedVsActual } from '@/lib/data/formdata';
 import ThreeBarChart from './ThreeBarChart';
 import { Category, Group } from '@prisma/client';
+import DashboardSkeleton from './DashboardSkeleton';
 
 type Props = {
     total: AggregatedData,
     monthlydataDirect : Monthlydata[],
      monthlydataInDirect: Monthlydata[], 
      monthlydataEquipment: Monthlydata[],
-     manpowerdata:ManpowerItem[]
+     manpowerdata:ManpowerItem[],
+     ManpowerApiData:ManpowerDataItem[]
 }
 
 type monthdata = {
@@ -47,7 +49,16 @@ type QuantityMonthData = {
     rebarMonthData : monthdata[], 
 }
 
-const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEquipment, manpowerdata}:Props) => {
+type ManpowerDataItem = {
+    _sum: {
+      Nos: number | null;
+    };
+    Month: string;
+    Year: number;
+    category: string;
+  };
+
+const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEquipment, manpowerdata, ManpowerApiData}:Props) => {
 
     const [selectedOption, setSelectedOption] = useState('day');
     const [selectedGroup, setSelectedGroup] = useState<string | undefined>(undefined);
@@ -144,13 +155,29 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
     const Indirect = monthlydataInDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
     const Equipment = monthlydataEquipment.map(({ Month, Value }) => ({ month: Month, total: Value }));
 
-    if(!total){
-        return <div>No data</div>
-    }
-    if(!quantitymonthData){
-        return <div>No data</div>
+    const direct = ManpowerApiData
+    ?.filter((data) => data.category === 'Direct')
+    .map((item) => {
+        return { month: item.Month, total: item._sum.Nos };
+    });
+    const indirect = ManpowerApiData
+    ?.filter((data) => data.category === 'Indirect')
+    .map((item) => {
+        return { month: item.Month, total: item._sum.Nos };
+    });
+    const equipment = ManpowerApiData
+    ?.filter((data) => data.category === 'Equipment')
+    .map((item) => {
+        return { month: item.Month, total: item._sum.Nos };
+    });
+
+    console.log(direct)
+
+    if(!total || !monthlydataDirect || !monthlydataInDirect || !monthlydataEquipment || !manpowerdata || !quantitymonthData || !groupData || !categoryData || !sumData || !Table1Data || !ManpowerApiData){
+        return <div><DashboardSkeleton/></div>
     }
 
+    
   
   return (
     <div >
@@ -163,7 +190,7 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
                     </SelectTrigger>
                     <SelectContent>
                         {groupData?.map((group,index) => (
-                            <SelectItem value={group.id.toString()}>{group.name}</SelectItem>
+                            <SelectItem key={index} value={group.id.toString()}>{group.name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -173,7 +200,7 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
                     </SelectTrigger>
                     <SelectContent>
                         {categoryData?.map((category,index) => (
-                            <SelectItem value={category.id.toString()}>{category.name}</SelectItem>
+                            <SelectItem key={index} value={category.id.toString()}>{category.name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -270,9 +297,9 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             <ThreeBarChart data={NCRTable} label='Comulative Non Complaince Report (NCR)' color='#9A4444'/>
             </div>
             <div className='space-y-3 flex flex-col'>
-            <ManpowerCharts data={Direct} label='Direct ManPower Histogram' color='#65B741'/>
-            <ManpowerCharts data={Indirect} label='InDirect ManPower Histogram' color='#7071E8'/>
-            <ManpowerCharts data={Equipment} label='Equipment Histogram' color='#9ADE7B'/>
+            <ManpowerCharts data={direct} label='Direct ManPower Histogram' color='#65B741'/>
+            <ManpowerCharts data={indirect} label='InDirect ManPower Histogram' color='#7071E8'/>
+            <ManpowerCharts data={equipment} label='Equipment Histogram' color='#9ADE7B'/>
             <ActualVsPallnedChart data={sCurveData} label='Cumulative Actual Vs Planned' color='#D0A2F7' />
             <ComposedCharts manpowerdata={manpowerdata} />
             </div>

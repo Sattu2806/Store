@@ -31,6 +31,15 @@ model MonthlyData {
   Value  Int
 }
 
+model ManpowerData {
+  id     Int    @id @default(autoincrement())
+  category String
+  Trade   String
+  Year    Int
+  Month   String
+  Nos     Int
+}
+
 model TradeData {
   id     Int      @id @default(autoincrement())
   Type   String
