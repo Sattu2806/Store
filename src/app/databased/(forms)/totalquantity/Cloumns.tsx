@@ -56,7 +56,11 @@ export const columns: ColumnDef<TotalQuantity>[] = [
         enableHiding: false,
       },
   {
-    accessorKey: "groupId",
+    accessorKey: "group",
+    id:'group',
+    accessorFn: (originalRow) => {
+      return originalRow.groupId.toString()
+    },
     header: "Group",
     cell:({row}) => {
         const {data: groupData = [], error: groupDatanError, isLoading: groupDataLoading, refetch:refetchgroupData} = useQuery<Group[]>({
@@ -71,7 +75,11 @@ export const columns: ColumnDef<TotalQuantity>[] = [
     }
   },
   {
-    accessorKey: "categoryId",
+    accessorKey: "category",
+    id:'category',
+    accessorFn: (originalRow) => {
+      return originalRow.categoryId.toString()
+    },
     header: ({ column }) => {
         return (
           <Button

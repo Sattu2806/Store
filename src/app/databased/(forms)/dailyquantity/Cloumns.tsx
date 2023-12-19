@@ -56,7 +56,11 @@ export const columns: ColumnDef<DailyQuantity>[] = [
         enableHiding: false,
       },
   {
-    accessorKey: "groupId",
+    accessorKey: "group",
+    id:'group',
+    accessorFn: (originalRow) => {
+      return originalRow.groupId.toString()
+    },
     header: "Group",
     cell:({row}) => {
         const {data: groupData = [], error: groupDatanError, isLoading: groupDataLoading, refetch:refetchgroupData} = useQuery<Group[]>({
@@ -66,12 +70,16 @@ export const columns: ColumnDef<DailyQuantity>[] = [
           retry:3,
         })
         return(
-          <div>{(groupData?.find((item) => item.id === row.original.groupId))?.name}</div>
+          <div>{(groupData?.find((item) => item.id === row.original.groupId))?.name}{row.original.groupId}</div>
         )
     }
   },
   {
-    accessorKey: "categoryId",
+    accessorKey: "category",
+    id:'category',
+    accessorFn: (originalRow) => {
+      return originalRow.categoryId.toString()
+    },
     header: ({ column }) => {
         return (
           <Button
@@ -92,7 +100,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
         retry:3,
       })
       return(
-        <div>{(categoryData?.find((item) => item.id === row.original.categoryId))?.name}</div>
+        <div>{(categoryData?.find((item) => item.id === row.original.categoryId))?.name}{row.original.categoryId}</div>
       )
     }
   },
@@ -167,6 +175,10 @@ export const columns: ColumnDef<DailyQuantity>[] = [
   },
   {
     accessorKey: "WeekNumber",
+    id:"WeekNumber",
+    accessorFn: (originalRow) => {
+      return originalRow.WeekNumber.toString()
+    },
     header: ({ column }) => {
         return (
           <p>WeekNumber 

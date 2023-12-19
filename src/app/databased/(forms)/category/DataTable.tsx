@@ -67,14 +67,15 @@ export function DataTable<TData, TValue>({
         },
     })
 
+    console.log(columnFilters)
   return (
     <div>
     <div className="flex items-center py-4 ">
         <Input
           placeholder="Filter by groupId"
-          value={(table.getColumn("groupId")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("group")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("groupId")?.setFilterValue(event.target.value)
+            table.getColumn("group")?.setFilterValue(event.target.value)
           }
           className="max-w-sm text-lg"
         />

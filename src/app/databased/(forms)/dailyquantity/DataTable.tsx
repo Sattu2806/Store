@@ -30,6 +30,9 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import * as React from "react"
+import axios from "axios"
+import { useQuery } from "react-query"
+import { Group } from "@prisma/client"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -67,22 +70,24 @@ export function DataTable<TData, TValue>({
         },
     })
 
+    console.log(table.getColumn("category")?.getFilterValue())
+
   return (
     <div>
     <div className="flex items-center py-4 ">
         <Input
           placeholder="Filter by groupId"
-          value={(table.getColumn("groupId")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("group")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("groupId")?.setFilterValue(event.target.value)
+            table.getColumn("group")?.setFilterValue(event.target.value)
           }
           className="max-w-sm text-lg"
         />
         <Input
           placeholder="Filter by categoryId"
-          value={(table.getColumn("categoryId")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("category")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("categoryId")?.setFilterValue(event.target.value)
+            table.getColumn("category")?.setFilterValue(event.target.value)
           }
           className="max-w-sm text-lg ml-3"
         />

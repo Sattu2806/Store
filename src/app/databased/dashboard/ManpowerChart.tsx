@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import axios from 'axios'
 import React from 'react'
+import { useQuery } from 'react-query'
 import { Bar, BarChart, ComposedChart, LabelList, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
 type Data = {
@@ -43,7 +45,15 @@ const ManpowerCharts = ({ data, label, color }: Props) => {
         };
     });
 
-    console.log(dataWithCumulative)
+    const {data: manpowerData = [], error: manpowerDataError, isLoading: manpowerDataLoading, refetch:refetchmanpowerData} = useQuery({
+        queryKey:'manpowerdata',
+        queryFn: ()=> axios.get('/api/manpowerdatachart').then((res) => res.data),
+        staleTime:60 * 1000,
+        retry:3,
+    })
+
+    console.log(manpowerData)
+
     return (
         <div className='relative'>
             <Card className='px-2'>
