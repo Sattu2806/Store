@@ -5,6 +5,7 @@ import React from 'react'
 import { useQuery } from 'react-query'
 import { DataTable } from './DataTable'
 import { columns } from "./Cloumns"
+import TableSkeleton from '../TableSkeleton'
 
 type Props = {}
 
@@ -20,7 +21,11 @@ const DailyDataTable = (props: Props) => {
      console.log(DailyData)
   return (
     <div className='max-w-[1280px] mx-auto'>
+        {isDailyDataLoading ? (
+            <TableSkeleton/>
+        ):(
         <DataTable columns={columns} data={DailyData} />
+        )}
     </div>
   )
 }

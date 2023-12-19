@@ -1,14 +1,13 @@
 import React from 'react'
 import prisma from "@/app/prismadb"
-import EditDailyQuantityForm from '../EditDailyQuantityForm'
-import { Skeleton } from '@/components/ui/skeleton'
-import Dailyskeleton from '../../../Editskeleton'
+import EditTotalQuantityForm from '../EditTotalQuantityForm'
+import Editskeleton from '../../../Editskeleton'
 
 type Props = {}
 
 const Editdailyquantity = async ({ params }: { params: { id: string } }) => {
     const id = params.id
-    const DatabyId = await prisma.dailyQuantity.findUnique({
+    const DatabyId = await prisma.totalQuantity.findUnique({
         where:{
             id:parseInt(id)
         }
@@ -18,9 +17,9 @@ const Editdailyquantity = async ({ params }: { params: { id: string } }) => {
   return (
     <div>
         {DatabyId ? (
-            <EditDailyQuantityForm data={DatabyId}/>
+            <EditTotalQuantityForm data={DatabyId}/>
         ):(
-            <Dailyskeleton/>
+            <Editskeleton/>
         )}
     </div>
   )

@@ -23,6 +23,7 @@ const getWeekandMonth = (data:DailyQuantityT) => {
     };
 }
 
+
 export async function PATCH(request:NextRequest, response:NextResponse){
     const body = await request.json()
     const newData = getWeekandMonth(body)
@@ -52,4 +53,18 @@ export async function PATCH(request:NextRequest, response:NextResponse){
         }
     }
     return NextResponse.json("Error while adding data")
+}
+
+
+export async function GET(request: Request) {  
+    const searchParams = new URLSearchParams(request.url.split('?')[1]);
+    const id = searchParams.get('id')
+    try {
+      const dailyQuantity = await prisma.dailyQuantity.findMany({
+      });
+      return NextResponse.json(dailyQuantity);
+    } catch (error) {
+      console.error('Error getting dailyQuantity data', error);
+      return NextResponse.error();
+    }
 }

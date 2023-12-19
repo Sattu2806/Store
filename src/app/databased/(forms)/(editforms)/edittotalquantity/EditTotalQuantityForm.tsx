@@ -21,16 +21,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 import { useQuery } from 'react-query'
-import { Category, Group } from '@prisma/client'
+import { Category, Group, TotalQuantity } from '@prisma/client'
 
-type Props = {}
+type Props = {
+    data:TotalQuantity
+}
 
-const TotalQuantityForm = (props: Props) => {
+const EditTotalQuantityForm = ({data}: Props) => {
     const {toast} = useToast()
     const router = useRouter()
     const form = useForm<z.infer<typeof TotalQuantitySchema>>({
         resolver: zodResolver(TotalQuantitySchema),
         defaultValues: {
+            ...data
         },
       })
       const {data: groupData = [], error: groupDataError, isLoading: groupDataLoading, refetch:refetchgroupData} = useQuery<Group[]>({
@@ -52,7 +55,8 @@ const TotalQuantityForm = (props: Props) => {
       async function onSubmit (values: z.infer<typeof TotalQuantitySchema>) {
         console.log(values)
         try {
-          const response = await axios.post('/api/totalquantity',{
+          const response = await axios.patch('/api/edittotalquantity',{
+            id:data.id,
             groupId:values.groupId,
             categoryId:values.categoryId,
             foundationType:values.foundationType,
@@ -63,8 +67,9 @@ const TotalQuantityForm = (props: Props) => {
           })
           console.log(response)
           toast({
-            description: "Category Created Successfully",
+            description: "Total Data Edited Created Successfully",
           })
+          router.push('/databased/totalquantity')
         } catch (error) {
           console.log('Errore', error)
         }
@@ -72,10 +77,11 @@ const TotalQuantityForm = (props: Props) => {
       useEffect(() => {
         refetchcategoryData()
       }, [form.watch().groupId])
+
   return (
     <div className="mt-5 max-w-[1280px] mx-auto">
         <Card className="p-5 mx-auto">
-        <h1 className="text-2xl text-center font-medium my-2 mb-6">Total Quantity Form</h1>
+        <h1 className="text-2xl text-center font-medium my-2 mb-6">Edit Total Quantity Data Form</h1>
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className=" mt-3">
             <div className='grid md:grid-cols-2 gap-8 my-5'>
@@ -129,7 +135,7 @@ const TotalQuantityForm = (props: Props) => {
             render={({ field }) => (
                 <FormItem>
                 <FormLabel>Foundation Type</FormLabel>
-                    <Input autoComplete="off" placeholder="foundation type" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
+                    <Input value={field.value} autoComplete="off" placeholder="foundation type" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
                 <FormMessage />
                 </FormItem>
             )}
@@ -141,7 +147,7 @@ const TotalQuantityForm = (props: Props) => {
                 <FormItem>
                 <FormLabel >Total Foundation</FormLabel>
                 <FormControl>
-                    <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
+                    <Input value={field.value} type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -154,7 +160,7 @@ const TotalQuantityForm = (props: Props) => {
                 <FormItem>
                 <FormLabel >Exacation Quantity</FormLabel>
                 <FormControl>
-                    <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
+                    <Input value={field.value} type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -167,7 +173,7 @@ const TotalQuantityForm = (props: Props) => {
                 <FormItem>
                 <FormLabel >Rebar Quantity</FormLabel>
                 <FormControl>
-                    <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
+                    <Input value={field.value} type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -180,7 +186,7 @@ const TotalQuantityForm = (props: Props) => {
                 <FormItem>
                 <FormLabel >Concrete</FormLabel>
                 <FormControl>
-                    <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
+                    <Input value={field.value.toFixed(2)} type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -195,4 +201,4 @@ const TotalQuantityForm = (props: Props) => {
   )
 }
 
-export default TotalQuantityForm
+export default EditTotalQuantityForm

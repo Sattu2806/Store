@@ -30,6 +30,7 @@ import {
 import { useQuery } from 'react-query'
 import { Category, DailyQuantity, Group } from '@prisma/client'
 import { useToast } from '@/components/ui/use-toast'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   data:DailyQuantity
@@ -37,14 +38,13 @@ type Props = {
 
 const EditDailyQuantityForm = ({data}: Props) => {
     const {toast} = useToast()
+    const router = useRouter()
     const form = useForm<z.infer<typeof DailyQuantitySchema>>({
         resolver: zodResolver(DailyQuantitySchema),
         defaultValues: {
           ...data
         },
       })
-
-    
 
       const {data: groupData = [], error: groupDataError, isLoading: groupDataLoading, refetch:refetchgroupData} = useQuery<Group[]>({
         queryKey:'groupdata',
@@ -63,6 +63,7 @@ const EditDailyQuantityForm = ({data}: Props) => {
         retry:3,
       })
 
+
       async function onSubmit (values: z.infer<typeof DailyQuantitySchema>) {
         console.log(values)
         try {
@@ -80,6 +81,7 @@ const EditDailyQuantityForm = ({data}: Props) => {
           toast({
             description: "Data Edited Successfully Successfully",
           })
+          router.push('/databased/dailyquantity')
         } catch (error) {
           console.log('Errore', error)
           toast({
@@ -95,7 +97,7 @@ const EditDailyQuantityForm = ({data}: Props) => {
   return (
     <div className="mt-5 max-w-[1280px] mx-auto">
     <Card className="p-5">
-    <h1 className="text-2xl text-center font-medium my-2 mb-6">Daily Quantity Form</h1>
+    <h1 className="text-2xl text-center font-medium my-2 mb-6">Edit Daily Quantity Form</h1>
     <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className="">
         <div className='grid md:grid-cols-2 gap-8 my-5'>
@@ -148,7 +150,7 @@ const EditDailyQuantityForm = ({data}: Props) => {
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col mt-2">
-              <FormLabel>Date of birth</FormLabel>
+              <FormLabel>Date</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>

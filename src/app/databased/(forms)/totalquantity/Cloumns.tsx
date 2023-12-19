@@ -15,7 +15,7 @@ import {
 import axios from "axios"
 import { useQuery } from "react-query"
 import { useState } from "react"
-import { Category, DailyQuantity, Group } from "@prisma/client"
+import { Category, DailyQuantity, Group, TotalQuantity } from "@prisma/client"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,7 +32,7 @@ import Link from "next/link"
 
 
 
-export const columns: ColumnDef<DailyQuantity>[] = [
+export const columns: ColumnDef<TotalQuantity>[] = [
     {
     id: "select",
         header: ({ table }) => (
@@ -97,19 +97,6 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     }
   },
   {
-    accessorKey: "date",
-    header: ({ column }) => {
-        return (
-          <p>Date</p>
-        )
-    },
-    cell:({row}) => {
-        return (
-            <div>{new Date(row.original.date).toLocaleDateString()}</div>
-        )
-    }
-  },
-  {
     accessorKey: "excavationQty",
     header: ({ column }) => {
         return (
@@ -124,16 +111,30 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     }
   },
   {
-    accessorKey: "formWorkQty",
+    accessorKey: "foundationType",
     header: ({ column }) => {
         return (
-          <p>FormWork
+          <p>foundationType
           </p>
         )
     },
     cell:({row}) => {
         return (
-            <div>{row.original.formWorkQty.toFixed(1)}</div>
+            <div>{row.original.foundationType}</div>
+        )
+    }
+  },
+  {
+    accessorKey: "totalFoundations",
+    header: ({ column }) => {
+        return (
+          <p>Total Foundations
+          </p>
+        )
+    },
+    cell:({row}) => {
+        return (
+            <div>{row.original.totalFoundations.toFixed(1)}</div>
         )
     }
   },
@@ -166,42 +167,13 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     }
   },
   {
-    accessorKey: "WeekNumber",
-    header: ({ column }) => {
-        return (
-          <p>WeekNumber 
-          </p>
-        )
-    },
-    cell:({row}) => {
-        return (
-            <div>Week {row.original.WeekNumber}</div>
-        )
-    }
-  },
-  {
-    accessorKey: "MonthName",
-    header: ({ column }) => {
-        return (
-          <p>MonthName
-          </p>
-        )
-    },
-    cell:({row}) => {
-        return (
-            <div>{row.original.MonthName}</div>
-        )
-    }
-  },
-  {
     id: "actions",
     cell: ({ row }) => {
-      const image = row.original
       const [openDialogue, setOpenDialogue] = useState<boolean>(false)
       const {toast} = useToast()
       const DeleteImage = async () => {
         try {
-            const response = await axios.delete('/api/dailyquantity',{
+            const response = await axios.delete('/api/totalquantity',{
                 params:{
                     id:row.original.id
                 }
@@ -209,7 +181,6 @@ export const columns: ColumnDef<DailyQuantity>[] = [
             console.log(response)
             setOpenDialogue(false)
             toast({
-              variant:'destructive',
               description: "Data Deleted Successfully Successfully",
             })
         }catch{
@@ -232,7 +203,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem> 
               <Button className="w-[120px]">
-                <Link href={`/databased/editdailyquantity/${row.original.id}`}>Edit</Link>
+                <Link href={`/databased/edittotalquantity/${row.original.id}`}>Edit</Link>
               </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>

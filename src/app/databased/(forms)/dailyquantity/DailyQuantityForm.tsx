@@ -58,7 +58,6 @@ const DailyQuantityForm = (props: Props) => {
         retry:3,
       })
 
-      
 
       async function onSubmit (values: z.infer<typeof DailyQuantitySchema>) {
         console.log(values)
@@ -83,7 +82,7 @@ const DailyQuantityForm = (props: Props) => {
 
       useEffect(() => {
         refetchcategoryData()
-      }, [form.watch()])
+      }, [form.watch().groupId])
   return (
     <div className="mt-5 max-w-[1280px] mx-auto">
     <Card className="p-5">
@@ -140,7 +139,7 @@ const DailyQuantityForm = (props: Props) => {
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col mt-2">
-              <FormLabel>Date of birth</FormLabel>
+              <FormLabel>Date</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
