@@ -65,3 +65,34 @@ export async function DELETE(request:Request){
         return NextResponse.json({error:'Error while deleting category'}, {status:500})
     }
 }
+
+export async function PATCH(request:Request){
+    const body = await request.json()
+
+
+    const category = await prisma.category.findFirst({
+        where:{
+            id:body.id
+        }
+    })
+
+    if(!category)
+        return NextResponse.json("Invalid category id", {status:400})
+
+    try{
+        const deletecategory = await prisma.category.update({
+            where:{
+                id:category.id
+            },
+            data:{
+                name:body.name,
+                groupId:body.groupId
+            }
+        })
+        return NextResponse.json(deletecategory)
+    }catch(error){
+        console.log(error)
+        return NextResponse.json({error:'Error while deleting category'}, {status:500})
+    }
+}
+

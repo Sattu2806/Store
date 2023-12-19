@@ -51,7 +51,7 @@ const DailyQuantityForm = (props: Props) => {
         queryKey:'categorydata',
         queryFn: ()=> axios.get('/api/categorybyparams',{
           params:{
-            groupId:form.getValues('groupId')
+            groupId:form.getValues('groupId') ? form.getValues('groupId')  : null
           }
         }).then((res) => res.data),
         staleTime:60 * 1000,

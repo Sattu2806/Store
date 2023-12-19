@@ -13,7 +13,7 @@ type Props = {}
 
 const DailyDataTable = (props: Props) => {
     const {data: DailyData = [], error: DailyDatanError, isLoading: isDailyDataLoading, refetch:refetchDailyData} = useQuery<DailyQuantity[]>({
-        queryKey:'DailyTableData',
+        queryKey:'DailyTableData1',
         queryFn: ()=> axios.get('/api/dailyquantity').then((res) => res.data),
         staleTime:60 * 1000,
         retry:3

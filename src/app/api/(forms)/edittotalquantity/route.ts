@@ -4,10 +4,16 @@ import prisma from "@/app/prismadb"
 
 export async function PATCH(request:NextRequest, response:NextResponse){
     const body = await request.json()
+    const ExistedtotalData = await prisma.totalQuantity.findUnique({
+        where:{
+            id:body.id
+        }
+    })
+    if(!ExistedtotalData) return NextResponse.json("Not Found",{status : 404})
     try {
         const totalQuantity = await prisma.totalQuantity.update({
             where:{
-                id:body.id
+                id:ExistedtotalData.id
             },
             data:{
                 groupId:body.groupId,
