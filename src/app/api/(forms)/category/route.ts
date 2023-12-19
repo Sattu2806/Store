@@ -80,7 +80,7 @@ export async function PATCH(request:Request){
         return NextResponse.json("Invalid category id", {status:400})
 
     try{
-        const deletecategory = await prisma.category.update({
+        const updatecategory = await prisma.category.update({
             where:{
                 id:category.id
             },
@@ -89,10 +89,10 @@ export async function PATCH(request:Request){
                 groupId:body.groupId
             }
         })
-        return NextResponse.json(deletecategory)
+        return NextResponse.json(updatecategory)
     }catch(error){
         console.log(error)
-        return NextResponse.json({error:'Error while deleting category'}, {status:500})
+        return NextResponse.json({error:'Error while updating category'}, {status:500})
     }
 }
 

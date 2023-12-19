@@ -64,3 +64,32 @@ export async function DELETE(request:Request){
         return NextResponse.json({error:'Error while deleting group'}, {status:500})
     }
 }
+
+export async function PATCH(request:Request){
+    const body = await request.json()
+
+
+    const group= await prisma.group.findFirst({
+        where:{
+            id:body.id
+        }
+    })
+
+    if(!group)
+        return NextResponse.json("Invalid category id", {status:400})
+
+    try{
+        const updatedgroup = await prisma.group.update({
+            where:{
+                id:group.id
+            },
+            data:{
+                name:body.name,
+            }
+        })
+        return NextResponse.json(updatedgroup)
+    }catch(error){
+        console.log(error)
+        return NextResponse.json({error:'Error while updating group'}, {status:500})
+    }
+}
