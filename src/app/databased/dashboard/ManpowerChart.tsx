@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import { Card, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import React from 'react'
@@ -21,7 +22,19 @@ type Props = {
 
 const ManpowerCharts = ({ data, label, color }: Props) => {
     let cumulativeSum = 0;
-    const dataWithCumulative: TransformedData[] = data.map((entry) => {
+
+    const monthsArray = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    const dataMap = new Map(data.map(entry => [entry.month, entry]));
+
+    const dataWithZeroes = monthsArray.map(month => {
+        const entry = dataMap.get(month);
+        return entry || { month, total: 0 };
+    });
+
+    const dataWithCumulative: TransformedData[] = dataWithZeroes.map((entry) => {
         cumulativeSum += entry.total;
         return {
             ...entry,
@@ -30,10 +43,14 @@ const ManpowerCharts = ({ data, label, color }: Props) => {
         };
     });
 
+    console.log(dataWithCumulative)
     return (
         <div className='relative'>
             <Card className='px-2'>
-                <CardHeader className='text-lg text-center font-semibold'>{label}</CardHeader>
+                <CardHeader className='text-lg text-center font-semibold'>
+                    {label}
+                    <Button size='sm' className='my-1 absolute top-3 right-3'>View Data</Button>
+                </CardHeader>
                 <ResponsiveContainer width="100%" height={350}>
                     <ComposedChart data={dataWithCumulative}
                               margin={{

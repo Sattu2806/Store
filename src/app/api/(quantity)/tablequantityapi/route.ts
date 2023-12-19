@@ -8,8 +8,6 @@ export async function GET(request: Request) {
   const groupId = searchParams.get('groupId');
   const categoryId = searchParams.get('categoryId');
 
-  
-
 
   console.log(Type);
 
@@ -47,7 +45,7 @@ export async function GET(request: Request) {
                         _sum:{
                             WeekNumber: 'asc',
                         }
-                    }
+                    },
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'week'){
@@ -136,7 +134,7 @@ export async function GET(request: Request) {
                     orderBy:{
                         _sum:{
                             WeekNumber: 'asc',
-                        }
+                        },
                     }
                 })
                 return NextResponse.json(groupdata)

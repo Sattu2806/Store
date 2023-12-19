@@ -28,82 +28,29 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    const formWorkData = await prisma.project.groupBy({
-      by: ['MonthName'],
-      _sum: {
-        FormWork: true,
-      },
-      orderBy: {
-        _sum: {
-          WeekNumber: 'asc',
-        },
-      },
-    });
+    const getData = async (field: string) => {
+      const data = await prisma.project.groupBy({
+        by: ['MonthName'],
+        _sum: { [field]: true },
+        orderBy: { _sum: { WeekNumber: 'asc' } },
+      });
 
-    const concreteData = await prisma.project.groupBy({
-      by: ['MonthName'],
-      _sum: {
-        Concrete: true,
-      },
-      orderBy: {
-        _sum: {
-          WeekNumber: 'asc',
-        },
-      },
-    });
+      return data.map((item) => ({
+        month: item.MonthName,
+        total: Math.round(item._sum[field] || 0),
+      }));
+    };
 
-    const excavationData = await prisma.project.groupBy({
-      by: ['MonthName'],
-      _sum: {
-        Excavation: true,
-      },
-      orderBy: {
-        _sum: {
-          WeekNumber: 'asc',
-        },
-      },
-    });
-    
-    const rebarData = await prisma.project.groupBy({
-      by: ['MonthName'],
-      _sum: {
-        Rebar: true,
-      },
-      orderBy: {
-        _sum: {
-          WeekNumber: 'asc',
-        },
-      },
-    });
-
-    const roundToWholeNumber = (value:number | null) => Math.round(value || 0);
-
-    const simplifiedFormWorkData = formWorkData.map((item) => ({
-      month: item.MonthName,
-      total: roundToWholeNumber(item._sum.FormWork),
-    }));
-
-    const simplifiedConcreteData = concreteData.map((item) => ({
-      month: item.MonthName,
-      total: roundToWholeNumber(item._sum.Concrete),
-    }));
-
-    const simplifiedExcavationData = excavationData.map((item) => ({
-      month: item.MonthName,
-      total: roundToWholeNumber(item._sum.Excavation),
-    }));
-
-    const simplifiedRebarData = rebarData.map((item) => ({
-      month: item.MonthName,
-      total: roundToWholeNumber(item._sum.Rebar),
-    }));
-
+    const formWorkMonthData = await getData('FormWork');
+    const concreteMonthData = await getData('Concrete');
+    const excavationMonthData = await getData('Excavation');
+    const rebarMonthData = await getData('Rebar');
 
     return NextResponse.json({
-      formWorkMonthData: simplifiedFormWorkData,
-      concreteMonthData: simplifiedConcreteData,
-      excavationMonthData: simplifiedExcavationData,
-      rebarMonthData: simplifiedRebarData,
+      formWorkMonthData,
+      concreteMonthData,
+      excavationMonthData,
+      rebarMonthData,
     });
   } catch (error) {
     console.error("Error fetching weekly data:", error);
