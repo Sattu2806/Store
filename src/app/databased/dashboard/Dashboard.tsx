@@ -27,12 +27,10 @@ import { sCurveData, NCRTable, ConcretePlannedVsActual } from '@/lib/data/formda
 import ThreeBarChart from './ThreeBarChart';
 import { Category, Group } from '@prisma/client';
 import DashboardSkeleton from './DashboardSkeleton';
+import ChartPie from './ChartPie';
 
 type Props = {
     total: AggregatedData,
-    monthlydataDirect : Monthlydata[],
-     monthlydataInDirect: Monthlydata[], 
-     monthlydataEquipment: Monthlydata[],
      manpowerdata:ManpowerItem[],
      ManpowerApiData:ManpowerDataItem[]
 }
@@ -58,7 +56,7 @@ type ManpowerDataItem = {
     category: string;
   };
 
-const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEquipment, manpowerdata, ManpowerApiData}:Props) => {
+const Dashboard = ({total, manpowerdata, ManpowerApiData}:Props) => {
 
     const [selectedOption, setSelectedOption] = useState('day');
     const [selectedGroup, setSelectedGroup] = useState<string | undefined>(undefined);
@@ -94,7 +92,6 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
         staleTime:60 * 1000,
         retry:3,
       })
-      console.log(sumData)
 
     const [opendialogue, setopenDialogue] = useState({
         excavationQty :false,
@@ -151,9 +148,6 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
         refetchcategoryData()
     },[selectedGroup])
 
-    const Direct = monthlydataDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
-    const Indirect = monthlydataInDirect.map(({ Month, Value }) => ({ month: Month, total: Value }));
-    const Equipment = monthlydataEquipment.map(({ Month, Value }) => ({ month: Month, total: Value }));
 
     const direct = ManpowerApiData
     ?.filter((data) => data.category === 'Direct')
@@ -171,9 +165,28 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
         return { month: item.Month, total: item._sum.Nos };
     });
 
-    console.log(direct)
+    const initialCategoryTotals: { name: string; total: number }[] = [];
 
-    if(!total || !monthlydataDirect || !monthlydataInDirect || !monthlydataEquipment || !manpowerdata || !quantitymonthData || !groupData || !categoryData || !sumData || !Table1Data || !ManpowerApiData){
+    const categoryTotals: { name: string; total: number }[] = ManpowerApiData.reduce(
+      (totals, entry) => {
+        const name = entry.category;
+        const total = entry._sum?.Nos || 0;
+    
+        const existingCategory = totals.find((item) => item.name === name);
+    
+        if (existingCategory) {
+          existingCategory.total += total;
+        } else {
+          totals.push({ name, total });
+        }
+    
+        return totals;
+      },
+      initialCategoryTotals
+    );
+
+
+    if(!total  || !manpowerdata || !quantitymonthData || !groupData || !categoryData || !sumData || !Table1Data || !ManpowerApiData){
         return <div><DashboardSkeleton/></div>
     }
 
@@ -297,6 +310,7 @@ const Dashboard = ({total, monthlydataDirect, monthlydataInDirect, monthlydataEq
             <ThreeBarChart data={NCRTable} label='Comulative Non Complaince Report (NCR)' color='#9A4444'/>
             </div>
             <div className='space-y-3 flex flex-col'>
+            <ChartPie data={categoryTotals}/>
             <ManpowerCharts data={direct} label='Direct ManPower Histogram' color='#65B741'/>
             <ManpowerCharts data={indirect} label='InDirect ManPower Histogram' color='#7071E8'/>
             <ManpowerCharts data={equipment} label='Equipment Histogram' color='#9ADE7B'/>
