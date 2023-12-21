@@ -16,7 +16,6 @@ type Props = {
 }
 
 const ActualVsPallnedChart = ({ data, label, color }: Props) => {
-
     return (
         <div className='relative'>
             <Card className='px-2'>

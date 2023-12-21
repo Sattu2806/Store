@@ -1,7 +1,8 @@
 import { Card, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import React from 'react'
+import React, { useState } from 'react'
 import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import ProductivityTable from './ProductivityTable'
 
 type Data =  {
     month:string, 
@@ -15,6 +16,44 @@ type Props = {
 }
 
 const Charts = ({data, label,color}: Props) => {
+    const [opendialogue, setopenDialogue] = useState(false)
+    const [selectedOption, setSelectedOption] = useState<string | null >(null);
+    const showdata = () => {
+        switch (true) {
+            case label.includes('Excavation'):
+                setSelectedOption('excavationQty');
+                break;
+            case label.includes('Formwork'):
+                setSelectedOption('formWorkQty');
+                break;
+            case label.includes('Rebar'):
+                setSelectedOption('rebarQty');
+                break;
+            case label.includes('Concrete'):
+                setSelectedOption('concreteQty');
+                break;
+            default:
+                break;
+        }
+    };
+
+
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const activeMonth = activeIndex ?  data[activeIndex].month : null
+    const activeitem = activeIndex ?  data[activeIndex] : null
+    console.log(activeitem)
+  
+    const handleClick = (data: Data[], index: number) => {
+        setActiveIndex(index);
+        showdata();
+        // Move setopenDialogue(true) here
+        setopenDialogue(true);
+    };
+
+
+
+
+
   return (
     <div className='relative'>
         <Card className='px-2'>
@@ -46,12 +85,13 @@ const Charts = ({data, label,color}: Props) => {
                 tickFormatter={(value) => `${value}`}
                 />
                 <Tooltip />
-                <Bar dataKey="total" fill={color} radius={[4, 4, 0, 0]} >
+                <Bar  onClick={handleClick} dataKey="total" fill={color} radius={[4, 4, 0, 0]} >
                 <LabelList dataKey="total" position="top" className='text-sm' />
                 </Bar>
             </BarChart>
             </ResponsiveContainer>
         </Card>
+        <ProductivityTable selectedMonth={activeMonth} selectedOption={selectedOption} setSelectedOption={setSelectedOption} opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
     </div>
   )
 }

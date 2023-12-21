@@ -5,7 +5,7 @@ import Editskeleton from '../../../Editskeleton'
 
 type Props = {}
 
-const Editdailyquantity = async ({ params }: { params: { id: string } }) => {
+const Edittotalquantity = async ({ params }: { params: { id: string } }) => {
     const id = params.id
     const DatabyId = await prisma.totalQuantity.findUnique({
         where:{
@@ -25,4 +25,4 @@ const Editdailyquantity = async ({ params }: { params: { id: string } }) => {
   )
 }
 
-export default Editdailyquantity
+export default Edittotalquantity

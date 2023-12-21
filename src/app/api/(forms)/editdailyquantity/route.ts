@@ -27,12 +27,17 @@ const getWeekandMonth = (data:DailyQuantityT) => {
 export async function PATCH(request:NextRequest, response:NextResponse){
     const body = await request.json()
     const newData = getWeekandMonth(body)
-    console.log(newData)
-    if(newData){
+
+    const ExistedDaliyData = await prisma.dailyQuantity.findUnique({
+        where:{
+            id:body.id
+        }
+    })
+    if(newData && ExistedDaliyData){
         try {
             const dailyQuantity = await prisma.dailyQuantity.update({
                 where:{
-                    id:body.id
+                    id:ExistedDaliyData.id
                 },
                 data:{
                     groupId:newData.groupId,

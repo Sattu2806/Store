@@ -28,47 +28,18 @@ import ThreeBarChart from './ThreeBarChart';
 import { Category, Group } from '@prisma/client';
 import DashboardSkeleton from './DashboardSkeleton';
 import ChartPie from './ChartPie';
+import ProductivityCharts from './ProductivityCharts';
+import ManpowerchartCollection from './ManpowerchartCollection';
 
 type Props = {
     total: AggregatedData,
-     manpowerdata:ManpowerItem[],
-     ManpowerApiData:ManpowerDataItem[]
 }
 
-type monthdata = {
-    month:string
-    total:number
-}
-
-type QuantityMonthData = {
-    formWorkMonthData : monthdata[], 
-    concreteMonthData : monthdata[], 
-    excavationMonthData : monthdata[], 
-    rebarMonthData : monthdata[], 
-}
-
-type ManpowerDataItem = {
-    _sum: {
-      Nos: number | null;
-    };
-    Month: string;
-    Year: number;
-    category: string;
-  };
-
-const Dashboard = ({total, manpowerdata, ManpowerApiData}:Props) => {
+const Dashboard = ({total}:Props) => {
 
     const [selectedOption, setSelectedOption] = useState('day');
     const [selectedGroup, setSelectedGroup] = useState<string | undefined>(undefined);
     const [selectedCategory, setSelectedCatefory] = useState<string | undefined>(undefined);
-
-    const {data: quantitymonthData =[], error: quantitymonthDatanError, isLoading: isquantitymonthDataLoading, refetch:refetchquantitymonthData} = useQuery<QuantityMonthData>({
-        queryKey:'quantitymonthData',
-        queryFn: ()=> axios.get('/api/chartquantityapi').then((res) => res.data),
-        staleTime:60 * 1000,
-        retry:3,
-    })
-    const {formWorkMonthData, concreteMonthData, excavationMonthData, rebarMonthData}  = quantitymonthData
 
     const {data: groupData = [], error: groupDataError, isLoading: groupDataLoading, refetch:refetchgroupData} = useQuery<Group[]>({
         queryKey:'groupdata',
@@ -149,44 +120,9 @@ const Dashboard = ({total, manpowerdata, ManpowerApiData}:Props) => {
     },[selectedGroup])
 
 
-    const direct = ManpowerApiData
-    ?.filter((data) => data.category === 'Direct')
-    .map((item) => {
-        return { month: item.Month, total: item._sum.Nos };
-    });
-    const indirect = ManpowerApiData
-    ?.filter((data) => data.category === 'Indirect')
-    .map((item) => {
-        return { month: item.Month, total: item._sum.Nos };
-    });
-    const equipment = ManpowerApiData
-    ?.filter((data) => data.category === 'Equipment')
-    .map((item) => {
-        return { month: item.Month, total: item._sum.Nos };
-    });
-
-    const initialCategoryTotals: { name: string; total: number }[] = [];
-
-    const categoryTotals: { name: string; total: number }[] = ManpowerApiData.reduce(
-      (totals, entry) => {
-        const name = entry.category;
-        const total = entry._sum?.Nos || 0;
-    
-        const existingCategory = totals.find((item) => item.name === name);
-    
-        if (existingCategory) {
-          existingCategory.total += total;
-        } else {
-          totals.push({ name, total });
-        }
-    
-        return totals;
-      },
-      initialCategoryTotals
-    );
 
 
-    if(!total  || !manpowerdata || !quantitymonthData || !groupData || !categoryData || !sumData || !Table1Data || !ManpowerApiData){
+    if(!total || !groupData || !categoryData || !sumData || !Table1Data){
         return <div><DashboardSkeleton/></div>
     }
 
@@ -302,20 +238,15 @@ const Dashboard = ({total, manpowerdata, ManpowerApiData}:Props) => {
         </div>
         <div className='grid md:grid-cols-2 gap-10 mt-3'>
             <div className='space-y-3 flex flex-col'>
-            <Charts data={excavationMonthData} label='Excavation Productivity By Month' color='#FF8080'/>
-            <Charts data={formWorkMonthData} label='Formwork Productivity By Month' color='#BC7AF9'/>
-            <Charts data={rebarMonthData} label='Rebar Productivity By Month' color='#FA7070'/>
-            <Charts data={concreteMonthData} label='Concrete Productivity By Month' color='#29ADB2'/>
-            <ThreeBarChart data={ConcretePlannedVsActual} label='Comulative Concrete Actual Vs Planned' color='#FF6C22'/>
+            <ProductivityCharts/>
+            <ThreeBarChart data={ConcretePlannedVsActual} label='Comulative Concrete Actual Vs Planned' color='#ABAC2A'/>
             <ThreeBarChart data={NCRTable} label='Comulative Non Complaince Report (NCR)' color='#9A4444'/>
             </div>
             <div className='space-y-3 flex flex-col'>
-            <ChartPie data={categoryTotals}/>
-            <ManpowerCharts data={direct} label='Direct ManPower Histogram' color='#65B741'/>
-            <ManpowerCharts data={indirect} label='InDirect ManPower Histogram' color='#7071E8'/>
-            <ManpowerCharts data={equipment} label='Equipment Histogram' color='#9ADE7B'/>
+            <ChartPie/>
+            <ManpowerchartCollection/>
             <ActualVsPallnedChart data={sCurveData} label='Cumulative Actual Vs Planned' color='#D0A2F7' />
-            <ComposedCharts manpowerdata={manpowerdata} />
+            <ComposedCharts />
             </div>
         </div>
     </div>

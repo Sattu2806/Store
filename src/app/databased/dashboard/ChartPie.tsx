@@ -22,7 +22,7 @@ type PieData = {
 }
 
 type Props = {
-    data:PieData[]
+    
 }
 
 type CategoryCount = {
@@ -36,10 +36,11 @@ const monthsArray = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 ];
 
-const ChartPie = ({data}: Props) => {
+const ChartPie = (props: Props) => {
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [opendialogue, setopenDialogue] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState<string>(monthsArray[new Date().getMonth()])
+  
 
   const handleCellClick = (entry: PieData, index: number) => {
     setSelectedName(entry.name);
@@ -74,7 +75,7 @@ const ChartPie = ({data}: Props) => {
     <div >
       <Card className=" relative">
         <div className="flex items-center justify-center">
-        <PieChart width={800} height={430} margin={{top:0, bottom:0}} className="py-0">
+        <PieChart width={800} height={430} margin={{top:0, bottom:0}}>
           <Pie
             data={piedata}
             innerRadius={90}
@@ -96,7 +97,7 @@ const ChartPie = ({data}: Props) => {
           </Pie>
         </PieChart>
         </div>
-        <p className=" text-center font-semibold mb-3">Available Resources (Direct / Indirect / Equipment) for {selectedMonth}</p>
+        <p className="absolute bottom-3 left-14 font-semibold">Available Resources (Direct / Indirect / Equipment) for {selectedMonth}</p>
         <div className="absolute top-5 right-5 ">
         <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(value)}>
               <SelectTrigger className="w-[180px] border-black">

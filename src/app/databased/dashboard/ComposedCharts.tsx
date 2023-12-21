@@ -3,9 +3,10 @@ import React from 'react'
 import { Bar,  Line, XAxis, YAxis,  ComposedChart, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList} from 'recharts';
 import { ManpowerItem } from '@/lib/types';
 import { Card, CardHeader } from '@/components/ui/card';
+import axios from 'axios';
+import { useQuery } from 'react-query';
 
 type Props = {
-  manpowerdata: ManpowerItem[]
 }
 
 interface TransformedDataItem {
@@ -16,10 +17,17 @@ interface TransformedDataItem {
   Cumulative_Indirect_Value: number;
 }
 
-const ComposedCharts = ({manpowerdata}: Props) => {
+const ComposedCharts = (props: Props) => {
+  const {data: AllMonthlydata = [], error: AllMonthlydataError, isLoading: isAllMonthlydataLoading, refetch:refetchAllMonthlydata} = useQuery<ManpowerItem[]>({
+    queryKey:'AllMonthlydata',
+    queryFn: ()=> axios.get('/api/allmonthlydata')
+    .then((res) => res.data),
+    staleTime:60 * 1000,
+    retry:3,
+})
   const transformedData: Record<string, TransformedDataItem> = {};
 
-  manpowerdata.forEach((item) => {
+  AllMonthlydata.forEach((item) => {
     const { Month, Type, Value } = item;
   
     if (!transformedData[Month]) {
