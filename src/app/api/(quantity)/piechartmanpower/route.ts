@@ -3,14 +3,15 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
     const searchParams = new URLSearchParams(request.url.split('?')[1]);
-    const Month = searchParams.get('Month');
-    console.log(Month)
+    const Date = searchParams.get('Date');
+    console.log(Date)
 
-    if(!Month){
+    if(!Date){
         return NextResponse.json([])
     }
 
-    console.log(Month)
+    const month = Date.split('-')[0]
+    const year = Date.split('-')[1]
 
     try {
         const bymonthmanpower = await prisma.manpowerData.groupBy({
@@ -19,7 +20,8 @@ export async function GET(request: Request) {
                 Nos:true
             },
             where:{
-                Month:Month
+                Month:month,
+                Year:parseInt(year)
             }
         })
         return NextResponse.json(bymonthmanpower)

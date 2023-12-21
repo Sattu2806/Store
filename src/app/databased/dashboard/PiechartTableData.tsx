@@ -54,7 +54,6 @@ const PiechartTableData= ({
         refetchmanpowerapiData()
     },[selectedOption])
 
-    console.log(selectedOption)
  
   return (
     <div>

@@ -30,6 +30,7 @@ import DashboardSkeleton from './DashboardSkeleton';
 import ChartPie from './ChartPie';
 import ProductivityCharts from './ProductivityCharts';
 import ManpowerchartCollection from './ManpowerchartCollection';
+import SCurveChart from './SCurveChart';
 
 type Props = {
     total: AggregatedData,
@@ -238,6 +239,7 @@ const Dashboard = ({total}:Props) => {
         </div>
         <div className='grid md:grid-cols-2 gap-10 mt-3'>
             <div className='space-y-3 flex flex-col'>
+            <SCurveChart/>
             <ProductivityCharts/>
             <ThreeBarChart data={ConcretePlannedVsActual} label='Comulative Concrete Actual Vs Planned' color='#ABAC2A'/>
             <ThreeBarChart data={NCRTable} label='Comulative Non Complaince Report (NCR)' color='#9A4444'/>
@@ -245,7 +247,7 @@ const Dashboard = ({total}:Props) => {
             <div className='space-y-3 flex flex-col'>
             <ChartPie/>
             <ManpowerchartCollection/>
-            <ActualVsPallnedChart data={sCurveData} label='Cumulative Actual Vs Planned' color='#D0A2F7' />
+            <ActualVsPallnedChart data={sCurveData} label='S-Curve' color='#D0A2F7' />
             <ComposedCharts />
             </div>
         </div>

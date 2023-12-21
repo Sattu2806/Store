@@ -1,16 +1,35 @@
+// export const sCurveData = [
+//     { month: 'Jan', planned: 100, actual: 80 },
+//     { month: 'Feb', planned: 150, actual: 120 },
+//     { month: 'Mar', planned: 200, actual: 180 },
+//     { month: 'Apr', planned: 250, actual: 220 },
+//     { month: 'May', planned: 300, actual: 280 },
+//     { month: 'Jun', planned: 350, actual: 320 },
+//     { month: 'Jul', planned: 400, actual: 380 },
+//     { month: 'Aug', planned: 450, actual: 420 },
+//     { month: 'Sep', planned: 500, actual: 480 },
+//     { month: 'Oct', planned: 550, actual: 520 },
+//     { month: 'Nov', planned: 600, actual: 580 },
+//     { month: 'Dec', planned: 650, actual: 620 },
+// ]
+
 export const sCurveData = [
-    { month: 'Jan', planned: 100, actual: 80 },
-    { month: 'Feb', planned: 150, actual: 120 },
-    { month: 'Mar', planned: 200, actual: 180 },
-    { month: 'Apr', planned: 250, actual: 220 },
-    { month: 'May', planned: 300, actual: 280 },
-    { month: 'Jun', planned: 350, actual: 320 },
-    { month: 'Jul', planned: 400, actual: 380 },
-    { month: 'Aug', planned: 450, actual: 420 },
-    { month: 'Sep', planned: 500, actual: 480 },
-    { month: 'Oct', planned: 550, actual: 520 },
-    { month: 'Nov', planned: 600, actual: 580 },
-    { month: 'Dec', planned: 650, actual: 620 },
+    { year:2023, month: 'Oct', planned: 10, actual: 8 },
+    { year:2023, month: 'Nov', planned: 10, actual: 9 },
+    { year:2023, month: 'Dec', planned: 10, actual: 7 },
+    { year:2024, month: 'Jan', planned: 6, actual: 0 },
+    { year:2024, month: 'Feb', planned: 7, actual: 0 },
+    { year:2024, month: 'Mar', planned: 8, actual: 0 },
+    { year:2024, month: 'Apr', planned: 9, actual: 0 },
+    { year:2024, month: 'May', planned: 6, actual: 0 },
+    { year:2024, month: 'Jun', planned: 3, actual: 0 },
+    { year:2024, month: 'Jul', planned: 1, actual: 0 },
+    { year:2024, month: 'Aug', planned: 2, actual: 0 },
+    { year:2024, month: 'Sep', planned: 7, actual: 0 },
+    { year:2024, month: 'Oct', planned: 6, actual: 0 },
+    { year:2024, month: 'Nov', planned: 6, actual: 0 },
+    { year:2024, month: 'Dec', planned: 4, actual: 0 },
+    { year:2024, month: 'Jan', planned: 5, actual: 0 }
 ]
 
 

@@ -39,27 +39,39 @@ const monthsArray = [
 const ChartPie = (props: Props) => {
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [opendialogue, setopenDialogue] = useState(false)
-  const [selectedMonth, setSelectedMonth] = useState<string>(monthsArray[new Date().getMonth()])
+  const [selectedMonth, setSelectedMonth] = useState<string>(`${monthsArray[new Date().getMonth()]}-${new Date().getFullYear()}`)
   
 
   const handleCellClick = (entry: PieData, index: number) => {
     setSelectedName(entry.name);
-    console.log("Selected Name:", entry.name);
 };
 
-  const {data: piemanpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<CategoryCount[]>({
+  const {data: piemanpowerapiData = [], error: piemanpowerapiDataError, isLoading: piemanpowerapiDataLoading, refetch:refetchpiemanpowerapiData} = useQuery<CategoryCount[]>({
     queryKey:'piemanpowerdata',
     queryFn: ()=> axios.get('/api/piechartmanpower', {
         params:{
-            Month:selectedMonth
+            Date:selectedMonth
         }
     }).then((res) => res.data),
     staleTime:60 * 1000,
     retry:3,
   })
 
+  const {data: manpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<ManpowerData[]>({
+    queryKey:'manpowerdata1',
+    queryFn: ()=> axios.get('/api/manpowerdatachart', {
+        params:{
+            Category:'All'
+        }
+    }).then((res) => res.data),
+    staleTime:60 * 1000,
+    retry:3,
+})
+
+  const uniqueYearMonthPairs = Array.from(new Set(manpowerapiData.map(item => `${item.Month}-${item.Year}`)))
+
   useEffect(() => {
-    refetchmanpowerapiData()
+    refetchpiemanpowerapiData()
   },[selectedMonth])
 
   const piedata = piemanpowerapiData.map((item) => {
@@ -69,7 +81,8 @@ const ChartPie = (props: Props) => {
     }
   })
 
-  console.log(piedata, piemanpowerapiData)
+
+
 
   return (
     <div >
@@ -104,7 +117,7 @@ const ChartPie = (props: Props) => {
                   <SelectValue placeholder="Select Group" />
               </SelectTrigger>
               <SelectContent>
-                  {monthsArray?.map((month,index) => (
+                  {uniqueYearMonthPairs?.map((month,index) => (
                       <SelectItem key={index} value={month}>{month}</SelectItem>
                   ))}
               </SelectContent>
