@@ -4,6 +4,8 @@ import axios from 'axios';
 import { FiUploadCloud } from "react-icons/fi";
 import { useQuery } from 'react-query';
 import Select from 'react-select';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 interface Group {
     id:number
@@ -21,6 +23,7 @@ const UploadForm = () => {
   const [statusmessage, setStatusMessage] = useState<string | undefined> (undefined)
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [selectedOption, setSelectedOption] = useState<GroupOption | null>(null);
+  const [isloading, setisLoading] = useState<boolean>(false)
 
   console.log(selectedOption)
 
@@ -43,10 +46,10 @@ const UploadForm = () => {
 
   const handleSubmit = async (event : React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setStatusMessage('Creating')
     if (!file) {
         return;
     }
+    setStatusMessage('Creating')
 
     const cloudinaryCloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
     const upload_preset = process.env.UPLOAD_PRESET
@@ -58,6 +61,7 @@ const UploadForm = () => {
 
     try {
       setStatusMessage('Uploading file')
+      setisLoading(true)
       const response = await axios.post(
         `https://api.cloudinary.com/v1_1/dhz0qhtw2/image/upload`,
         formData
@@ -82,6 +86,7 @@ const UploadForm = () => {
       setStatusMessage('failed')
     }
     setStatusMessage('Created')
+    setisLoading(false)
   };
 
 
@@ -157,7 +162,14 @@ const UploadForm = () => {
       {statusmessage && (
             <div className='py-2 text-lg bg-yellow-50 rounded-md my-1 text-center'>{statusmessage}</div>
       )}
-      <button className='border rounded-mdf px-4 py-2 block w-full mt-4 rounded-md bg-gray-700 text-white border-gray-600 hover:opacity-80 text-lg' type="submit">Upload</button>
+      {isloading ? (
+        <Button disabled className=' w-full mt-2' size='lg'>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Please wait
+        </Button>
+      ):(
+      <Button size='lg' className=' w-full mt-2' type="submit">Upload</Button>
+      )}
     </form>
     </div>
   );

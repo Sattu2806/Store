@@ -18,12 +18,20 @@ import LongLeadTable from '../../../components/(Tables)/LongLeadTable';
 import AllCardComponents from '../../../components/(cards)/AllCardComponents';
 
 type Props = {
+
 }
 
 const Dashboard = (props:Props) => {
     const {data: total , error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<AggregatedData>({
         queryKey:'projectdata2',
-        queryFn: ()=> axios.get('/api/project').then((res) => res.data),
+        queryFn: async () => {
+            try {
+              const res = await axios.get('/api/project');
+              return res.data;
+            } catch (error) {
+              throw new Error('Failed to fetch data');
+            }
+        },
         staleTime:60 * 1000,
         retry:3,
     })
@@ -58,5 +66,4 @@ const Dashboard = (props:Props) => {
     </div>
   );
 };
-
 export default Dashboard;

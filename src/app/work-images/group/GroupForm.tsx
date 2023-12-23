@@ -30,10 +30,21 @@ import { Card, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DialogClose } from '@radix-ui/react-dialog';
-
-
-
-
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { useToast } from '@/components/ui/use-toast'
+import { useRouter } from 'next/navigation'
+import { Loader2 } from "lucide-react"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 
 
 type Props = {}
@@ -43,22 +54,38 @@ interface Group {
     name: string
 }
 
+const Group = z.object({
+  name:z.string()
+})
+
 const AddDataBranchForm = (props: Props) => {
-    const [group, setGroup] = useState('')
     const [editGroup, seteditGroup] = useState('')
     const [iseditable, setIseditable] = useState(false);
     const [tobeEdited, settobeEdited] = useState<number>();
     const [tobedeledted, settobedeleted] = useState<number>()
+    const [isloading, setisLoading] = useState<boolean>(false)
+    const {toast} = useToast()
+    const router = useRouter()
 
-    const addDepartments = async () => {
+    const form = useForm<z.infer<typeof Group>>({
+      resolver: zodResolver(Group),
+      defaultValues: {
+      },
+    })
+
+    async function onSubmit (values: z.infer<typeof Group>) {
+      setisLoading(true)
+      console.log(values)
       try {
         const response = await axios.post('/api/imagegroup', {
-          name: group
+          name: values.name
         });
+        toast({
+          description: "Image Group Created Successfully",
+        })
     
         if (response.status === 200) {
           seteditGroup('')
-          setGroup('')
           await refetchGroupData()
         } else {
           console.error('Branch could not be added. Status code:', response.status);
@@ -66,7 +93,11 @@ const AddDataBranchForm = (props: Props) => {
       } catch (error) {
         console.error('An error occurred while adding the branch', error);
       }
-    };
+      setisLoading(false)
+      form.reset()
+      router.refresh()
+    }
+
 
     const confirmDelete = async (id: number) => {
       try {
@@ -118,24 +149,41 @@ const AddDataBranchForm = (props: Props) => {
         retry:3
     })
 
-      const handleChangeDep = (event:any) => {
-        setGroup(event.target.value);
-      };
       const handleChangeEditDep = (event: any) => {
         seteditGroup(event.target.value);
       };
 
       const GroupToEdit = GroupData?.find((Group) => Group.id === tobeEdited);
-      console.log(GroupToEdit)
-
       
   return (
     <div className='my-10'>
         <p className='mb-10 text-center font-semibold block clear-left text-2xl'>Add Group</p>
         <div className='my-6'></div>
-        <Input className='text-xl' onChange={handleChangeDep} value={group} placeholder='Name of Branch'/>
-        <div className='my-6'></div>
-        <Button onClick={addDepartments} size='lg' className='text-gray-50 bg-gray-800 px-10 text-lg' color='crimson'>Add</Button>
+        <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-base">Image Group</FormLabel>
+                <FormControl>
+                  <Input autoComplete="off" placeholder="group name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+            {isloading ? (
+                <Button disabled className='mt-2' size='lg'>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </Button>
+            ):(
+            <Button className=' mt-2' size='lg' type="submit">Submit</Button>
+            )}
+        </form>
+      </Form>
         <div className='my-6'></div>
         <Card className='p-5'>
             <CardTitle className='font-semibold text-center text-xl mt-3'>List of Groups</CardTitle>
@@ -155,7 +203,7 @@ const AddDataBranchForm = (props: Props) => {
                     </TableCell>
                     <TableCell>
                     <div className='flex items-center justify-between space-x-6'>
-                      <p className='font-medium text-xl'>{GroupData?.find((Group) => Group.id === tobeEdited)?.name}</p> 
+                      <p className='font-medium text-xl'>{item.name}</p> 
                       <div className='flex items-center space-x-2'>
                         <div className={` ${iseditable ? "hidden":""}`}>
                       <div className='flex items-center justify-between gap-5'>
@@ -200,15 +248,19 @@ const AddDataBranchForm = (props: Props) => {
 
                             <div className='flex mt-4 items-center justify-end gap-3'>
                               <AlertDialogCancel>
+                              <div>
                                 <Button variant="secondary" color="gray">
                                   Cancel
                                 </Button>
+                              </div>
                               </AlertDialogCancel>
                               <AlertDialogAction>
                                 {tobedeledted && 
+                                  <div>
                                     <Button onClick={() => confirmDelete(tobedeledted)} variant="secondary" color="red">
                                     Delete
                                   </Button>
+                                  </div>
                                 }
                               </AlertDialogAction>
                             </div>
