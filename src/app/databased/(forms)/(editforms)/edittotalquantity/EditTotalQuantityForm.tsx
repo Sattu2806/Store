@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -22,12 +22,14 @@ import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 import { useQuery } from 'react-query'
 import { Category, Group, TotalQuantity } from '@prisma/client'
+import { Loader2 } from 'lucide-react'
 
 type Props = {
     data:TotalQuantity
 }
 
 const EditTotalQuantityForm = ({data}: Props) => {
+  const [isloading, setisLoading] = useState<boolean>(false)
     const {toast} = useToast()
     const router = useRouter()
     const form = useForm<z.infer<typeof TotalQuantitySchema>>({
@@ -53,6 +55,7 @@ const EditTotalQuantityForm = ({data}: Props) => {
         retry:3,
       })
       async function onSubmit (values: z.infer<typeof TotalQuantitySchema>) {
+        setisLoading(true)
         console.log(values)
         try {
           const response = await axios.patch('/api/edittotalquantity',{
@@ -73,6 +76,7 @@ const EditTotalQuantityForm = ({data}: Props) => {
         } catch (error) {
           console.log('Errore', error)
         }
+        setisLoading(false)
       }
       useEffect(() => {
         refetchcategoryData()
@@ -193,7 +197,14 @@ const EditTotalQuantityForm = ({data}: Props) => {
             )}
             />
             </div>
+            {isloading ? (
+                <Button disabled className='w-full mt-2' size='lg'>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </Button>
+            ):(
             <Button className='w-full mt-2' size='lg' type="submit">Submit</Button>
+            )}
         </form>
         </Form>
         </Card>

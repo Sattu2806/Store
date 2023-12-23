@@ -1,11 +1,12 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { TotalQuantitySchema } from '@/ZodSchema/QuantitySchema'
 import axios from 'axios'
 import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
 import {
   Form,
   FormControl,
@@ -26,6 +27,7 @@ import { Category, Group } from '@prisma/client'
 type Props = {}
 
 const TotalQuantityForm = (props: Props) => {
+    const [isloading, setisLoading] = useState<boolean>(false)
     const {toast} = useToast()
     const router = useRouter()
     const form = useForm<z.infer<typeof TotalQuantitySchema>>({
@@ -50,6 +52,7 @@ const TotalQuantityForm = (props: Props) => {
         retry:3,
       })
       async function onSubmit (values: z.infer<typeof TotalQuantitySchema>) {
+        setisLoading(true)
         console.log(values)
         try {
           const response = await axios.post('/api/totalquantity',{
@@ -63,11 +66,12 @@ const TotalQuantityForm = (props: Props) => {
           })
           console.log(response)
           toast({
-            description: "Category Created Successfully",
+            description: "Total Quantity Created Successfully",
           })
         } catch (error) {
           console.log('Errore', error)
         }
+        setisLoading(false)
       }
       useEffect(() => {
         refetchcategoryData()
@@ -129,7 +133,7 @@ const TotalQuantityForm = (props: Props) => {
             render={({ field }) => (
                 <FormItem>
                 <FormLabel>Foundation Type</FormLabel>
-                    <Input autoComplete="off" placeholder="foundation type" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
+                    <Input autoComplete="off" placeholder="foundation type" onChange={(e) => field.onChange((e.target.value))} />
                 <FormMessage />
                 </FormItem>
             )}
@@ -187,7 +191,14 @@ const TotalQuantityForm = (props: Props) => {
             )}
             />
             </div>
+            {isloading ? (
+                <Button disabled className='w-full mt-2' size='lg'>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </Button>
+            ):(
             <Button className='w-full mt-2' size='lg' type="submit">Submit</Button>
+            )}
         </form>
         </Form>
         </Card>

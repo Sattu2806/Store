@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -20,12 +20,14 @@ import { Card } from "@/components/ui/card"
 import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 import { Group } from '@prisma/client'
+import { Loader2 } from 'lucide-react'
 
 type Props = {
     data:Group
 }
 
 const EditGroupForm = ({data}: Props) => {
+  const [isloading, setisLoading] = useState<boolean>(false)
     const {toast} = useToast()
     const router = useRouter()
     const form = useForm<z.infer<typeof GroupSchema>>({
@@ -35,6 +37,7 @@ const EditGroupForm = ({data}: Props) => {
         },
       })
       async function onSubmit (values: z.infer<typeof GroupSchema>) {
+        setisLoading(true)
         console.log(values)
         try {
           const response = await axios.patch('/api/group',{
@@ -53,6 +56,7 @@ const EditGroupForm = ({data}: Props) => {
             description: "Error whiel Editing daa",
           })
         }
+        setisLoading(false)
       }
   return (
     <div className="mt-4 max-w-[1280px] mx-auto">
@@ -73,7 +77,14 @@ const EditGroupForm = ({data}: Props) => {
             </FormItem>
           )}
         />
-        <Button size='lg' type="submit">Submit</Button>
+          {isloading ? (
+              <Button disabled className='mt-2' size='lg'>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+          ):(
+          <Button className=' mt-2' size='lg' type="submit">Submit</Button>
+          )}
       </form>
     </Form>
     </Card>

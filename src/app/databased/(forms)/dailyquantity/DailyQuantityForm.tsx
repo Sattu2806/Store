@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -34,6 +34,7 @@ import { useToast } from '@/components/ui/use-toast'
 type Props = {}
 
 const DailyQuantityForm = (props: Props) => {
+  const [isloading, setisLoading] = useState<boolean>(false)
     const {toast} = useToast()
     const form = useForm<z.infer<typeof DailyQuantitySchema>>({
         resolver: zodResolver(DailyQuantitySchema),
@@ -60,6 +61,7 @@ const DailyQuantityForm = (props: Props) => {
 
 
       async function onSubmit (values: z.infer<typeof DailyQuantitySchema>) {
+        setisLoading(true)
         console.log(values)
         try {
           const response = await axios.post('/api/dailyquantity',{
@@ -77,7 +79,11 @@ const DailyQuantityForm = (props: Props) => {
           })
         } catch (error) {
           console.log('Errore', error)
+          toast({
+            description: "Error while creating",
+          })
         }
+        setisLoading(false)
       }
 
       useEffect(() => {
@@ -231,7 +237,14 @@ const DailyQuantityForm = (props: Props) => {
         )}
         />
         </div>
-        <Button className='w-full mt-3' size='lg' type="submit">Submit</Button>
+        {isloading ? (
+              <Button disabled className='w-full mt-2' size='lg'>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+          ):(
+          <Button className='w-full mt-2' size='lg' type="submit">Submit</Button>
+          )}
     </form>
     </Form>
     </Card>

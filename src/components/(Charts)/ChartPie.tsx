@@ -5,7 +5,7 @@ import axios from "axios";
 import { ManpowerData } from "@prisma/client";
 import { useQuery } from "react-query";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import PiechartTableData from "./PiechartTableData";
+import PiechartTableData from "../(Tables)/PiechartTableData";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 

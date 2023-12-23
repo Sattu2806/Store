@@ -18,10 +18,10 @@ const CardComponent = ({total, label, unit}: Props) => {
                     Total
                 </CardTitle>
                 <div className="text-md font-medium text-center">
-                    {label === 'Excavation' ? total._sum.Excavation?.toFixed(0) : null}
-                    {label === 'FormWork' ? total._sum.FormWork?.toFixed(0) : null}
-                    {label === 'Rebar' ? total._sum.Rebar?.toFixed(0) : null}
-                    {label === 'Concrete' ? total._sum.Concrete?.toFixed(0) : null}
+                    {label === 'Excavation' ? total._sum?.Excavation?.toFixed(0) : null}
+                    {label === 'FormWork' ? total._sum?.FormWork?.toFixed(0) : null}
+                    {label === 'Rebar' ? total._sum?.Rebar?.toFixed(0) : null}
+                    {label === 'Concrete' ? total._sum?.Concrete?.toFixed(0) : null}
                     {unit}
                 </div>
             </CardContent>

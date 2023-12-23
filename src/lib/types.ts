@@ -76,3 +76,19 @@ export type sumQuantityData = {
       };
     };
   };
+
+
+  export interface ImageT {
+    id: number;
+    url: string;
+    description: string;
+    slideActive: boolean;
+    groupId: number;
+    Group: ImageGroup; // This might need to be updated based on the structure of the Group interface
+  }
+  
+export interface ImageGroup {
+id: number;
+name: string;
+Image: ImageT[];
+}

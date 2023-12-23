@@ -96,3 +96,19 @@ model DailyQuantity {
   group          Group    @relation(fields: [groupId], references: [id])
   category       Category @relation(fields: [categoryId], references: [id])
 }
+
+
+model Image {
+  id      Int      @id @default(autoincrement())
+  url     String
+  description String
+  slideActive Boolean @default(false)
+  groupId     Int
+  ImageGroup    ImageGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+model ImageGroup {
+  id      Int      @id @default(autoincrement())
+  name    String
+  Image   Image[]
+}

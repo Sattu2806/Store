@@ -1,5 +1,4 @@
-import { Card, CardHeader } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+
 import React from 'react'
 import { Bar, BarChart, ComposedChart, LabelList, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { sCurveData } from '@/lib/data/formdata'

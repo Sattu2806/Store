@@ -20,7 +20,7 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { ManpowerData } from '@prisma/client'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Skeleton } from '@/components/ui/skeleton'
-import MnapowerTableData from './MnapowerTableData'
+import MnapowerTableData from '../(Tables)/MnapowerTableData'
 
 type Data = {
     month: string,

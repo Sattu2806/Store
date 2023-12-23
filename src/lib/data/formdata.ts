@@ -13,6 +13,90 @@
 //     { month: 'Dec', planned: 650, actual: 620 },
 // ]
 
+
+export const long_lead_item = [
+    {
+        "ItemID": "R-1234",
+        "Description": "50 MW High-Pressure Reactor",
+        "Manufacturer": "Acme Engineering",
+        "LeadTime(Weeks)": 24,
+        "OrderDate": "15/11/2023",
+        "ExpectedDeliveryDate": "12/05/2024",
+        "Status": "Ordered",
+        "Remarks": "Expedited delivery requested due to project timeline."
+    },
+    {
+        "ItemID": "C-7890",
+        "Description": "20m Distillation Column",
+        "Manufacturer": "ChemTech Industries",
+        "LeadTime(Weeks)": 16,
+        "OrderDate": "12/12/2023",
+        "ExpectedDeliveryDate": "03/04/2024",
+        "Status": "In Production",
+        "Remarks": "Material selection awaiting final approval."
+    },
+    {
+        "ItemID": "HX-5678",
+        "Description": "Heat Exchanger (Shell & Tube)",
+        "Manufacturer": "Alfa Laval",
+        "LeadTime(Weeks)": 12,
+        "OrderDate": "05/12/2023",
+        "ExpectedDeliveryDate": "13/03/2024",
+        "Status": "Pending Quote",
+        "Remarks": "Awaiting final pricing and technical specifications."
+    },
+    {
+        "ItemID": "P-4321",
+        "Description": "Centrifugal Pump (250 KW)",
+        "Manufacturer": "Grundfos",
+        "LeadTime(Weeks)": 8,
+        "OrderDate": "20/12/2023",
+        "ExpectedDeliveryDate": "21/02/2024",
+        "Status": "Quotation Received",
+        "Remarks": "Evaluating quotes from multiple vendors."
+    },
+    {
+        "ItemID": "C-2019",
+        "Description": "Axial Compressor (High Flow)",
+        "Manufacturer": "MAN Energy Solutions",
+        "LeadTime(Weeks)": 20,
+        "OrderDate": "28/11/2023",
+        "ExpectedDeliveryDate": "29/05/2024",
+        "Status": "On Backorder",
+        "Remarks": "Extended lead time due to high demand."
+    },
+    {
+        "ItemID": "SW-9876",
+        "Description": "High-Voltage Switchgear (33 kV)",
+        "Manufacturer": "Siemens",
+        "LeadTime(Weeks)": 18,
+        "OrderDate": "10/12/2023",
+        "ExpectedDeliveryDate": "17/04/2024",
+        "Status": "Manufacturing Started",
+        "Remarks": "Early delivery possible based on current progress."
+    },
+    {
+        "ItemID": "G-1254",
+        "Description": "Planetary Gear Reducer",
+        "Manufacturer": "Bonfiglioli",
+        "LeadTime(Weeks)": 10,
+        "OrderDate": "18/12/2023",
+        "ExpectedDeliveryDate": "06/03/2024",
+        "Status": "Design Review In Progress",
+        "Remarks": "Awaiting confirmation on final gear ratios."
+    },
+    {
+        "ItemID": "S-3456",
+        "Description": "Ultrasonic Flowmeter",
+        "Manufacturer": "Endress+Hauser",
+        "LeadTime(Weeks)": 14,
+        "OrderDate": "07/12/2023",
+        "ExpectedDeliveryDate": "27/03/2024",
+        "Status": "Tender Stage",
+        "Remarks": "Evaluating proposals from qualified suppliers."
+    }
+]
+
 export const sCurveData = [
     { year:2023, month: 'Oct', planned: 10, actual: 8 },
     { year:2023, month: 'Nov', planned: 10, actual: 9 },

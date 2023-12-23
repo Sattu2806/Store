@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -37,6 +37,7 @@ type Props = {
 }
 
 const EditDailyQuantityForm = ({data}: Props) => {
+  const [isloading, setisLoading] = useState<boolean>(false)
     const {toast} = useToast()
     const router = useRouter()
     const form = useForm<z.infer<typeof DailyQuantitySchema>>({
@@ -66,6 +67,7 @@ const EditDailyQuantityForm = ({data}: Props) => {
 
       async function onSubmit (values: z.infer<typeof DailyQuantitySchema>) {
         console.log(values)
+        setisLoading(true)
         try {
           const response = await axios.patch('/api/editdailyquantity',{
                 id:data.id,
@@ -89,6 +91,8 @@ const EditDailyQuantityForm = ({data}: Props) => {
             description: "Error while editing data",
           })
         }
+
+        setisLoading(false)
       }
       
       useEffect(() => {
@@ -242,7 +246,14 @@ const EditDailyQuantityForm = ({data}: Props) => {
         )}
         />
         </div>
-        <Button className='w-full mt-3' size='lg' type="submit">Submit</Button>
+        {isloading ? (
+                <Button disabled className='w-full mt-2' size='lg'>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </Button>
+            ):(
+            <Button className='w-full mt-2' size='lg' type="submit">Submit</Button>
+          )}
     </form>
     </Form>
     </Card>

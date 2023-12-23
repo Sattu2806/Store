@@ -2,7 +2,7 @@ import { Card, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import React, { useState } from 'react'
 import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import ProductivityTable from './ProductivityTable'
+import ProductivityTable from '../(Tables)/ProductivityTable'
 
 type Data =  {
     month:string, 
