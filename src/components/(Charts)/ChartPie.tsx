@@ -86,7 +86,7 @@ const ChartPie = (props: Props) => {
 
   return (
     <div >
-      <Card className=" relative">
+      <Card className=" relative py-3">
         <div className="flex items-center justify-center">
         <PieChart width={800} height={430} margin={{top:0, bottom:0}}>
           <Pie

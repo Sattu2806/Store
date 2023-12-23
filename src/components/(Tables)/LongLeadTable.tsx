@@ -21,15 +21,15 @@ const LongLeadTable = (props: Props) => {
         <Table>
         <TableCaption>Long Lead Item Table</TableCaption>
         <TableHeader>
-            <TableRow>
+            <TableRow className='bg-gray-50'>
             <TableHead className="w-[100px]">ItemID</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Manufacturer</TableHead>
-            <TableHead className="text-right">LeadTime(Weeks)</TableHead>
-            <TableHead className="text-right">OrderDate</TableHead>
-            <TableHead className="text-right">ExpectedDeliveryDate</TableHead>
-            <TableHead className="text-right">Status</TableHead>
-            <TableHead className="text-right">Remarks</TableHead>
+            <TableHead className="w-[50px]">LeadTime (Weeks)</TableHead>
+            <TableHead className="">OrderDate</TableHead>
+            <TableHead className="w-[80px]">Expected DeliveryDate</TableHead>
+            <TableHead className="w-[80px]">Status</TableHead>
+            <TableHead className="w-[350px]">Remarks</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -38,7 +38,7 @@ const LongLeadTable = (props: Props) => {
                     <TableCell className="font-medium">{item.ItemID}</TableCell>
                     <TableCell>{item.Description}</TableCell>
                     <TableCell>{item.Manufacturer}</TableCell>
-                    <TableCell>{item['LeadTime(Weeks)']}</TableCell>
+                    <TableCell className='text-center'>{item['LeadTime(Weeks)']}</TableCell>
                     <TableCell>{item.OrderDate}</TableCell>
                     <TableCell>{item.ExpectedDeliveryDate}</TableCell>
                     <TableCell>{item.Status}</TableCell>

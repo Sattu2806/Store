@@ -35,9 +35,6 @@ const SCurveChart = (props: Props) => {
 
   console.log(currentMonthData)
 
-  const variance = currentMonthData
-  ? ((currentMonthData.cumulative_planned - currentMonthData.cumulative_actual) / currentMonthData.cumulative_planned) * 100
-  : 0;
 
 
   return (
@@ -51,11 +48,11 @@ const SCurveChart = (props: Props) => {
         >View Data</Button>
         <CardContent>
             <div className='flex flex-col  items-baseline justify-between h-full gap-10 mt-16'>
-            <ProgressBar label='Planned' color='bg-blue-700' actualprogress={currentMonthData?.cumulative_planned ?? 0} progress={currentMonthData?.cumulative_planned ? (currentMonthData?.cumulative_planned /currentMonthData?.cumulative_planned *100) : 0}/>
+            <ProgressBar label='Planned' color='bg-[#0088FE]' progress={currentMonthData?.cumulative_planned ?? 0}/>
 
-            <ProgressBar actualprogress={currentMonthData?.cumulative_actual ?? 0} label='Actual' color='bg-green-700'  progress={currentMonthData?.cumulative_actual ? (currentMonthData?.cumulative_actual / currentMonthData?.cumulative_planned *100)  : 0}/>
+            <ProgressBar label='Actual' color='bg-[#00C49F]'  progress={currentMonthData?.cumulative_actual ?? 0}/>
             
-            <ProgressBar actualprogress={currentMonthData ? currentMonthData.cumulative_planned - currentMonthData.cumulative_actual : 0} label='Variance' color='bg-red-700'  progress={variance} />
+            <ProgressBar progress={currentMonthData ? currentMonthData.cumulative_planned - currentMonthData.cumulative_actual : 0} label='Variance' color='bg-red-500'  />
             </div>
         </CardContent>
       </Card>

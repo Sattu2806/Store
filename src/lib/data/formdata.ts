@@ -135,15 +135,15 @@ export const ConcretePlannedVsActual = [
 export const NCRTable = [
     {
         "name":"Observed",
-        value:160
+        value:80
     },
     {
         "name":"Closed",
-        value:90
+        value:50
     },
     {
         "name":"Open",
-        value:70
+        value:30
     }
 ]
 

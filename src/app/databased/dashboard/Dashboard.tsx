@@ -16,6 +16,7 @@ import ManpowerchartCollection from '../../../components/(Charts)/ManpowerchartC
 import SCurveChart from '../../../components/(Charts)/SCurveChart';
 import LongLeadTable from '../../../components/(Tables)/LongLeadTable';
 import AllCardComponents from '../../../components/(cards)/AllCardComponents';
+import NCRChart from '@/components/(Charts)/NCRChart';
 
 type Props = {
 
@@ -46,22 +47,25 @@ const Dashboard = (props:Props) => {
             <SCurveChart/>
             </div>
             <div className='space-y-3 flex flex-col'>
+            <NCRChart/>
+            </div>
+            <div className='space-y-3 flex flex-col col-span-2'>
             <ChartPie/>
             </div>
-        </div>
-        <div className='grid md:grid-cols-2 gap-10 mt-3'>
-            <LongLeadTable/>
         </div>
         <div className='grid md:grid-cols-2 gap-10 mt-3'>
             <div className='space-y-3 flex flex-col'>
             <ProductivityCharts/>
             <ThreeBarChart data={ConcretePlannedVsActual} label='Comulative Concrete Actual Vs Planned' color='#ABAC2A'/>
-            <ThreeBarChart data={NCRTable} label='Comulative Non Complaince Report (NCR)' color='#9A4444'/>
+            {/* <ThreeBarChart data={NCRTable} label='Comulative Non Complaince Report (NCR)' color='#9A4444'/> */}
             </div>
             <div className='space-y-3 flex flex-col'>
             <ManpowerchartCollection/>
             <ComposedCharts />
             </div>
+        </div>
+        <div className='grid md:grid-cols-2 gap-10 mt-3'>
+            <LongLeadTable/>
         </div>
     </div>
   );
