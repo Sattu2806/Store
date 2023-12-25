@@ -70,6 +70,7 @@ const UploadManpowerData= (props: Props) => {
         parsedJsonContent.map(async (data: any) => {
           try {
             const response = await axios.post('/api/uploadmapowerdata', {
+                group:data.Group,
                 category:data.Category,
                 Trade:data.Trade,
                 Year:data.Year,

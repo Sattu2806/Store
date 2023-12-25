@@ -4,20 +4,23 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
     const searchParams = new URLSearchParams(request.url.split('?')[1]);
     const Category = searchParams.get('Category');
+    const group = searchParams.get('group')
     console.log(Category)
 
     if(!Category){
         return NextResponse.json([])
     }
 
-    if(Category === 'All'){
-        const response = await prisma.manpowerData.findMany({})
+    if(Category === 'All' || !group){
+        const response = await prisma.manpowerData.findMany({
+        })
         return NextResponse.json(response)
     }
     try {
         const bymonthmanpower = await prisma.manpowerData.findMany({
             where:{
-                category: Category
+                category: Category,
+                Group:group
             }
         })
         return NextResponse.json(bymonthmanpower)

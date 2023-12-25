@@ -31,7 +31,7 @@ const GroupForm = (props: Props) => {
         resolver: zodResolver(GroupSchema),
         defaultValues: {
         },
-      })
+    })
       async function onSubmit (values: z.infer<typeof GroupSchema>) {
         setisLoading(true)
         console.log(values)

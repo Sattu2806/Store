@@ -19,6 +19,7 @@ import { useQuery } from 'react-query'
 
 
 type Props = {
+    selectedGroup: string | null;
     selectedOption: string | null;
     setSelectedOption: (value: string) => void;
     opendialogue: boolean;
@@ -26,6 +27,7 @@ type Props = {
 };
 
 const PiechartTableData= ({
+    selectedGroup,
     selectedOption,
     setSelectedOption,
     opendialogue,
@@ -35,7 +37,8 @@ const PiechartTableData= ({
         queryKey:'manpowerdata',
         queryFn: ()=> axios.get('/api/manpowerdatachart', {
             params:{
-                Category:selectedOption
+                Category:selectedOption,
+                group:selectedGroup
             }
         }).then((res) => res.data),
         staleTime:60 * 1000,
@@ -52,7 +55,9 @@ const PiechartTableData= ({
 
     useEffect(() => {
         refetchmanpowerapiData()
-    },[selectedOption])
+    },[selectedOption, setSelectedOption, selectedGroup])
+    
+    console.log(selectedGroup)
 
  
   return (
@@ -74,6 +79,7 @@ const PiechartTableData= ({
                 <Table className='mt-5'>
                 <TableHeader className='w-full sticky top-0 bg-white'>
                   <TableRow>
+                    <TableHead className='min-w-[80px]'>Group</TableHead>
                     <TableHead className='min-w-[80px]'>Category</TableHead>
                     <TableHead className='min-w-[250px]'>Trade</TableHead>
                     {uniqueYearMonthPairs?.map((month, index) => (
@@ -87,6 +93,7 @@ const PiechartTableData= ({
                   {manpowerapiData &&
                     uniqueCategoryTradePairs?.map((data, index1) => (
                       <TableRow  className={`${index1%2 === 1 ? "bg-gray-50" : ""}`} key={index1}>
+                        <TableCell>{selectedGroup}</TableCell>
                         <TableCell>{data.split('-')[0]}</TableCell>
                         <TableCell>{data.split('-')[1]}</TableCell>
                         {uniqueYearMonthPairs?.map((month, index) => {
@@ -103,6 +110,7 @@ const PiechartTableData= ({
                 <TableFooter>
                     <TableRow>
                         <TableCell className='font-semibold'>Total</TableCell>
+                        <TableCell></TableCell>
                         <TableCell></TableCell>
                         {uniqueYearMonthPairs?.map((month, index) => {
                             const matchingData = manpowerapiData.filter((item) => `${item.Month}-${item.Year}` === month);

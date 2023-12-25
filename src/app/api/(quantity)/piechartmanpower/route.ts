@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
     const searchParams = new URLSearchParams(request.url.split('?')[1]);
     const Date = searchParams.get('Date');
+    const group = searchParams.get('group')
     console.log(Date)
 
     if(!Date){
@@ -21,7 +22,8 @@ export async function GET(request: Request) {
             },
             where:{
                 Month:month,
-                Year:parseInt(year)
+                Year:parseInt(year),
+                Group:group
             }
         })
         return NextResponse.json(bymonthmanpower)

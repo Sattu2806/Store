@@ -33,6 +33,7 @@ model MonthlyData {
 
 model ManpowerData {
   id     Int    @id @default(autoincrement())
+  Group   String?
   category String
   Trade   String
   Year    Int

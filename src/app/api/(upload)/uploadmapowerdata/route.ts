@@ -15,12 +15,13 @@ export async function GET(request: Request) {
 
 export async function POST(request:NextRequest, response:NextResponse){
     const body = await request.json()
-    const { category,Trade,Year,Month,Nos} = body
+    const { category,Trade,Year,Month,Nos,group} = body
     console.log(body)
 
     try {
         const dailyQuantity = await prisma.manpowerData.create({
             data:{
+                Group:group,
                 category,
                 Trade,
                 Year,

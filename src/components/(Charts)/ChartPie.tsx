@@ -38,6 +38,7 @@ const monthsArray = [
 
 const ChartPie = (props: Props) => {
   const [selectedName, setSelectedName] = useState<string | null>(null);
+  const [SelectedGroup, setSelectedGroup] = useState<string | null > (null)
   const [opendialogue, setopenDialogue] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState<string>(`${monthsArray[new Date().getMonth()]}-${new Date().getFullYear()}`)
   
@@ -46,11 +47,23 @@ const ChartPie = (props: Props) => {
     setSelectedName(entry.name);
 };
 
-  const {data: piemanpowerapiData = [], error: piemanpowerapiDataError, isLoading: piemanpowerapiDataLoading, refetch:refetchpiemanpowerapiData} = useQuery<CategoryCount[]>({
-    queryKey:'piemanpowerdata',
+  const {data: piemanpowerapiDataPlan = [], error: piemanpowerapiDataErrorPlan, isLoading: piemanpowerapiDataLoadingPlan, refetch:refetchpiemanpowerapiDataPlan} = useQuery<CategoryCount[]>({
+    queryKey:'piemanpowerdataPlan',
     queryFn: ()=> axios.get('/api/piechartmanpower', {
         params:{
-            Date:selectedMonth
+            Date:selectedMonth,
+            group:'Plan'
+        }
+    }).then((res) => res.data),
+    staleTime:60 * 1000,
+    retry:3,
+  })
+  const {data: piemanpowerapiData = [], error: piemanpowerapiDataError, isLoading: piemanpowerapiDataLoading, refetch:refetchpiemanpowerapiData} = useQuery<CategoryCount[]>({
+    queryKey:'piemanpowerdataActual',
+    queryFn: ()=> axios.get('/api/piechartmanpower', {
+        params:{
+            Date:selectedMonth,
+            group:'Actual'
         }
     }).then((res) => res.data),
     staleTime:60 * 1000,
@@ -58,10 +71,10 @@ const ChartPie = (props: Props) => {
   })
 
   const {data: manpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<ManpowerData[]>({
-    queryKey:'manpowerdata1',
+    queryKey:'manpowerdatapie',
     queryFn: ()=> axios.get('/api/manpowerdatachart', {
         params:{
-            Category:'All'
+            Category:'All',
         }
     }).then((res) => res.data),
     staleTime:60 * 1000,
@@ -72,9 +85,16 @@ const ChartPie = (props: Props) => {
 
   useEffect(() => {
     refetchpiemanpowerapiData()
+    refetchpiemanpowerapiDataPlan()
   },[selectedMonth])
 
-  const piedata = piemanpowerapiData.map((item) => {
+  const piedataPlan = piemanpowerapiDataPlan.map((item) => {
+    return{
+      name:item.category,
+      total:item._sum.Nos
+    }
+  })
+  const piedataActual = piemanpowerapiData.map((item) => {
     return{
       name:item.category,
       total:item._sum.Nos
@@ -84,19 +104,41 @@ const ChartPie = (props: Props) => {
 
 
 
+
   return (
     <div >
       <Card className=" relative py-3">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-between gap-10">
         <PieChart width={800} height={430} margin={{top:0, bottom:0}}>
           <Pie
-            data={piedata}
+            data={piedataPlan}
             innerRadius={90}
             outerRadius={180}
             fill="#8884d8"
             paddingAngle={5}
             dataKey="total"
-            onClick={(entry, index) => {handleCellClick(entry, index); setopenDialogue(true)}}
+            onClick={(entry, index) => {handleCellClick(entry, index); setopenDialogue(true); setSelectedGroup('Plan')}}
+            className="border-none outline-none"
+          >
+            {data.map((entry, index) => {
+              return(
+                <Cell  className="cursor-pointer outline-none" key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              )
+            })}
+            <LabelList fill="#fff" className="text-2xl" dataKey='total' />
+            <LabelList fill="#333"  className="text-2xl border-none stroke-none" dataKey='name' position='outside'  />
+            <Tooltip/>
+          </Pie>
+        </PieChart>
+        <PieChart width={800} height={430} margin={{top:0, bottom:0}}>
+          <Pie
+            data={piedataActual}
+            innerRadius={90}
+            outerRadius={180}
+            fill="#8884d8"
+            paddingAngle={5}
+            dataKey="total"
+            onClick={(entry, index) => {handleCellClick(entry, index); setopenDialogue(true); setSelectedGroup('Actual')}}
             className="border-none outline-none"
           >
             {data.map((entry, index) => {
@@ -110,7 +152,8 @@ const ChartPie = (props: Props) => {
           </Pie>
         </PieChart>
         </div>
-        <p className="absolute bottom-3 left-14 font-semibold">Available Resources (Direct / Indirect / Equipment) for {selectedMonth}</p>
+        <p className="absolute bottom-3 left-14 font-semibold"> Planned Available Resources (Direct / Indirect / Equipment) for {selectedMonth}</p>
+        <p className="absolute bottom-3 right-5 font-semibold"> Actual Available Resources (Direct / Indirect / Equipment) for {selectedMonth}</p>
         <div className="absolute top-5 right-5 ">
         <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(value)}>
               <SelectTrigger className="w-[180px] border-black">
@@ -124,7 +167,7 @@ const ChartPie = (props: Props) => {
         </Select>
         </div>
       </Card>
-      <PiechartTableData  selectedOption={selectedName} setSelectedOption={setSelectedName} opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
+      <PiechartTableData selectedGroup={SelectedGroup}   selectedOption={selectedName} setSelectedOption={setSelectedName} opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
     </div>
   )
 }
