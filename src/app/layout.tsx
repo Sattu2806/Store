@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '@/app/Navbar'
 import { Toaster } from "@/components/ui/toaster"
 import QueryClientProvider from './QueryClientProvider'
+import Provider from '@/components/Provider'
 
 
 
@@ -22,11 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Provider>
           <QueryClientProvider>
           <Toaster/>
           <Navbar/>
             {children}
           </QueryClientProvider>
+        </Provider>
         </body>
     </html>
   )

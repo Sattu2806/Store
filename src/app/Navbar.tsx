@@ -13,16 +13,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
+import { signOut, useSession } from 'next-auth/react'
 
 
 type Props = {}
 
 const Navbar = (props: Props) => {
+  const {data: Session, status} = useSession()
   const pathname = usePathname()
   return (
     <div>
-        <div className='py-4 max-w-[1280px] mx-auto grid grid-cols-2 gap-10 px-3'>
-          <div className='flex items-center space-x-5'>
+        <div className='py-4 max-w-[1280px] mx-auto px-3'>
+          <div className='flex items-center justify-between space-x-5 w-full'>
+            <div className='flex items-center justify-between space-x-5'>
             <Link href='/' className='font-medium hover:opacity-60'>Home</Link>
             <Link href='/workaccordian' className='font-medium hover:opacity-60'>Accordian</Link>
             {/* <Link href='/categories' className='font-medium hover:opacity-60'>Categories</Link>
@@ -74,6 +77,13 @@ const Navbar = (props: Props) => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+            </div>
+            {Session && (
+            <div className='flex items-center justify-between space-x-5'>
+              <p className='font-medium'>{Session?.user?.name}</p>
+              <Button onClick={() => signOut()} variant='destructive' className='text-white'>SignOut</Button>
+            </div>
+            )}
           </div>
         </div>
         <Separator/>
