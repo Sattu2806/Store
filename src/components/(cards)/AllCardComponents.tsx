@@ -43,7 +43,11 @@ const AllCardComponents = (props: Props) => {
         <div onClick={() => setopenDialogue({...opendialogue, concreteQty: true})}>
             <CardComponent total={total} label='Concrete' unit = {<>M<sup>3</sup></>} />
         </div>
+
+        
         <CardDialogue opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
+
+        
     </div>
   )
 }

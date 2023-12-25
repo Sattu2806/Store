@@ -157,7 +157,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
           debouncedUpdateQty(newValue);
         };
         return (
-            <div>
+            <div className="text-center">
               <input
                 className="w-[60px]"
                 value={value}
@@ -177,7 +177,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     },
     cell:({row}) => {
         return (
-            <div>{row.original.formWorkQty.toFixed(1)}</div>
+            <div className="text-center">{row.original.formWorkQty.toFixed(1)}</div>
         )
     }
   },
@@ -191,7 +191,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     },
     cell:({row}) => {
         return (
-            <div>{row.original.rebarQty.toFixed(1)}</div>
+            <div className="text-center">{row.original.rebarQty.toFixed(1)}</div>
         )
     }
   },
@@ -205,7 +205,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     },
     cell:({row}) => {
         return (
-            <div>{row.original.concreteQty.toFixed(1)}</div>
+            <div className="text-center">{row.original.concreteQty.toFixed(1)}</div>
         )
     }
   },
@@ -217,7 +217,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     },
     header: ({ column }) => {
         return (
-          <p>WeekNumber 
+          <p>Week
           </p>
         )
     },
@@ -231,7 +231,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     accessorKey: "MonthName",
     header: ({ column }) => {
         return (
-          <p>MonthName
+          <p>Month
           </p>
         )
     },
@@ -243,6 +243,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
   },
   {
     id: "actions",
+    header:'Actions',
     cell: ({ row }) => {
       const image = row.original
       const [openDialogue, setOpenDialogue] = useState<boolean>(false)
