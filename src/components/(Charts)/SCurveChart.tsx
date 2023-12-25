@@ -17,8 +17,8 @@ const SCurveChart = (props: Props) => {
   const currentMonthIndex = new Date().getMonth();
   const currentMonth = monthsArray[currentMonthIndex];
 
-  let cumulativeActual = 0;
-  let cumulativePlanned = 0;
+  let cumulativeActual = 0
+  let cumulativePlanned = 0
 
   const dataWithCumulative = sCurveData.map((entry, index) => {
     cumulativeActual += entry.actual;

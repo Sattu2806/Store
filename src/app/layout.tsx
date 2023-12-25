@@ -5,6 +5,8 @@ import Navbar from '@/app/Navbar'
 import { Toaster } from "@/components/ui/toaster"
 import QueryClientProvider from './QueryClientProvider'
 import Provider from '@/components/Provider'
+import { getServerSession } from 'next-auth'
+import { options } from './api/auth/[...nextauth]/options'
 
 
 
@@ -20,6 +22,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const Session = getServerSession(options)
   return (
     <html lang="en">
       <body className={inter.className}>
