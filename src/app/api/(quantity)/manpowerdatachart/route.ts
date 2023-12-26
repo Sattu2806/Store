@@ -11,8 +11,11 @@ export async function GET(request: Request) {
         return NextResponse.json([])
     }
 
-    if(Category === 'All' || !group){
+    if(Category === 'All' && group){
         const response = await prisma.manpowerData.findMany({
+            where:{
+                Group:group
+            }
         })
         return NextResponse.json(response)
     }

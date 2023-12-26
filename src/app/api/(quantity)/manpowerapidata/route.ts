@@ -15,4 +15,11 @@ export async function GET(request: Request) {
     console.error(error);
     return NextResponse.json({ message: 'Internal Server Error' });
   }
+
+  // try {
+  //   const deleteall = await prisma.manpowerData.deleteMany()
+  //   return NextResponse.json('All data deleetd successfully');
+  // } catch (error) {
+  //   return NextResponse.error()
+  // }
 }

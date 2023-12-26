@@ -10,13 +10,15 @@ import ComposedCharts from '../../../components/(Charts)/ComposedCharts';
 import { NCRTable, ConcretePlannedVsActual } from '@/lib/data/formdata';
 import ThreeBarChart from '../../../components/(Charts)/ThreeBarChart';
 import DashboardSkeleton from './DashboardSkeleton';
-import ChartPie from '../../../components/(Charts)/ChartPie';
+import ChartPie from '../../../components/(Charts)/ChartPieActual';
 import ProductivityCharts from '../../../components/(Charts)/ProductivityCharts';
 import ManpowerchartCollection from '../../../components/(Charts)/ManpowerchartCollection';
 import SCurveChart from '../../../components/(Charts)/SCurveChart';
 import LongLeadTable from '../../../components/(Tables)/LongLeadTable';
 import AllCardComponents from '../../../components/(cards)/AllCardComponents';
 import NCRChart from '@/components/(Charts)/NCRChart';
+import ChartPiePlan from '@/components/(Charts)/ChartPiePlan';
+import ChartPieActual from '../../../components/(Charts)/ChartPieActual';
 
 type Props = {
 
@@ -49,8 +51,11 @@ const Dashboard = (props:Props) => {
             <div className='space-y-3 flex flex-col'>
             <NCRChart/>
             </div>
-            <div className='space-y-3 flex flex-col col-span-2'>
-            <ChartPie/>
+            <div className='space-y-3 flex flex-col '>
+            <ChartPieActual/>
+            </div>
+            <div className='space-y-3 flex flex-col '>
+            <ChartPiePlan/>
             </div>
         </div>
         <div className='grid md:grid-cols-2 gap-10 mt-3'>

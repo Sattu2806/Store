@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { NCRTable } from '@/lib/data/formdata';
 
 type Props = {}
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
+const COLORS = ["#0088FE", "#00C49F", "#00C49F"];
 
 const NCRChart = (props: Props) => {
     const data = NCRTable
