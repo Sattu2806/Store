@@ -1,12 +1,12 @@
 import React from 'react'
-import UploadTrade from '../upload/UploadTrade'
+import Upload from './Upload'
 
 type Props = {}
 
 const page = (props: Props) => {
   return (
     <div>
-        <UploadTrade/>
+        <Upload/>
     </div>
   )
 }

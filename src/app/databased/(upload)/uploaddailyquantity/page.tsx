@@ -1,5 +1,5 @@
 import React from 'react'
-import UploadDailyQuantityData from './UploadDailyQunatity'
+import UploadDailyQuantityData from '../upload/UploadDailyQunatity'
 
 type Props = {}
 

@@ -1,14 +1,8 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import {FiUpload} from "react-icons/fi"
 import { useToast } from "@/components/ui/use-toast"
-import { Card, CardContent, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import CodeBlock from '@/components/codeblock';
-import { Progress } from "@/components/ui/progress"
+import FileUploadComponent from './CommonUpload';
 
 
 
@@ -88,7 +82,7 @@ const UploadProjectData = (props: Props) => {
       await Promise.all(
         parsedJsonContent.map(async (data: any) => {
           try {
-            const response = await axios.post('/api/uploadproject', {
+            const response = await axios.post('/api/upload', {
                 Discipline: data.Discipline,
                 Area: data.Area,
                 Date: data.Date,
@@ -98,7 +92,14 @@ const UploadProjectData = (props: Props) => {
                 Concrete: data.Concrete,
                 WeekNumber: data.WeekNumber,
                 MonthName: data.MonthName,
-            });
+            },
+            {
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Type':'Project'
+              },
+            } 
+            );
 
             uploadeddata++;
             setUploadProgress((uploadeddata / totalData) * 100);
@@ -138,50 +139,7 @@ const UploadProjectData = (props: Props) => {
     }
   }, [Error]);
   return (
-    <div className='h-[200px] relative'>
-      <div className='mt-2'>
-      <Input
-        className='cursor-pointer hidden'
-        type="file"
-        name="jsonFile"
-        id="jsonFileInput"
-        onChange={handleFileChange}
-        accept=".json"
-      />
-      {startUploading === true && (
-        <div className=''>
-          <Progress className='w-1/2 mx-auto mt-2' value={uploadProgress} />
-        </div>
-        )}
-      {!jsonContent && (
-        <label
-            className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] px-4 py-3 flex items-center justify-between space-x-2 text-[14px] border-neutral-800 border-[1px] text-neutral-800 font-medium rounded-lg cursor-pointer"
-            htmlFor="jsonFileInput"
-        >
-            <span>
-            Upload Project Data
-            </span>
-            <FiUpload/>
-        </label>
-      )}
-      {jsonContent &&  (
-        <Button size='lg' onClick={PostData}>
-          Add Data
-        </Button>
-      )}
-      <div>
-        {jsonContent !== null && (
-          <Card>
-            <CardContent>
-                <CardDescription>
-                    <CodeBlock code={jsonContent} language="json" />
-                </CardDescription>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
-    </div>
+    <FileUploadComponent label='Project Data' PostData={PostData} handleFileChange={handleFileChange} jsonContent={jsonContent} startUploading={startUploading} uploadProgress={uploadProgress} />
   );
 };
 

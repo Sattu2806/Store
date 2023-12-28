@@ -1,5 +1,5 @@
 import React from 'react'
-import UploadProjectData from './UploadProject'
+import UploadProjectData from '../upload/UploadProject'
 
 type Props = {}
 

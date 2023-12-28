@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/prismadb";
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   const body = await request.json();
-  const { id, excavationQty, formWorkQty, rebarQty, concreteQty } = body;
+  const { id, excavationQty, totalFoundations, rebarQty, concreteQty } = body;
 
   try {
-    const existingDailyQuantity = await prisma.dailyQuantity.findUnique({
+    const existingTotalQuantity = await prisma.totalQuantity.findUnique({
       where: {
         id,
       },
     });
 
-    if (existingDailyQuantity) {
+    if (existingTotalQuantity) {
       const updateData: {
         excavationQty?: number;
-        formWorkQty?: number;
+        totalFoundations?: number;
         rebarQty?: number;
         concreteQty?: number;
       } = {};
@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
         updateData.excavationQty = excavationQty;
       }
 
-      if (formWorkQty !== null) {
-        updateData.formWorkQty = formWorkQty;
+      if (totalFoundations !== null) {
+        updateData.totalFoundations = totalFoundations
       }
 
       if (rebarQty !== null) {
@@ -37,15 +37,15 @@ export async function POST(request: NextRequest) {
       }
 
       if (Object.keys(updateData).length > 0) {
-        const updatedDailyQuantity = await prisma.dailyQuantity.update({
+        const updatedTotalQuantity = await prisma.totalQuantity.update({
           where: { id: id },
           data: updateData,
         });
 
-        return NextResponse.json(updatedDailyQuantity, { status: 200 });
+        return NextResponse.json(updatedTotalQuantity, { status: 200 });
       } else {
         return NextResponse.json(
-          { message: "No fields to update", existingDailyQuantity },
+          { message: "No fields to update", existingTotalQuantity },
           { status: 200 }
         );
       }
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Record not found" }, { status: 404 });
     }
   } catch (error) {
-    console.error("Error updating dailyquantity:", error);
+    console.error("Error updating totalquantity:", error);
     return NextResponse.json(
       { error: "Internal Server Error", details: error },
       { status: 500 }

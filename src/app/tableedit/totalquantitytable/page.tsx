@@ -1,12 +1,13 @@
 import React from 'react'
-import UploadTrade from '../upload/UploadTrade'
+import { DataTable } from './DataTable'
+import TotalDataTable from './TotalTable'
 
 type Props = {}
 
 const page = (props: Props) => {
   return (
     <div>
-        <UploadTrade/>
+        <TotalDataTable/>
     </div>
   )
 }

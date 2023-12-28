@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import axios from "axios"
 import { useQuery } from "react-query"
-import React, { useEffect, useState } from "react"
-import { Category, DailyQuantity, Group } from "@prisma/client"
+import { useState } from "react"
+import { Category, DailyQuantity, Group, TotalQuantity } from "@prisma/client"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +33,7 @@ import debounce from "lodash/debounce";
 
 
 
-export const columns: ColumnDef<DailyQuantity>[] = [
+export const columns: ColumnDef<TotalQuantity>[] = [
     {
     id: "select",
         header: ({ table }) => (
@@ -71,7 +71,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
           retry:3,
         })
         return(
-          <div>{(groupData?.find((item) => item.id === row.original.groupId))?.name}{row.original.groupId}</div>
+          <div>{(groupData?.find((item) => item.id === row.original.groupId))?.name}</div>
         )
     }
   },
@@ -101,20 +101,21 @@ export const columns: ColumnDef<DailyQuantity>[] = [
         retry:3,
       })
       return(
-        <div>{(categoryData?.find((item) => item.id === row.original.categoryId))?.name}{row.original.categoryId}</div>
+        <div>{(categoryData?.find((item) => item.id === row.original.categoryId))?.name}</div>
       )
     }
   },
   {
-    accessorKey: "date",
+    accessorKey: "foundationType",
     header: ({ column }) => {
         return (
-          <p>Date</p>
+          <p>foundationType
+          </p>
         )
     },
     cell:({row}) => {
         return (
-            <div>{new Date(row.original.date).toLocaleDateString()}</div>
+            <div>{row.original.foundationType}</div>
         )
     }
   },
@@ -127,119 +128,19 @@ export const columns: ColumnDef<DailyQuantity>[] = [
         )
     },
     cell:({row}) => {
-        const initialValue = row.original.excavationQty
-        const [value, setValue] = useState(initialValue.toString())
-        const {toast} = useToast()
-
-        const UpdateQty = async (newValue:string) => {
-          try {
-            const resposne = await axios.patch('/api/dailytable',{
-              id:row.original.id,
-              excavationQty:parseFloat(newValue)
-            })
-            console.log(resposne.data)
-            toast({
-              description:`Excavation Quantity Updated Successfully, Value:  ${resposne.data.excavationQty}`
-            })
-          } catch (error) {
-            console.log('Error while updating data')
-            toast({
-              variant:'destructive',
-              description:`Could not update the data, Value:  ${newValue}`
-            })
-          }
-        }
-
-        const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const newValue = e.target.value;
-          setValue(newValue);
-          debouncedUpdateQty(newValue);
-        };
-        return (
-            <div className="text-center">
-              <input
-                className="w-[60px]"
-                value={value}
-                onChange={handleChange}
-              />
-            </div>
-        )
-    }
-  },
-  {
-    accessorKey: "formWorkQty",
-    header: ({ column }) => {
-        return (
-          <p>FormWork
-          </p>
-        )
-    },
-    cell:({row}) => {
-      const initialValue = row.original.formWorkQty
+      const initialValue = row.original.excavationQty
       const [value, setValue] = useState(initialValue.toString())
       const {toast} = useToast()
 
       const UpdateQty = async (newValue:string) => {
         try {
-          const resposne = await axios.patch('/api/dailytable',{
+          const resposne = await axios.patch('/api/totaltable',{
             id:row.original.id,
-            formWorkQty:parseFloat(newValue)
+            excavationQty:parseFloat(newValue)
           })
           console.log(resposne.data)
           toast({
-            description:`FormWork Quantity Updated Successfully, Value:  ${resposne.data.excavationQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
-        return (
-          <div className="text-center">
-            <input
-              className="w-[60px]"
-              value={value}
-              onChange={handleChange}
-            />
-        </div>
-        )
-    }
-  },
-  {
-    accessorKey: "rebarQty",
-    header: ({ column }) => {
-        return (
-          <p>Rebar
-          </p>
-        )
-    },
-    cell:({row}) => {
-      const initialValue = row.original.rebarQty
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/dailytable',{
-            id:row.original.id,
-            rebarQty:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Rebar Quantity Updated Successfully, Value:  ${resposne.data.rebarQty}`
+            description:`Excavation Quantity Updated Successfully, Value:  ${resposne.data.excavationQty}`
           })
         } catch (error) {
           console.log('Error while updating data')
@@ -269,6 +170,106 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     }
   },
   {
+    accessorKey: "totalFoundations",
+    header: ({ column }) => {
+        return (
+          <p>Total Foundations
+          </p>
+        )
+    },
+    cell:({row}) => {
+      const initialValue = row.original.totalFoundations
+      const [value, setValue] = useState(initialValue.toString())
+      const {toast} = useToast()
+
+      const UpdateQty = async (newValue:string) => {
+        try {
+          const resposne = await axios.patch('/api/totaltable',{
+            id:row.original.id,
+            totalFoundations:parseInt(newValue)
+          })
+          console.log(resposne.data)
+          toast({
+            description:`Total Foundation Quantity Updated Successfully, Value:  ${resposne.data.totalFoundations}`
+          })
+        } catch (error) {
+          console.log('Error while updating data')
+          toast({
+            variant:'destructive',
+            description:`Could not update the data, Value:  ${newValue}`
+          })
+        }
+      }
+
+      const debouncedUpdateQty = debounce(UpdateQty, 2000);
+
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setValue(newValue);
+        debouncedUpdateQty(newValue);
+      };
+        return (
+          <div className="text-center">
+          <input
+            className="w-[60px]"
+            value={value}
+            onChange={handleChange}
+          />
+      </div>
+        )
+    }
+  },
+  {
+    accessorKey: "rebarQty",
+    header: ({ column }) => {
+        return (
+          <p>Rebar
+          </p>
+        )
+    },
+    cell:({row}) => {
+      const initialValue = row.original.rebarQty
+      const [value, setValue] = useState(initialValue.toString())
+      const {toast} = useToast()
+
+      const UpdateQty = async (newValue:string) => {
+        try {
+          const resposne = await axios.patch('/api/totaltable',{
+            id:row.original.id,
+            rebarQty:parseFloat(newValue)
+          })
+          console.log(resposne.data)
+          toast({
+            description:`Rebar Quantity Updated Successfully, Value:  ${resposne.data.rebarQty}`
+          })
+        } catch (error) {
+          console.log('Error while updating data')
+          toast({
+            variant:'destructive',
+            description:`Could not update the data, Value:  ${newValue}`
+          })
+        }
+      }
+
+      const debouncedUpdateQty = debounce(UpdateQty, 2000);
+
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setValue(newValue);
+        debouncedUpdateQty(newValue);
+      };
+        return (
+          <div className="text-center">
+            <input
+              className="w-[60px]"
+              value={value}
+              onChange={handleChange}
+            />
+        </div>
+        )
+    }
+  },
+  {
     accessorKey: "concreteQty",
     header: ({ column }) => {
         return (
@@ -283,7 +284,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
 
       const UpdateQty = async (newValue:string) => {
         try {
-          const resposne = await axios.patch('/api/dailytable',{
+          const resposne = await axios.patch('/api/totaltable',{
             id:row.original.id,
             concreteQty:parseFloat(newValue)
           })
@@ -319,47 +320,13 @@ export const columns: ColumnDef<DailyQuantity>[] = [
     }
   },
   {
-    accessorKey: "WeekNumber",
-    id:"WeekNumber",
-    accessorFn: (originalRow) => {
-      return originalRow.WeekNumber.toString()
-    },
-    header: ({ column }) => {
-        return (
-          <p>Week
-          </p>
-        )
-    },
-    cell:({row}) => {
-        return (
-            <div>Week {row.original.WeekNumber}</div>
-        )
-    }
-  },
-  {
-    accessorKey: "MonthName",
-    header: ({ column }) => {
-        return (
-          <p>Month
-          </p>
-        )
-    },
-    cell:({row}) => {
-        return (
-            <div>{row.original.MonthName}</div>
-        )
-    }
-  },
-  {
     id: "actions",
-    header:'Actions',
     cell: ({ row }) => {
-      const image = row.original
       const [openDialogue, setOpenDialogue] = useState<boolean>(false)
       const {toast} = useToast()
       const DeleteImage = async () => {
         try {
-            const response = await axios.delete('/api/dailyquantity',{
+            const response = await axios.delete('/api/totalquantity',{
                 params:{
                     id:row.original.id
                 }
@@ -367,7 +334,6 @@ export const columns: ColumnDef<DailyQuantity>[] = [
             console.log(response)
             setOpenDialogue(false)
             toast({
-              variant:'destructive',
               description: "Data Deleted Successfully Successfully",
             })
         }catch{
@@ -390,7 +356,7 @@ export const columns: ColumnDef<DailyQuantity>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem> 
               <Button className="w-[120px]">
-                <Link href={`/databased/editdailyquantity/${row.original.id}`}>Edit</Link>
+                <Link href={`/databased/edittotalquantity/${row.original.id}`}>Edit</Link>
               </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>

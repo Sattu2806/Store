@@ -1,5 +1,5 @@
 import React from 'react'
-import UploadMonthlyData from './UploadMonthlyData'
+import UploadMonthlyData from '../upload/UploadMonthlyData'
 
 type Props = {}
 

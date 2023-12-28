@@ -1,5 +1,5 @@
 import React from 'react'
-import UploadTotalQuantity from './UploadTotalQuantity'
+import UploadTotalQuantity from '../upload/UploadTotalQuantity'
 
 type Props = {}
 

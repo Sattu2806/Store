@@ -1,58 +1,42 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import {FiUpload} from "react-icons/fi"
 import { useToast } from "@/components/ui/use-toast"
-import { Card, CardContent, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import CodeBlock from '@/components/codeblock';
+import FileUploadComponent from './CommonUpload';
+
 
 
 type Props = {};
 
-const UploadMonthlyData = (props: Props) => {
-  const jsonFileInputRef = useRef<HTMLInputElement | null>(null);
+const UploadTrade = (props: Props) => {
   const [jsonContent, setJsonContent] = useState<string | null>(null);
   const [startUploading, setStartUpload] = useState<boolean>(false)
   const [completeUploading, setCompleteUploading] = useState<boolean>(false)
-  const [base_url, setbase_url] = useState('')
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [Error,setError] = useState<boolean>(false)
-  const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    if (jsonFileInputRef.current) {
-      jsonFileInputRef.current.addEventListener('change', handleFileChange);
 
-      return () => {
-        jsonFileInputRef.current?.removeEventListener('change', handleFileChange);
-      };
-    }
-  }, []);
-
-  const handleFileChange = async (event: Event) => {
-    const target = event.target as HTMLInputElement;
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
     const file = target.files?.[0];
 
     if (file) {
       const fileContent = await file.text();
       try {
         const parsedData = JSON.parse(fileContent);
-        setJsonContent(JSON.stringify(parsedData, null, 2)); // Convert parsed data to a formatted JSON string
+        setJsonContent(JSON.stringify(parsedData, null, 2));
         console.log('Parsed JSON data:', parsedData);
       } catch (error) {
         console.error('Error parsing JSON file:', error);
         setJsonContent(null);
-        console.log(jsonContent)
-        setError(true)
+        console.log(jsonContent);
+        setError(true);
       }
     }
   };
 
-  const PostQuiz = async () => {
+  const PostData = async () => {
     try {
       if (!jsonContent) {
         toast({
@@ -79,11 +63,19 @@ const UploadMonthlyData = (props: Props) => {
       await Promise.all(
         parsedJsonContent.map(async (data: any) => {
           try {
-            const response = await axios.post('/api/uploadmonthlydata', {
-                Type:data.Type,
+            const response = await axios.post('/api/upload', {
+                Type:data.Trade,
+                Trade:data.Trade,
                 Month:data.Month,
                 Value:data.Value
-            });
+            },
+            {
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Type':'Trade'
+              },
+            } 
+            );
 
             uploadeddata++;
             setUploadProgress((uploadeddata / totalData) * 100);
@@ -123,46 +115,8 @@ const UploadMonthlyData = (props: Props) => {
     }
   }, [Error]);
   return (
-    <div className='h-[200px]'>
-      <div className='mt-2'>
-      <Input
-        className='cursor-pointer hidden'
-        type="file"
-        name="jsonFile"
-        id="jsonFileInput"
-        ref={jsonFileInputRef}
-        accept=".json"
-      />
-      {!jsonContent && (
-        <label
-            className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] px-4 py-3 flex items-center justify-between space-x-2 text-[14px] border-neutral-800 border-[1px] text-neutral-800 font-medium rounded-lg cursor-pointer"
-            htmlFor="jsonFileInput"
-        >
-            <span>
-            Upload Monthly Data
-            </span>
-            <FiUpload/>
-        </label>
-      )}
-      {jsonContent &&  (
-        <Button onClick={PostQuiz}>
-          Add Data
-        </Button>
-      )}
-      <div>
-        {jsonContent !== null && (
-          <Card>
-            <CardContent>
-                <CardDescription>
-                    <CodeBlock code={jsonContent} language="json" />
-                </CardDescription>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
-    </div>
+  <FileUploadComponent label='Trade Data' PostData={PostData} handleFileChange={handleFileChange} jsonContent={jsonContent} startUploading={startUploading} uploadProgress={uploadProgress} />
   );
 };
 
-export default UploadMonthlyData
+export default UploadTrade

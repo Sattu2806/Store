@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/prismadb";
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   const body = await request.json();
   const { id, excavationQty, formWorkQty, rebarQty, concreteQty } = body;
 

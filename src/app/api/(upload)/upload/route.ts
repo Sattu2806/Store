@@ -1,0 +1,95 @@
+import { NextResponse, NextRequest } from "next/server";
+import prisma from "@/app/prismadb"
+import { DailyQuantitySchema } from "@/ZodSchema/QuantitySchema";
+import { headers } from 'next/headers'
+import { DailyQuantity, ManpowerData, MonthlyData, Project, TotalQuantity, TradeData } from "@/lib/types";
+
+export async function GET(request: Request) {  
+    try {
+      const dailyQuantity = await prisma.dailyQuantity.findMany({
+      });
+      return NextResponse.json(dailyQuantity);
+    } catch (error) {
+      console.error('Error getting dailyQuantity data', error);
+      return NextResponse.error();
+    }
+}
+
+export async function POST(request:NextRequest, response:NextResponse){
+    const headersList = headers()
+    const Type = headersList.get('Type')
+    if(Type === 'Daily'){
+        try {
+            const body : DailyQuantity = await request.json()
+            const dailyQuantity = await prisma.dailyQuantity.create({
+                data:body
+            })
+            return NextResponse.json(dailyQuantity, {status:201})
+        } catch (error) {
+            console.log("Error while creating dailyQuantity data")
+            return NextResponse.error()
+        }
+    }
+    else if(Type === 'Total') {
+        try {
+            const body : TotalQuantity = await request.json()
+            const totalQuantity = await prisma.totalQuantity.create({
+                data:body
+            })
+            return NextResponse.json(totalQuantity, {status:201})
+        } catch (error) {
+            console.log("Error while creating totalQuantity data")
+            return NextResponse.error()
+        }
+    }
+    else if(Type === 'Manpower'){
+        try {
+            const body : ManpowerData = await request.json()
+            const ManpowerData = await prisma.manpowerData.create({
+                data:body
+            })
+            return NextResponse.json(ManpowerData, {status:201})
+        } catch (error) {
+            console.log("Error while creating Manpower data")
+            return NextResponse.error()
+        }
+    }
+    else if(Type === 'Trade'){
+        try {
+            const body : TradeData = await request.json()
+            const tradeData = await prisma.tradeData.create({
+                data:body
+            })
+            return NextResponse.json(tradeData, {status:201})
+        } catch (error) {
+            console.log("Error while creating trade data")
+            return NextResponse.error()
+        }
+    }
+    else if(Type === 'Monthly'){
+        try {
+            const body : MonthlyData = await request.json()
+            const monthlyData = await prisma.monthlyData.create({
+                data:body
+            })
+            return NextResponse.json(monthlyData, {status:201})
+        } catch (error) {
+            console.log("Error while creating monthly data")
+            return NextResponse.error()
+        }
+    }
+    else if(Type === 'Project'){
+        try {
+            const body : Project = await request.json()
+            const project = await prisma.project.create({
+                data:body
+            })
+            return NextResponse.json(project, {status:201})
+        } catch (error) {
+            console.log("Error while creating project data")
+            return NextResponse.error()
+        }
+    } else{
+        return NextResponse.json('Not Valid Upload')
+    }
+}

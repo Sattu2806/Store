@@ -92,3 +92,89 @@ id: number;
 name: string;
 Image: ImageT[];
 }
+
+
+// interfaces.ts
+
+export interface Project {
+  id: number;
+  Discipline: string;
+  Area: string;
+  Date: Date;
+  Excavation: number;
+  FormWork: number;
+  Rebar: number;
+  Concrete: number;
+  WeekNumber: number;
+  MonthName: string;
+}
+
+ export interface MonthlyData {
+  id: number;
+  Type: string;
+  Month: string;
+  Value: number;
+}
+
+export interface ManpowerData {
+  id: number;
+  Group?: string;
+  category: string;
+  Trade: string;
+  Year: number;
+  Month: string;
+  Nos: number;
+}
+
+export interface TradeData {
+  id: number;
+  Type: string;
+  Trade: string;
+  Month: string;
+  Value: number;
+}
+
+export interface Group {
+  id: number;
+  name: string;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  groupId: number;
+}
+
+export interface TotalQuantity {
+  id: number;
+  groupId: number;
+  categoryId: number;
+  foundationType: string;
+  totalFoundations: number;
+  excavationQty: number;
+  rebarQty: number;
+  concreteQty: number;
+}
+
+export interface DailyQuantity {
+  id: number;
+  groupId: number;
+  categoryId: number;
+  date: Date;
+  excavationQty: number;
+  formWorkQty: number;
+  rebarQty: number;
+  concreteQty: number;
+  WeekNumber: number;
+  MonthName: string;
+}
+
+export interface Image {
+  id: number;
+  url: string;
+  description: string;
+  slideActive: boolean;
+  groupId: number;
+}
+
+
