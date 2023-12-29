@@ -97,7 +97,6 @@ Image: ImageT[];
 // interfaces.ts
 
 export interface Project {
-  id: number;
   Discipline: string;
   Area: string;
   Date: Date;
@@ -110,14 +109,12 @@ export interface Project {
 }
 
  export interface MonthlyData {
-  id: number;
   Type: string;
   Month: string;
   Value: number;
 }
 
 export interface ManpowerData {
-  id: number;
   Group?: string;
   category: string;
   Trade: string;
@@ -127,7 +124,6 @@ export interface ManpowerData {
 }
 
 export interface TradeData {
-  id: number;
   Type: string;
   Trade: string;
   Month: string;
@@ -135,18 +131,15 @@ export interface TradeData {
 }
 
 export interface Group {
-  id: number;
   name: string;
 }
 
 export interface Category {
-  id: number;
   name: string;
   groupId: number;
 }
 
 export interface TotalQuantity {
-  id: number;
   groupId: number;
   categoryId: number;
   foundationType: string;
@@ -157,7 +150,6 @@ export interface TotalQuantity {
 }
 
 export interface DailyQuantity {
-  id: number;
   groupId: number;
   categoryId: number;
   date: Date;
@@ -170,7 +162,6 @@ export interface DailyQuantity {
 }
 
 export interface Image {
-  id: number;
   url: string;
   description: string;
   slideActive: boolean;
