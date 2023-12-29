@@ -132,7 +132,9 @@ const ManpowerCharts = ({ data, label, color }: Props) => {
                     </ComposedChart>
                 </ResponsiveContainer>
             </Card>
+            {opendialogue && (
                 <MnapowerTableData selectedOption={selectedOption} setSelectedOption={setSelectedOption} opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
+            )}
         </div>
     )
 }

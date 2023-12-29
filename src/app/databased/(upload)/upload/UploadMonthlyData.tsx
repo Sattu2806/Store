@@ -92,6 +92,8 @@ const UploadMonthlyData = (props: Props) => {
             } 
             );
 
+            console.log(response.data)
+
             uploadeddata++;
             setUploadProgress((uploadeddata / totalData) * 100);
             setJsonContent(null);

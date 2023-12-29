@@ -1,51 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/prismadb";
 
+
+export async function GET(request: Request) {  
+    try {  
+      const response = await prisma.dailyQuantity.findMany({
+      });
+      return NextResponse.json(response);
+    } catch (error) {
+      console.error("Error fetching weekly data:", error);
+      return NextResponse.error();
+    }
+  }
+  
+
 export async function PATCH(request: NextRequest) {
   const body = await request.json();
-  const { id, excavationQty, formWorkQty, rebarQty, concreteQty } = body;
+  const { id, Excavation, FormWork, Rebar, Concrete } = body;
 
   try {
-    const existingDailyQuantity = await prisma.dailyQuantity.findUnique({
+    const existingupdatedProject = await prisma.project.findUnique({
       where: {
         id,
       },
     });
 
-    if (existingDailyQuantity) {
+    if (existingupdatedProject) {
       const updateData: {
-        excavationQty?: number;
-        formWorkQty?: number;
-        rebarQty?: number;
-        concreteQty?: number;
+        Excavation?: number;
+        FormWork?: number;
+        Rebar?: number;
+        Concrete?: number;
       } = {};
 
-      if (excavationQty !== null) {
-        updateData.excavationQty = excavationQty;
+      if (Excavation !== null) {
+        updateData.Excavation = Excavation;
       }
 
-      if (formWorkQty !== null) {
-        updateData.formWorkQty = formWorkQty;
+      if (FormWork !== null) {
+        updateData.FormWork = FormWork;
       }
 
-      if (rebarQty !== null) {
-        updateData.rebarQty = rebarQty;
+      if (Rebar !== null) {
+        updateData.Rebar = Rebar;
       }
 
-      if (concreteQty !== null) {
-        updateData.concreteQty = concreteQty;
+      if (Concrete !== null) {
+        updateData.Concrete = Concrete;
       }
 
       if (Object.keys(updateData).length > 0) {
-        const updatedDailyQuantity = await prisma.dailyQuantity.update({
+        const updatedProject = await prisma.project.update({
           where: { id: id },
           data: updateData,
         });
 
-        return NextResponse.json(updatedDailyQuantity, { status: 200 });
+        return NextResponse.json(updatedProject, { status: 200 });
       } else {
         return NextResponse.json(
-          { message: "No fields to update", existingDailyQuantity },
+          { message: "No fields to update", existingupdatedProject },
           { status: 200 }
         );
       }
@@ -53,7 +66,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Record not found" }, { status: 404 });
     }
   } catch (error) {
-    console.error("Error updating dailyquantity:", error);
+    console.error("Error updating project data:", error);
     return NextResponse.json(
       { error: "Internal Server Error", details: error },
       { status: 500 }

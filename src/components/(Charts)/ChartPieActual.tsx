@@ -129,7 +129,9 @@ const ChartPieActual = (props: Props) => {
         </Select>
         </div>
       </Card>
+      {opendialogue && (
       <PiechartTableData selectedGroup={SelectedGroup}   selectedOption={selectedName} setSelectedOption={setSelectedName} opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
+      )}
     </div>
   )
 }

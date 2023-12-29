@@ -44,10 +44,9 @@ const AllCardComponents = (props: Props) => {
             <CardComponent total={total} label='Concrete' unit = {<>M<sup>3</sup></>} />
         </div>
 
-        
-        <CardDialogue opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
-
-        
+        {opendialogue && (
+            <CardDialogue opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
+        )}
     </div>
   )
 }

@@ -56,7 +56,9 @@ const SCurveChart = (props: Props) => {
             </div>
         </CardContent>
       </Card>
+      {opendialogue && (
       <ActualVsPallnedChart opendialogue={opendialogue} setopenDialogue={setopenDialogue} />
+      )}
     </div>
   );
 };

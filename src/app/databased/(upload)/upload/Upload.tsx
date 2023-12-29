@@ -36,30 +36,30 @@ const Upload = (props: Props) => {
     };
   return (
     <div className='max-w-[1280px] mx-auto my-4'>
-        <RadioGroup className='flex items-center space-x-5' value={selectedUpload} onValueChange={handleUploadTypeChange} defaultValue="option-one">
-        <div className="flex items-center space-x-2">
-            <RadioGroupItem value="project" id="project" />
-            <Label htmlFor="project">Project</Label>
+        <RadioGroup className='flex items-center space-x-5 ' value={selectedUpload} onValueChange={handleUploadTypeChange} defaultValue="option-one">
+        <div className="flex items-center space-x-2 ">
+            <RadioGroupItem  value="project" id="project" />
+            <Label htmlFor="project" className='text-xl'>Project</Label>
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="trade" id="trade" />
-            <Label htmlFor="trade">Trade</Label>
+            <Label htmlFor="trade" className='text-xl'>Trade</Label>
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="daily" id="daily" />
-            <Label htmlFor="daily">Daily</Label>
+            <Label htmlFor="daily" className='text-xl'>Daily</Label>
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="total" id="total" />
-            <Label htmlFor="total">Total</Label>
+            <Label htmlFor="total" className='text-xl'>Total</Label>
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="manpower" id="manpower" />
-            <Label htmlFor="manpower">Manpower</Label>
+            <Label htmlFor="manpower" className='text-xl'>Manpower</Label>
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="monthly" id="monthly" />
-            <Label htmlFor="monthly">Monthly</Label>
+            <Label htmlFor="monthly" className='text-xl'>Monthly</Label>
         </div>
         </RadioGroup>
         {renderSelectedComponent()}

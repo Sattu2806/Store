@@ -91,7 +91,9 @@ const Charts = ({data, label,color}: Props) => {
             </BarChart>
             </ResponsiveContainer>
         </Card>
+        {opendialogue && (
         <ProductivityTable selectedMonth={activeMonth} selectedOption={selectedOption} setSelectedOption={setSelectedOption} opendialogue={opendialogue} setopenDialogue={setopenDialogue}/>
+        )}
     </div>
   )
 }
