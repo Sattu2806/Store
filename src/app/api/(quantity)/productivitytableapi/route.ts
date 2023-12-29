@@ -30,7 +30,7 @@ export async function GET(request: Request) {
 
     console.log(selectFields, selectedMonth, Type);
 
-    const response = await prisma.dailyQuantity.findMany({
+    const response = await prisma.dailyProductivity.findMany({
       select: selectFields,
       where: {
         MonthName: selectedMonth ? selectedMonth : 'Jan',

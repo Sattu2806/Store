@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     }
 
     if(Category === 'All' && group){
-        const response = await prisma.manpowerData.findMany({
+        const response = await prisma.resourceData.findMany({
             where:{
                 Group:group
             }
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
         return NextResponse.json(response)
     }
     try {
-        const bymonthmanpower = await prisma.manpowerData.findMany({
+        const bymonthmanpower = await prisma.resourceData.findMany({
             where:{
                 category: Category,
                 Group:group

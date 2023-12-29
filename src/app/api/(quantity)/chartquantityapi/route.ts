@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    const formWorkData = await prisma.dailyQuantity.groupBy({
+    const formWorkData = await prisma.dailyProductivity.groupBy({
       by: ['MonthName'],
       _sum: {
         formWorkQty: true,
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       },
     });
 
-    const concreteData = await prisma.dailyQuantity.groupBy({
+    const concreteData = await prisma.dailyProductivity.groupBy({
       by: ['MonthName'],
       _sum: {
         concreteQty: true,
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
       },
     });
 
-    const excavationData = await prisma.dailyQuantity.groupBy({
+    const excavationData = await prisma.dailyProductivity.groupBy({
       by: ['MonthName'],
       _sum: {
         excavationQty: true,
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
       },
     });
     
-    const rebarData = await prisma.dailyQuantity.groupBy({
+    const rebarData = await prisma.dailyProductivity.groupBy({
       by: ['MonthName'],
       _sum: {
         rebarQty: true,

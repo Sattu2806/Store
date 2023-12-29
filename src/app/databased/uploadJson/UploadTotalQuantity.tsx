@@ -8,22 +8,13 @@ import FileUploadComponent from './CommonUpload';
 
 type Props = {};
 
-const UploadProjectData = (props: Props) => {
+const UploadTotalQuantity = (props: Props) => {
   const [jsonContent, setJsonContent] = useState<string | null>(null);
   const [startUploading, setStartUpload] = useState<boolean>(false)
   const [completeUploading, setCompleteUploading] = useState<boolean>(false)
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [Error,setError] = useState<boolean>(false)
   const { toast } = useToast()
-
-  const getISOWeek = (date: Date): number => {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() + 4 - (d.getDay() || 7));
-    const yearStart: Date = new Date(d.getFullYear(), 0, 1);
-    return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-  };
-
 
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,17 +25,7 @@ const UploadProjectData = (props: Props) => {
       const fileContent = await file.text();
       try {
         const parsedData = JSON.parse(fileContent);
-        // Add WeekNumber and MonthName to each data item
-        const processedData = parsedData.map((data: any) => {
-          const weekNumber = getISOWeek(new Date(data.Date));
-          const monthName = new Date(data.Date).toLocaleString('en', { month: 'short' });
-          return {
-            ...data,
-            WeekNumber: weekNumber,
-            MonthName: monthName,
-          };
-        });
-        setJsonContent(JSON.stringify(processedData, null, 2));
+        setJsonContent(JSON.stringify(parsedData, null, 2));
         console.log('Parsed JSON data:', parsedData);
       } catch (error) {
         console.error('Error parsing JSON file:', error);
@@ -82,21 +63,19 @@ const UploadProjectData = (props: Props) => {
       await Promise.all(
         parsedJsonContent.map(async (data: any) => {
           try {
-            const response = await axios.post('/api/upload', {
-                Discipline: data.Discipline,
-                Area: data.Area,
-                Date: data.Date,
-                Excavation: data.Excavation,
-                FormWork: data.FormWork,
-                Rebar: data.Rebar,
-                Concrete: data.Concrete,
-                WeekNumber: data.WeekNumber,
-                MonthName: data.MonthName,
+            const response = await axios.post('/api/uploadJson', {
+                groupId:data.groupId,
+                categoryId:data.categoryId,
+                foundationType:data.FoundationType,
+                totalFoundations: data.TotalFoundatios,
+                excavationQty: data.Excavation_Qty,
+                rebarQty: data.Rebar_Qty,
+                concreteQty: data.Concrete_Qty
             },
             {
               headers: {
                   'Content-Type': 'application/json',
-                  'Type':'Project'
+                  'Type':'Total'
               },
             } 
             );
@@ -139,8 +118,8 @@ const UploadProjectData = (props: Props) => {
     }
   }, [Error]);
   return (
-    <FileUploadComponent label='Project Data' PostData={PostData} handleFileChange={handleFileChange} jsonContent={jsonContent} startUploading={startUploading} uploadProgress={uploadProgress} />
+    <FileUploadComponent label='Total Data' PostData={PostData} handleFileChange={handleFileChange} jsonContent={jsonContent} startUploading={startUploading} uploadProgress={uploadProgress} />
   );
 };
 
-export default UploadProjectData
+export default UploadTotalQuantity

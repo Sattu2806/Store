@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    const totalquantitysum = await prisma.totalQuantity.aggregate({
+    const totalquantitysum = await prisma.totalScope.aggregate({
       _sum:{
         totalFoundations:true,
         concreteQty:true,
@@ -11,7 +11,7 @@ export async function GET(request: Request) {
         rebarQty:true
       },
     });
-    const dailyquantitysum = await prisma.dailyQuantity.aggregate({
+    const dailyquantitysum = await prisma.dailyProductivity.aggregate({
       _sum:{
         formWorkQty:true,
         concreteQty:true,

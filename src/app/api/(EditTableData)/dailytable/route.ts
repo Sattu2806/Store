@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/prismadb";
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   const body = await request.json();
   const { id, excavationQty, formWorkQty, rebarQty, concreteQty } = body;
 
   try {
-    const existingDailyQuantity = await prisma.dailyQuantity.findUnique({
+    const existingDailyQuantity = await prisma.dailyProductivity.findUnique({
       where: {
         id,
       },
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       }
 
       if (Object.keys(updateData).length > 0) {
-        const updatedDailyQuantity = await prisma.dailyQuantity.update({
+        const updatedDailyQuantity = await prisma.dailyProductivity.update({
           where: { id: id },
           data: updateData,
         });

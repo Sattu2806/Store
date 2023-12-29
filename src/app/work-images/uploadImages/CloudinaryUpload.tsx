@@ -70,7 +70,7 @@ const UploadForm = () => {
         const groupId = selectedOption && selectedOption.value ? parseInt(selectedOption.value) : undefined;
 
         if (groupId !== undefined && !isNaN(groupId)) {
-        const adddata = await axios.post('/api/fileupload', {
+        const adddata = await axios.post('/api/uploadImages', {
             url: response.data.secure_url,
             description,
             groupId,

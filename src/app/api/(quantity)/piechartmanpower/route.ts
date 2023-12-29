@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const year = Date.split('-')[1]
 
     try {
-        const bymonthmanpower = await prisma.manpowerData.groupBy({
+        const bymonthmanpower = await prisma.resourceData.groupBy({
             by:['category'],
             _sum: {
                 Nos:true

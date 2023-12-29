@@ -78,7 +78,7 @@ model MonthlyData {
   Value  Int
 }
 
-model ManpowerData {
+model resourceData {
   id     Int    @id @default(autoincrement())
   Group   String?
   category String
@@ -101,8 +101,8 @@ model Group {
   id             Int       @id @default(autoincrement())
   name           String    @unique
   Category       Category[]
-  totalQuantities TotalQuantity[]
-  dailyQuantities DailyQuantity[]
+  TotalScope TotalScope[]
+  DailyProductivity DailyProductivity[]
 }
 
 model Category {
@@ -110,11 +110,11 @@ model Category {
   name           String    @unique
   groupId        Int
   group  Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  totalQuantities TotalQuantity[]
-  dailyQuantities DailyQuantity[]
+  TotalScope TotalScope[]
+  DailyProductivity DailyProductivity[]
 }
 
-model TotalQuantity {
+model TotalScope {
   id             Int      @id @default(autoincrement())
   groupId        Int
   categoryId     Int
@@ -129,7 +129,7 @@ model TotalQuantity {
 
 }
 
-model DailyQuantity {
+model DailyProductivity {
   id             Int      @id @default(autoincrement())
   groupId        Int
   categoryId     Int

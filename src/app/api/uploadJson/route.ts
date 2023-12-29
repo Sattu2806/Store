@@ -6,7 +6,7 @@ import { DailyQuantity, ManpowerData, MonthlyData, Project, TotalQuantity, Trade
 
 export async function GET(request: Request) {  
     try {
-      const dailyQuantity = await prisma.dailyQuantity.findMany({
+      const dailyQuantity = await prisma.dailyProductivity.findMany({
       });
       return NextResponse.json(dailyQuantity);
     } catch (error) {
@@ -21,7 +21,7 @@ export async function POST(request:NextRequest, response:NextResponse){
     if(Type === 'Daily'){
         try {
             const body : DailyQuantity = await request.json()
-            const dailyQuantity = await prisma.dailyQuantity.create({
+            const dailyQuantity = await prisma.dailyProductivity.create({
                 data:body
             })
             return NextResponse.json(dailyQuantity, {status:201})
@@ -33,7 +33,7 @@ export async function POST(request:NextRequest, response:NextResponse){
     else if(Type === 'Total') {
         try {
             const body : TotalQuantity = await request.json()
-            const totalQuantity = await prisma.totalQuantity.create({
+            const totalQuantity = await prisma.totalScope.create({
                 data:body
             })
             return NextResponse.json(totalQuantity, {status:201})
@@ -46,7 +46,7 @@ export async function POST(request:NextRequest, response:NextResponse){
         try {
             const body : ManpowerData = await request.json()
             console.log(body)
-            const ManpowerData = await prisma.manpowerData.create({
+            const ManpowerData = await prisma.resourceData.create({
                 data:body
             })
             return NextResponse.json(ManpowerData, {status:201})

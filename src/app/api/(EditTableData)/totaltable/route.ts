@@ -6,7 +6,7 @@ export async function PATCH(request: NextRequest) {
   const { id, excavationQty, totalFoundations, rebarQty, concreteQty } = body;
 
   try {
-    const existingTotalQuantity = await prisma.totalQuantity.findUnique({
+    const existingTotalQuantity = await prisma.totalScope.findUnique({
       where: {
         id,
       },
@@ -37,7 +37,7 @@ export async function PATCH(request: NextRequest) {
       }
 
       if (Object.keys(updateData).length > 0) {
-        const updatedTotalQuantity = await prisma.totalQuantity.update({
+        const updatedTotalQuantity = await prisma.totalScope.update({
           where: { id: id },
           data: updateData,
         });

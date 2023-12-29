@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    const ManpowerApiData = await prisma.manpowerData.groupBy({
+    const ManpowerApiData = await prisma.resourceData.groupBy({
         by:['Month', 'Year', 'category'],
           _sum:{
             Nos:true

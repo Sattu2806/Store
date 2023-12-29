@@ -5,7 +5,7 @@ import React from 'react'
 import { useQuery } from 'react-query'
 import { DataTable } from './DataTable'
 import { columns } from "./Cloumns"
-import TableSkeleton from '@/app/databased/(forms)/TableSkeleton'
+import TableSkeleton from '@/app/databased/(dataEntryRoutes)/TableSkeleton'
 
 type Props = {}
 

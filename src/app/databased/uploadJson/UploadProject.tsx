@@ -8,7 +8,7 @@ import FileUploadComponent from './CommonUpload';
 
 type Props = {};
 
-const UploadDailyQuantityData = (props: Props) => {
+const UploadProjectData = (props: Props) => {
   const [jsonContent, setJsonContent] = useState<string | null>(null);
   const [startUploading, setStartUpload] = useState<boolean>(false)
   const [completeUploading, setCompleteUploading] = useState<boolean>(false)
@@ -82,21 +82,21 @@ const UploadDailyQuantityData = (props: Props) => {
       await Promise.all(
         parsedJsonContent.map(async (data: any) => {
           try {
-            const response = await axios.post('/api/upload', {
-                groupId:data.groupId,
-                categoryId:data.categoryId,
-                formWorkQty:data.FormWork_Qty,
-                date:data.Date,
-                excavationQty: data.Excavation_Qty,
-                rebarQty: data.Rebar_Qty,
-                concreteQty: data.Concrete_Qty,
+            const response = await axios.post('/api/uploadJson', {
+                Discipline: data.Discipline,
+                Area: data.Area,
+                Date: data.Date,
+                Excavation: data.Excavation,
+                FormWork: data.FormWork,
+                Rebar: data.Rebar,
+                Concrete: data.Concrete,
                 WeekNumber: data.WeekNumber,
                 MonthName: data.MonthName,
             },
             {
               headers: {
                   'Content-Type': 'application/json',
-                  'Type':'Daily'
+                  'Type':'Project'
               },
             } 
             );
@@ -108,14 +108,12 @@ const UploadDailyQuantityData = (props: Props) => {
                 variant:'default',
                 description: "data uploaded successfully!",
             })
-            console.log(response.data)
           } catch (error) {
             toast({
                 variant: "destructive",
                 title: "Uh oh! Something went wrong.",
                 description: "Error uploading data",
             })
-            console.log("Error", error)
           }
         })
       );
@@ -141,8 +139,8 @@ const UploadDailyQuantityData = (props: Props) => {
     }
   }, [Error]);
   return (
-  <FileUploadComponent label='Daily Data' PostData={PostData} handleFileChange={handleFileChange} jsonContent={jsonContent} startUploading={startUploading} uploadProgress={uploadProgress} />
+    <FileUploadComponent label='Project Data' PostData={PostData} handleFileChange={handleFileChange} jsonContent={jsonContent} startUploading={startUploading} uploadProgress={uploadProgress} />
   );
 };
 
-export default UploadDailyQuantityData
+export default UploadProjectData

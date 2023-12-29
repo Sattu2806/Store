@@ -79,7 +79,7 @@ const UploadMonthlyData = (props: Props) => {
       await Promise.all(
         parsedJsonContent.map(async (data: any) => {
           try {
-            const response = await axios.post('/api/upload', {
+            const response = await axios.post('/api/uploadJson', {
                 Type:data.Type,
                 Month:data.Month,
                 Value:data.Value

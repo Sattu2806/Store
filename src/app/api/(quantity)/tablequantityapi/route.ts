@@ -34,7 +34,7 @@ export async function GET(request: Request) {
 
         if(groupId && categoryId){
             if(option === 'month'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["MonthName"],
                     _sum:sumFields,
                     where:{
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'week'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["WeekNumber"],
                     _sum:sumFields,
                     where:{
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'day'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["date"],
                     _sum:sumFields,
                     where:{
@@ -81,7 +81,7 @@ export async function GET(request: Request) {
             }
         } else if(groupId && categoryId === null){
             if(option === 'month'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["MonthName"],
                     _sum:sumFields,
                     where:{
@@ -95,7 +95,7 @@ export async function GET(request: Request) {
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'week'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["WeekNumber"],
                     _sum:sumFields,
                     where:{
@@ -109,7 +109,7 @@ export async function GET(request: Request) {
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'day'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["date"],
                     _sum:sumFields,
                     where:{
@@ -125,7 +125,7 @@ export async function GET(request: Request) {
             }
         }else if(categoryId && groupId === null){
             if(option === 'month'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["MonthName"],
                     _sum:sumFields,
                     where:{
@@ -139,7 +139,7 @@ export async function GET(request: Request) {
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'week'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["WeekNumber"],
                     _sum:sumFields,
                     where:{
@@ -153,7 +153,7 @@ export async function GET(request: Request) {
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'day'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["date"],
                     _sum:sumFields,
                     where:{
@@ -169,7 +169,7 @@ export async function GET(request: Request) {
             }
         }else {
             if(option === 'month'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["MonthName"],
                     _sum:sumFields,
                     orderBy:{
@@ -180,7 +180,7 @@ export async function GET(request: Request) {
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'week'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["WeekNumber"],
                     _sum:sumFields,
                     orderBy:{
@@ -191,7 +191,7 @@ export async function GET(request: Request) {
                 })
                 return NextResponse.json(groupdata)
             }else if(option === 'day'){
-                const groupdata = await prisma.dailyQuantity.groupBy({
+                const groupdata = await prisma.dailyProductivity.groupBy({
                     by:["date"],
                     _sum:sumFields,
                     orderBy:{

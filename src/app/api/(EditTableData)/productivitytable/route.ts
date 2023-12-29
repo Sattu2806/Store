@@ -4,7 +4,7 @@ import prisma from "@/app/prismadb";
 
 export async function GET(request: Request) {  
     try {  
-      const response = await prisma.dailyQuantity.findMany({
+      const response = await prisma.dailyProductivity.findMany({
       });
       return NextResponse.json(response);
     } catch (error) {

@@ -8,7 +8,7 @@ import FileUploadComponent from './CommonUpload';
 
 type Props = {};
 
-const UploadTotalQuantity = (props: Props) => {
+const UploadTrade = (props: Props) => {
   const [jsonContent, setJsonContent] = useState<string | null>(null);
   const [startUploading, setStartUpload] = useState<boolean>(false)
   const [completeUploading, setCompleteUploading] = useState<boolean>(false)
@@ -63,19 +63,16 @@ const UploadTotalQuantity = (props: Props) => {
       await Promise.all(
         parsedJsonContent.map(async (data: any) => {
           try {
-            const response = await axios.post('/api/upload', {
-                groupId:data.groupId,
-                categoryId:data.categoryId,
-                foundationType:data.FoundationType,
-                totalFoundations: data.TotalFoundatios,
-                excavationQty: data.Excavation_Qty,
-                rebarQty: data.Rebar_Qty,
-                concreteQty: data.Concrete_Qty
+            const response = await axios.post('/api/uploadJson', {
+                Type:data.Trade,
+                Trade:data.Trade,
+                Month:data.Month,
+                Value:data.Value
             },
             {
               headers: {
                   'Content-Type': 'application/json',
-                  'Type':'Total'
+                  'Type':'Trade'
               },
             } 
             );
@@ -118,8 +115,8 @@ const UploadTotalQuantity = (props: Props) => {
     }
   }, [Error]);
   return (
-    <FileUploadComponent label='Total Data' PostData={PostData} handleFileChange={handleFileChange} jsonContent={jsonContent} startUploading={startUploading} uploadProgress={uploadProgress} />
+  <FileUploadComponent label='Trade Data' PostData={PostData} handleFileChange={handleFileChange} jsonContent={jsonContent} startUploading={startUploading} uploadProgress={uploadProgress} />
   );
 };
 
-export default UploadTotalQuantity
+export default UploadTrade
