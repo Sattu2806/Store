@@ -24,6 +24,7 @@ const ProductivityCharts = (props: Props) => {
         staleTime:60 * 1000,
         retry:3,
     })
+    console.log(quantitymonthData)
     const {formWorkMonthData, concreteMonthData, excavationMonthData, rebarMonthData}  = quantitymonthData
   return (
     <div className='flex flex-col space-y-3 mt-1'>
