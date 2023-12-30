@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { ManpowerData } from '@prisma/client'
+import { resourceData } from '@prisma/client'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Skeleton } from '@/components/ui/skeleton'
 import { Label } from '@/components/ui/label'
@@ -31,7 +31,7 @@ const MnapowerTableData = ({
     opendialogue,
     setopenDialogue,
 }: Props) => {
-    const {data: manpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<ManpowerData[]>({
+    const {data: manpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<resourceData[]>({
         queryKey:'manpowerdata',
         queryFn: ()=> axios.get('/api/manpowerdatachart', {
             params:{

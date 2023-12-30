@@ -2,7 +2,7 @@ import { PieChart, Pie, Sector, Cell, Label, LabelList, Tooltip } from "recharts
 import React, { useEffect, useState } from "react";
 import { Card, CardFooter, CardTitle } from "@/components/ui/card";
 import axios from "axios";
-import { ManpowerData } from "@prisma/client";
+import { resourceData } from "@prisma/client";
 import { useQuery } from "react-query";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PiechartTableData from "../(Tables)/PiechartTableData";
@@ -60,7 +60,7 @@ const ChartPiePlan = (props: Props) => {
   })
 
 
-  const {data: manpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<ManpowerData[]>({
+  const {data: manpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<resourceData[]>({
     queryKey:'manpowerdatapie',
     queryFn: ()=> axios.get('/api/manpowerdatachart', {
         params:{

@@ -1,35 +1,17 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import { Bar, BarChart, ComposedChart, LabelList, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { manpowerdata } from '@/lib/data/manpowerdata'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { ManpowerData } from '@prisma/client'
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Skeleton } from '@/components/ui/skeleton'
 import MnapowerTableData from '../(Tables)/MnapowerTableData'
 
 type Data = {
     month: string,
-    total: number 
+    total: number | null
 }
 type TransformedData = {
     month: string,
-    value1: number,
-    value2: number
+    value1: number | null
+    value2: number | null
 }
 
 type Props = {
@@ -72,7 +54,7 @@ const ManpowerCharts = ({ data, label, color }: Props) => {
     });
 
     const dataWithCumulative: TransformedData[] = dataWithZeroes.map((entry) => {
-        cumulativeSum += entry?.total;
+        cumulativeSum += entry?.total!;
         return {
             ...entry,
             value1: entry.total,

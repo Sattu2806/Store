@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { DailyQuantity, ManpowerData } from '@prisma/client'
+import { DailyProductivity } from '@prisma/client'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Skeleton } from '@/components/ui/skeleton'
 import { Label } from '@/components/ui/label'
@@ -33,7 +33,7 @@ const ProductivityTable= ({
     setopenDialogue,
     selectedMonth,
 }: Props) => {
-    const {data: productivityData = [], error: productivityDataError, isLoading: productivityDataLoading, refetch:refetchproductivityData} = useQuery<DailyQuantity[]>({
+    const {data: productivityData = [], error: productivityDataError, isLoading: productivityDataLoading, refetch:refetchproductivityData} = useQuery<DailyProductivity[]>({
         queryKey:'productivitydata',
         queryFn: ()=> axios.get('/api/productivitytableapi', {
             params:{
@@ -56,7 +56,7 @@ const ProductivityTable= ({
       }
     
       return productivityData.reduce((total, item) => {
-        const optionValue = item[selectedOption as keyof DailyQuantity];
+        const optionValue = item[selectedOption as keyof DailyProductivity];
     
         // Ensure that the optionValue is a number before adding
         const numericValue = typeof optionValue === 'number' ? optionValue : 0;

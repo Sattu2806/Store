@@ -1,5 +1,5 @@
 import React from 'react'
-import prisma from "@/app/prismadb"
+import prisma from "@/lib/prismadb"
 import EditTotalQuantityForm from '../EditTotalQuantityForm'
 import Editskeleton from '../../../Editskeleton'
 

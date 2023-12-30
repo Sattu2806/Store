@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/app/prismadb"
+import prisma from "@/lib/prismadb"
 import { DailyQuantitySchema } from "@/ZodSchema/QuantitySchema";
 import { z } from "zod"
 
@@ -28,14 +28,14 @@ export async function PATCH(request:NextRequest, response:NextResponse){
     const body = await request.json()
     const newData = getWeekandMonth(body)
 
-    const ExistedDaliyData = await prisma.dailyQuantity.findUnique({
+    const ExistedDaliyData = await prisma.dailyProductivity.findUnique({
         where:{
             id:body.id
         }
     })
     if(newData && ExistedDaliyData){
         try {
-            const dailyQuantity = await prisma.dailyQuantity.update({
+            const dailyQuantity = await prisma.dailyProductivity.update({
                 where:{
                     id:ExistedDaliyData.id
                 },
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
     const searchParams = new URLSearchParams(request.url.split('?')[1]);
     const id = searchParams.get('id')
     try {
-      const dailyQuantity = await prisma.dailyQuantity.findMany({
+      const dailyQuantity = await prisma.dailyProductivity.findMany({
       });
       return NextResponse.json(dailyQuantity);
     } catch (error) {

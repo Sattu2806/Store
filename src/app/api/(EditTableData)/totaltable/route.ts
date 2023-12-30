@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/app/prismadb";
+import prisma from "@/lib/prismadb";
 
 export async function PATCH(request: NextRequest) {
   const body = await request.json();

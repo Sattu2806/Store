@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/app/prismadb"
+import prisma from "@/lib/prismadb"
 import { DailyQuantitySchema } from "@/ZodSchema/QuantitySchema";
 import { z } from "zod"
 
@@ -25,7 +25,7 @@ const getWeekandMonth = (data:DailyQuantityT) => {
 
 export async function GET(request: Request) {  
     try {
-      const dailyQuantity = await prisma.dailyQuantity.findMany({
+      const dailyQuantity = await prisma.dailyProductivity.findMany({
       });
       return NextResponse.json(dailyQuantity);
     } catch (error) {
@@ -40,7 +40,7 @@ export async function POST(request:NextRequest, response:NextResponse){
     console.log(newData)
     if(newData){
         try {
-            const dailyQuantity = await prisma.dailyQuantity.create({
+            const dailyQuantity = await prisma.dailyProductivity.create({
                 data:{
                     groupId:newData.groupId,
                     categoryId:newData.categoryId,
@@ -73,7 +73,7 @@ export async function DELETE(request:Request){
         return NextResponse.json('Invalid id type is provided', {status:400})
     }
 
-    const dailyQuantity= await prisma.dailyQuantity.findFirst({
+    const dailyQuantity= await prisma.dailyProductivity.findFirst({
         where:{
             id: parseInt(id)
         }
@@ -83,7 +83,7 @@ export async function DELETE(request:Request){
         return NextResponse.json("Invalid dailyQuantity id", {status:400})
 
     try{
-        const deletedailyQuantity= await prisma.dailyQuantity.delete({
+        const deletedailyQuantity= await prisma.dailyProductivity.delete({
             where:{
                 id:parseInt(id,10)
             }

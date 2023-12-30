@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/app/prismadb"
+import prisma from "@/lib/prismadb"
 import { CategorySchema } from "@/ZodSchema/QuantitySchema";
 
 export async function GET(request: Request) {  

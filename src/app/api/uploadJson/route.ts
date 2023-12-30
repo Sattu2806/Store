@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/app/prismadb"
+import prisma from "@/lib/prismadb"
 import { DailyQuantitySchema } from "@/ZodSchema/QuantitySchema";
 import { headers } from 'next/headers'
 import { DailyQuantity, ManpowerData, MonthlyData, Project, TotalQuantity, TradeData } from "@/lib/types";

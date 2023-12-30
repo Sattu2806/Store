@@ -1,17 +1,17 @@
 import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/app/prismadb"
+import prisma from "@/lib/prismadb"
 
 
 export async function PATCH(request:NextRequest, response:NextResponse){
     const body = await request.json()
-    const ExistedtotalData = await prisma.totalQuantity.findUnique({
+    const ExistedtotalData = await prisma.totalScope.findUnique({
         where:{
             id:body.id
         }
     })
     if(!ExistedtotalData) return NextResponse.json("Not Found",{status : 404})
     try {
-        const totalQuantity = await prisma.totalQuantity.update({
+        const totalQuantity = await prisma.totalScope.update({
             where:{
                 id:ExistedtotalData.id
             },

@@ -1,10 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/app/prismadb"
+import prisma from "@/lib/prismadb"
 import { TotalQuantitySchema } from "@/ZodSchema/QuantitySchema";
 
 export async function GET(request: Request) {  
     try {
-      const totalQuantity = await prisma.totalQuantity.findMany({
+      const totalQuantity = await prisma.totalScope.findMany({
       });
       return NextResponse.json(totalQuantity);
     } catch (error) {
@@ -20,7 +20,7 @@ export async function POST(request:NextRequest, response:NextResponse){
     }
 
     try {
-        const totalQuantity = await prisma.totalQuantity.create({
+        const totalQuantity = await prisma.totalScope.create({
             data:{
                 groupId:body.groupId,
                 categoryId:body.categoryId,
@@ -49,7 +49,7 @@ export async function DELETE(request:Request){
         return NextResponse.json('Invalid id type is provided', {status:400})
     }
 
-    const totalQuantity= await prisma.totalQuantity.findFirst({
+    const totalQuantity= await prisma.totalScope.findFirst({
         where:{
             id: parseInt(id)
         }
@@ -59,7 +59,7 @@ export async function DELETE(request:Request){
         return NextResponse.json("Invalid totalquantity id", {status:400})
 
     try{
-        const deletetotalquantity= await prisma.totalQuantity.delete({
+        const deletetotalquantity= await prisma.totalScope.delete({
             where:{
                 id:parseInt(id,10)
             }

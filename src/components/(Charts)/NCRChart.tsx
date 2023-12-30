@@ -1,8 +1,6 @@
 import React from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { sCurveData } from '@/lib/data/formdata';
 import ProgressBar from '../../app/databased/dashboard/ProgressBar';
-import { Button } from '@/components/ui/button';
 import { NCRTable } from '@/lib/data/formdata';
 
 type Props = {}

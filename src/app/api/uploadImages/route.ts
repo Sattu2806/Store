@@ -1,4 +1,4 @@
-import prisma from "@/app/prismadb";
+import prisma from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { ImageSchema } from "@/ZodSchema/Image";
 import crypto from "crypto";

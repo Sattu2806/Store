@@ -40,6 +40,7 @@ const ManpowerchartCollection = (props: Props) => {
         return { month: item.Month, total: item._sum.Nos };
     });
 
+
   return (
     <div className='flex flex-col space-y-3'>
         <ManpowerCharts data={direct} label='Direct ManPower Histogram' color='#65B741'/>
