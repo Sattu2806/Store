@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import { Toaster } from "@/components/ui/toaster"
-import QueryClientProvider from './QueryClientProvider'
+import QueryClientProvider from '../components/QueryClientProvider'
 import Provider from '@/components/Provider'
 import { getServerSession } from 'next-auth'
 import { options } from './api/auth/[...nextauth]/options'
