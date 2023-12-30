@@ -15,7 +15,7 @@ import {
 import axios from "axios"
 import { useQuery } from "react-query"
 import { useState } from "react"
-import { Category, DailyQuantity, Group, TotalQuantity } from "@prisma/client"
+import { Category, Group, TotalScope } from "@prisma/client"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,7 +32,7 @@ import Link from "next/link"
 
 
 
-export const columns: ColumnDef<TotalQuantity>[] = [
+export const columns: ColumnDef<TotalScope>[] = [
     {
     id: "select",
         header: ({ table }) => (

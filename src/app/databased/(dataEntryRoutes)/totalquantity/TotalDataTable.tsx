@@ -1,5 +1,5 @@
 'use client'
-import { DailyQuantity, TotalQuantity } from '@prisma/client'
+import { TotalScope } from '@prisma/client'
 import axios from 'axios'
 import React from 'react'
 import { useQuery } from 'react-query'
@@ -13,7 +13,7 @@ type Props = {}
 
 
 const TotalDataTable = (props: Props) => {
-    const {data: TotalData = [], error: TotalDatanError, isLoading: isTotalDataLoading, refetch:refetchTotalData} = useQuery<TotalQuantity[]>({
+    const {data: TotalData = [], error: TotalDatanError, isLoading: isTotalDataLoading, refetch:refetchTotalData} = useQuery<TotalScope[]>({
         queryKey:'TotalTableData',
         queryFn: ()=> axios.get('/api/totalquantity').then((res) => res.data),
         staleTime:60 * 1000,

@@ -15,7 +15,7 @@ import {
 import axios from "axios"
 import { useQuery } from "react-query"
 import { useState } from "react"
-import { Category, DailyQuantity, Group } from "@prisma/client"
+import { Category, Group } from "@prisma/client"
 import {
   AlertDialog,
   AlertDialogAction,

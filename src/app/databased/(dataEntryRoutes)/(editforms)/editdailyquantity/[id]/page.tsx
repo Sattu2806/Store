@@ -8,7 +8,7 @@ type Props = {}
 
 const Editdailyquantity = async ({ params }: { params: { id: string } }) => {
     const id = params.id
-    const DatabyId = await prisma.dailyQuantity.findUnique({
+    const DatabyId = await prisma.dailyProductivity.findUnique({
         where:{
             id:parseInt(id)
         }

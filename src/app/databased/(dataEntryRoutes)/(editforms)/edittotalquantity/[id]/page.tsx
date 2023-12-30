@@ -7,7 +7,7 @@ type Props = {}
 
 const Edittotalquantity = async ({ params }: { params: { id: string } }) => {
     const id = params.id
-    const DatabyId = await prisma.totalQuantity.findUnique({
+    const DatabyId = await prisma.totalScope.findUnique({
         where:{
             id:parseInt(id)
         }

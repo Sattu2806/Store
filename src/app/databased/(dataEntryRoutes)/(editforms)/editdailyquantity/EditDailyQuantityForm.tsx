@@ -28,12 +28,12 @@ import {
     PopoverTrigger,
   } from "@/components/ui/popover"
 import { useQuery } from 'react-query'
-import { Category, DailyQuantity, Group } from '@prisma/client'
+import { Category, DailyProductivity, Group } from '@prisma/client'
 import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 
 type Props = {
-  data:DailyQuantity
+  data:DailyProductivity
 }
 
 const EditDailyQuantityForm = ({data}: Props) => {

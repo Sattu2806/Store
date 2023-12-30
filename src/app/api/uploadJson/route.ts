@@ -94,3 +94,15 @@ export async function POST(request:NextRequest, response:NextResponse){
         return NextResponse.json('Not Valid Upload')
     }
 }
+
+
+// export async function DELETE(request: Request) {  
+//     try {
+//       const dailyQuantity = await prisma.resourceData.deleteMany({
+//       });
+//       return NextResponse.json(dailyQuantity);
+//     } catch (error) {
+//       console.error('Error getting dailyQuantity data', error);
+//       return NextResponse.error();
+//     }
+// }

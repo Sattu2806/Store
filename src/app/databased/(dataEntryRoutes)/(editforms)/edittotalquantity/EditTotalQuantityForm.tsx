@@ -21,11 +21,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 import { useQuery } from 'react-query'
-import { Category, Group, TotalQuantity } from '@prisma/client'
+import { Category, Group, TotalScope } from '@prisma/client'
 import { Loader2 } from 'lucide-react'
 
 type Props = {
-    data:TotalQuantity
+    data:TotalScope
 }
 
 const EditTotalQuantityForm = ({data}: Props) => {

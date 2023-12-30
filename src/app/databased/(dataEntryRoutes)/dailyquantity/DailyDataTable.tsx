@@ -1,5 +1,5 @@
 'use client'
-import { DailyQuantity } from '@prisma/client'
+import { DailyProductivity } from '@prisma/client'
 import axios from 'axios'
 import React from 'react'
 import { useQuery } from 'react-query'
@@ -12,7 +12,7 @@ type Props = {}
 
 
 const DailyDataTable = (props: Props) => {
-    const {data: DailyData = [], error: DailyDatanError, isLoading: isDailyDataLoading, refetch:refetchDailyData} = useQuery<DailyQuantity[]>({
+    const {data: DailyData = [], error: DailyDatanError, isLoading: isDailyDataLoading, refetch:refetchDailyData} = useQuery<DailyProductivity[]>({
         queryKey:'DailyTableData1',
         queryFn: ()=> axios.get('/api/dailyquantity').then((res) => res.data),
         staleTime:60 * 1000,

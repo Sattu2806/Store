@@ -33,7 +33,7 @@ const MnapowerTableData = ({
 }: Props) => {
     const {data: manpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<resourceData[]>({
         queryKey:'manpowerdata',
-        queryFn: ()=> axios.get('/api/manpowerdatachart', {
+        queryFn: ()=> axios.get('/api/resourcetabledata', {
             params:{
                 Category:selectedOption
             }
@@ -86,7 +86,7 @@ const MnapowerTableData = ({
             </div>
             </div>
             {ismanpowerapiDataLoading ? (
-                <Skeleton className="py-5 text-sm md:text-base h-8 " />
+                <Skeleton className="py-5 text-sm md:text-base h-[400px] " />
             ):(
                 <Table className='mt-5'>
                 <TableHeader className='w-full sticky top-0 bg-white'>
