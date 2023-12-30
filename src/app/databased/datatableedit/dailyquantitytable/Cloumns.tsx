@@ -15,7 +15,7 @@ import {
 import axios from "axios"
 import { useQuery } from "react-query"
 import React, { useEffect, useState } from "react"
-import { Category, DailyQuantity, Group } from "@prisma/client"
+import { Category, DailyProductivity, Group } from "@prisma/client"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +33,7 @@ import debounce from "lodash/debounce";
 
 
 
-export const columns: ColumnDef<DailyQuantity>[] = [
+export const columns: ColumnDef<DailyProductivity>[] = [
     {
     id: "select",
         header: ({ table }) => (

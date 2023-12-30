@@ -5,7 +5,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import axios from 'axios';
-import { ImageT } from './types';
+import { ImageT } from '@/lib/types';
 import { useQuery } from 'react-query';
 const slides = [
     {
