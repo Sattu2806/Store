@@ -5,6 +5,7 @@ import { ManpowerItem } from '@/lib/types';
 import { Card, CardHeader } from '@/components/ui/card';
 import axios from 'axios';
 import { useQuery } from 'react-query';
+import { resourceData } from '@prisma/client';
 
 type Props = {
 }
@@ -18,18 +19,18 @@ interface TransformedDataItem {
 }
 
 const ComposedCharts = (props: Props) => {
-  const {data: AllMonthlydata = [], error: AllMonthlydataError, isLoading: isAllMonthlydataLoading, refetch:refetchAllMonthlydata} = useQuery<ManpowerItem[]>({
-    queryKey:'AllMonthlydata',
-    queryFn: ()=> axios.get('/api/allmonthlydata')
-    .then((res) => res.data),
-    staleTime:60 * 1000,
-    retry:3,
-})
+  const { data: AllMonthlydata = [], error: AllMonthlydataError, isLoading: isAllMonthlydataLoading, refetch: refetchAllMonthlydata } = useQuery<resourceData[]>({
+    queryKey: 'AllMonthlydata',
+    queryFn: () => axios.get('/api/allmonthlydata').then((res) => res.data),
+    staleTime: 60 * 1000,
+    retry: 3,
+  });
+
   const transformedData: Record<string, TransformedDataItem> = {};
 
   AllMonthlydata.forEach((item) => {
-    const { Month, Type, Value } = item;
-  
+    const { Month, category, Nos } = item;
+
     if (!transformedData[Month]) {
       transformedData[Month] = {
         Month,
@@ -39,30 +40,30 @@ const ComposedCharts = (props: Props) => {
         Cumulative_Indirect_Value: 0,
       };
     }
-  
-    if (Type === 'Direct') {
-      transformedData[Month].Direct_Value = Value ?? 0;
-      transformedData[Month].Cumulative_Direct_Value += Value ?? 0;
-    } else if (Type === 'Indirect') {
-      transformedData[Month].Indirect_Value = Value ?? 0;
-      transformedData[Month].Cumulative_Indirect_Value += Value ?? 0;
+
+    if (category === 'Direct') {
+      transformedData[Month].Direct_Value = Nos ?? 0;
+      transformedData[Month].Cumulative_Direct_Value += Nos ?? 0;
+    } else if (category === 'Indirect') {
+      transformedData[Month].Indirect_Value = Nos ?? 0;
+      transformedData[Month].Cumulative_Indirect_Value += Nos ?? 0;
     }
   });
-  
+
   let result: TransformedDataItem[] = Object.values(transformedData);
-  
+
   result.sort((a, b) => {
     const monthsOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return monthsOrder.indexOf(a.Month) - monthsOrder.indexOf(b.Month);
   });
-  
+
   let cumulativeDirect = 0;
   let cumulativeIndirect = 0;
-  
+
   result = result.map((item) => {
     cumulativeDirect += item.Direct_Value;
     cumulativeIndirect += item.Indirect_Value;
-  
+
     return {
       ...item,
       Cumulative_Direct_Value: cumulativeDirect,

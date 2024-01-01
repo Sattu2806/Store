@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
-    const ManpowerData = await prisma.monthlyData.findMany()
+    const ManpowerData = await prisma.resourceData.findMany()
 
     return NextResponse.json(ManpowerData);
   } catch (error) {

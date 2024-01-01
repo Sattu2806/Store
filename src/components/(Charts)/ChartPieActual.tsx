@@ -1,6 +1,6 @@
 import { PieChart, Pie, Sector, Cell, Label, LabelList, Tooltip } from "recharts";
 import React, { useEffect, useState } from "react";
-import { Card, CardFooter, CardTitle } from "@/components/ui/card";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import { resourceData } from "@prisma/client";
 import { useQuery } from "react-query";
@@ -65,17 +65,29 @@ const ChartPieActual = (props: Props) => {
     queryFn: ()=> axios.get('/api/manpowerdatachart', {
         params:{
             Category:'All',
-            group:'Actual'
         }
     }).then((res) => res.data),
     staleTime:60 * 1000,
     retry:3,
 })
 
+const {data: piemanpowerapiDataPlan = [], error: piemanpowerapiDataErrorPlan, isLoading: piemanpowerapiDataLoadingPlan, refetch:refetchpiemanpowerapiDataPlan} = useQuery<CategoryCount[]>({
+  queryKey:'piemanpowerdataPlan',
+  queryFn: ()=> axios.get('/api/piechartmanpower', {
+      params:{
+          Date:selectedMonth,
+          group:'Plan'
+      }
+  }).then((res) => res.data),
+  staleTime:60 * 1000,
+  retry:3,
+})
+
   const uniqueYearMonthPairs = Array.from(new Set(manpowerapiData.map(item => `${item.Month}-${item.Year}`)))
 
   useEffect(() => {
     refetchpiemanpowerapiData()
+    refetchpiemanpowerapiDataPlan()
   },[selectedMonth])
 
   const piedataActual = piemanpowerapiData.map((item) => {
@@ -84,14 +96,17 @@ const ChartPieActual = (props: Props) => {
       total:item._sum.Nos
     }
   })
-
-
-
-
+  const piedataPlan = piemanpowerapiDataPlan.map((item) => {
+    return{
+      name:item.category,
+      total:item._sum.Nos
+    }
+  })
 
   return (
     <div >
       <Card className=" relative py-3">
+        <p className="text-center text-xl font-semibold mt-2">Actual Vs Planned Resources</p>
         <div className="flex items-center justify-between gap-10">
         <PieChart width={800} height={430} margin={{top:0, bottom:0}}>
           <Pie
@@ -114,8 +129,30 @@ const ChartPieActual = (props: Props) => {
             <Tooltip/>
           </Pie>
         </PieChart>
+        <PieChart width={800} height={430} margin={{top:0, bottom:0}}>
+          <Pie
+            data={piedataPlan}
+            innerRadius={90}
+            outerRadius={180}
+            fill="#8884d8"
+            paddingAngle={5}
+            dataKey="total"
+            onClick={(entry, index) => {handleCellClick(entry, index); setopenDialogue(true); setSelectedGroup('Plan')}}
+            className="border-none outline-none"
+          >
+            {data.map((entry, index) => {
+              return(
+                <Cell  className="cursor-pointer outline-none" key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              )
+            })}
+            <LabelList fill="#fff" className="text-2xl" dataKey='total' />
+            <LabelList fill="#333"  className="text-2xl border-none stroke-none" dataKey='name' position='outside'  />
+            <Tooltip/>
+          </Pie>
+        </PieChart>
+        <p className="absolute bottom-3 left-[20%] text-lg font-medium border-[1px] border-blue-400 rounded-sm px-4 py-1">Actual</p>
+        <p className="absolute bottom-3 right-[20%] text-lg font-medium border-[1px] border-blue-400 rounded-sm px-4 py-1">Plan</p>
         </div>
-        <p className="absolute bottom-3 left-3 font-semibold"> Actual Available Resources (Direct / Indirect / Equipment) for {selectedMonth}</p>
         <div className="absolute top-5 right-5 ">
         <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(value)}>
               <SelectTrigger className="w-[180px] border-black">

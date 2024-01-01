@@ -11,11 +11,8 @@ export async function GET(request: Request) {
         return NextResponse.json([])
     }
 
-    if(Category === 'All' && group){
+    if(Category === 'All'){
         const response = await prisma.resourceData.findMany({
-            where:{
-                Group:group
-            }
         })
         return NextResponse.json(response)
     }

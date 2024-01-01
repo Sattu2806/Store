@@ -57,7 +57,8 @@ const Charts = ({data, label,color}: Props) => {
   return (
     <div className='relative'>
         <Card className='px-2'>
-            <CardHeader className='text-lg text-center font-semibold'>{label}</CardHeader>
+            <p className='text-lg text-center font-semibold mt-2'>{label}</p>
+            <p className='text-center text-[10px] italic'>click on bar for more </p>
             <ResponsiveContainer width="100%"
              height={350}
             >
