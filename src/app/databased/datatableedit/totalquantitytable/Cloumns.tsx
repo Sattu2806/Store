@@ -32,316 +32,96 @@ import Link from "next/link"
 import debounce from "lodash/debounce";
 
 
+type EditableCellProps = {
+  value: number;
+  column: string;
+  id: number;
+};
 
-export const columns: ColumnDef<TotalScope>[] = [
+const EditableCell: React.FC<EditableCellProps> = ({ value, column, id}) => {
+  const [inputValue, setInputValue] = useState(value.toString());
+  const { toast } = useToast();
+
+  const updateValue = async (newValue: string) => {
+    try {
+      const response = await axios.patch('/api/totaltable', {
+        id,
+        [column]: parseFloat(newValue),
+      });
+      toast({
+        description: `${column} Quantity Updated Successfully, Value: ${response.data[column]}`,
+      });
+    } catch (error) {
+      console.log(`Error while updating ${column} data`);
+      toast({
+        variant: 'destructive',
+        description: `Could not update ${column} data, Value: ${newValue}`,
+      });
+    }
+  };
+
+  const debouncedUpdateValue = debounce(updateValue, 2000);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    debouncedUpdateValue(newValue);
+  };
+
+  return (
+    <div className="text-center">
+      <input className="w-[60px]" value={inputValue} onChange={handleChange} />
+    </div>
+  );
+};
+
+
+type DataCellProps = {
+  row: {
+    original: TotalScope
+  };
+  columnType: "group" | "category";
+};
+
+const DataCell: React.FC<DataCellProps> = ({ row, columnType }) => {
+  const { data, error, isLoading, refetch } = useQuery<Group[]>(
+    columnType === "group" ? 'groupdata' : 'allcategorydata',
     {
-    id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
+      queryFn: () => axios.get(columnType === "group" ? '/api/group' : '/api/category').then((res) => res.data),
+      staleTime: 60 * 1000,
+      retry: 3,
+    }
+  );
+
+  const name = data?.find((item) => item.id === row.original[`${columnType}Id`])?.name;
+  const id = row.original[`${columnType}Id`];
+
+  return <div>{name}{id}</div>;
+}
+
+
+const DataActions = ({row}:{row:{original:TotalScope}}) => {
+  const [openDialogue, setOpenDialogue] = useState<boolean>(false)
+  const {toast} = useToast()
+  const DeleteImage = async () => {
+    try {
+        const response = await axios.delete('/api/totalquantity',{
+            params:{
+                id:row.original.id
             }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-  {
-    accessorKey: "group",
-    id:'group',
-    accessorFn: (originalRow) => {
-      return originalRow.groupId.toString()
-    },
-    header: "Group",
-    cell:({row}) => {
-        const {data: groupData = [], error: groupDatanError, isLoading: groupDataLoading, refetch:refetchgroupData} = useQuery<Group[]>({
-          queryKey:'groupdata',
-          queryFn: ()=> axios.get('/api/group').then((res) => res.data),
-          staleTime:60 * 1000,
-          retry:3,
         })
-        return(
-          <div>{(groupData?.find((item) => item.id === row.original.groupId))?.name}</div>
-        )
+        console.log(response)
+        setOpenDialogue(false)
+        toast({
+          description: "Data Deleted Successfully Successfully",
+        })
+    }catch{
+        console.log('error deleting data')
     }
-  },
-  {
-    accessorKey: "category",
-    id:'category',
-    accessorFn: (originalRow) => {
-      return originalRow.categoryId.toString()
-    },
-    header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="text-lg"
-          >
-            Category
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-    },
-    cell:({row}) => {
-      const {data: categoryData = [], error: categoryDataError, isLoading: categoryDataLoading, refetch:refetchcategoryData} = useQuery<Category[]>({
-        queryKey:'allcategorydata',
-        queryFn: ()=> axios.get('/api/category').then((res) => res.data),
-        staleTime:60 * 1000,
-        retry:3,
-      })
-      return(
-        <div>{(categoryData?.find((item) => item.id === row.original.categoryId))?.name}</div>
-      )
-    }
-  },
-  {
-    accessorKey: "foundationType",
-    header: ({ column }) => {
-        return (
-          <p>foundationType
-          </p>
-        )
-    },
-    cell:({row}) => {
-        return (
-            <div>{row.original.foundationType}</div>
-        )
-    }
-  },
-  {
-    accessorKey: "excavationQty",
-    header: ({ column }) => {
-        return (
-          <p>Excavation
-          </p>
-        )
-    },
-    cell:({row}) => {
-      const initialValue = row.original.excavationQty
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
+  }
 
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/totaltable',{
-            id:row.original.id,
-            excavationQty:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Excavation Quantity Updated Successfully, Value:  ${resposne.data.excavationQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
-        return (
-          <div className="text-center">
-          <input
-            className="w-[60px]"
-            value={value}
-            onChange={handleChange}
-          />
-      </div>
-        )
-    }
-  },
-  {
-    accessorKey: "totalFoundations",
-    header: ({ column }) => {
-        return (
-          <p>Total Foundations
-          </p>
-        )
-    },
-    cell:({row}) => {
-      const initialValue = row.original.totalFoundations
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/totaltable',{
-            id:row.original.id,
-            totalFoundations:parseInt(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Total Foundation Quantity Updated Successfully, Value:  ${resposne.data.totalFoundations}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
-        return (
-          <div className="text-center">
-          <input
-            className="w-[60px]"
-            value={value}
-            onChange={handleChange}
-          />
-      </div>
-        )
-    }
-  },
-  {
-    accessorKey: "rebarQty",
-    header: ({ column }) => {
-        return (
-          <p>Rebar
-          </p>
-        )
-    },
-    cell:({row}) => {
-      const initialValue = row.original.rebarQty
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/totaltable',{
-            id:row.original.id,
-            rebarQty:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Rebar Quantity Updated Successfully, Value:  ${resposne.data.rebarQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
-        return (
-          <div className="text-center">
-            <input
-              className="w-[60px]"
-              value={value}
-              onChange={handleChange}
-            />
-        </div>
-        )
-    }
-  },
-  {
-    accessorKey: "concreteQty",
-    header: ({ column }) => {
-        return (
-          <p>Concrete
-          </p>
-        )
-    },
-    cell:({row}) => {
-      const initialValue = row.original.concreteQty
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/totaltable',{
-            id:row.original.id,
-            concreteQty:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Concrete Quantity Updated Successfully, Value:  ${resposne.data.concreteQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
-        return (
-          <div className="text-center">
-          <input
-            className="w-[60px]"
-            value={value}
-            onChange={handleChange}
-          />
-      </div>
-        )
-    }
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const [openDialogue, setOpenDialogue] = useState<boolean>(false)
-      const {toast} = useToast()
-      const DeleteImage = async () => {
-        try {
-            const response = await axios.delete('/api/totalquantity',{
-                params:{
-                    id:row.original.id
-                }
-            })
-            console.log(response)
-            setOpenDialogue(false)
-            toast({
-              description: "Data Deleted Successfully Successfully",
-            })
-        }catch{
-            console.log('error deleting data')
-        }
-      }
-      return (
-        <>
+  return (
+    <>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -375,7 +155,150 @@ export const columns: ColumnDef<TotalScope>[] = [
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        </>
+  )
+}
 
+
+
+
+
+export const columns: ColumnDef<TotalScope>[] = [
+    {
+    id: "select",
+        header: ({ table }) => (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
+  {
+    accessorKey: "group",
+    id:'group',
+    accessorFn: (originalRow) => {
+      return originalRow.groupId.toString()
+    },
+    header: "Group",
+    cell:({row}) => {
+        return(
+          <div><DataCell row={row} columnType="group" /></div>
+        )
+    }
+  },
+  {
+    accessorKey: "category",
+    id:'category',
+    accessorFn: (originalRow) => {
+      return originalRow.categoryId.toString()
+    },
+    header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="text-lg"
+          >
+            Category
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+    },
+    cell:({row}) => {
+      return(
+        <div><DataCell row={row} columnType="category" /></div>
+      )
+    }
+  },
+  {
+    accessorKey: "foundationType",
+    header: ({ column }) => {
+        return (
+          <p>foundationType
+          </p>
+        )
+    },
+    cell:({row}) => {
+        return (
+            <div>{row.original.foundationType}</div>
+        )
+    }
+  },
+  {
+    accessorKey: "excavationQty",
+    header: ({ column }) => {
+        return (
+          <p>Excavation
+          </p>
+        )
+    },
+    cell:({row}) => {
+        return (
+          <EditableCell value={row.original.excavationQty} column="excavationQty" id={row.original.id} />
+        )
+    }
+  },
+  {
+    accessorKey: "totalFoundations",
+    header: ({ column }) => {
+        return (
+          <p>Total Foundations
+          </p>
+        )
+    },
+    cell:({row}) => {
+        return (
+          <EditableCell value={row.original.totalFoundations} column="totalFoundations" id={row.original.id} />
+        )
+    }
+  },
+  {
+    accessorKey: "rebarQty",
+    header: ({ column }) => {
+        return (
+          <p>Rebar
+          </p>
+        )
+    },
+    cell:({row}) => {
+        return (
+          <EditableCell value={row.original.rebarQty} column="rebarQty" id={row.original.id} />
+        )
+    }
+  },
+  {
+    accessorKey: "concreteQty",
+    header: ({ column }) => {
+        return (
+          <p>Concrete
+          </p>
+        )
+    },
+    cell:({row}) => {
+        return (
+          <EditableCell value={row.original.concreteQty} column="concreteQty" id={row.original.id} />
+        )
+    }
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
+        <>
+          <DataActions row={row} />
         </>
       )
     },

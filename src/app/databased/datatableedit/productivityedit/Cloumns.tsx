@@ -15,7 +15,7 @@ import {
 import axios from "axios"
 import { useQuery } from "react-query"
 import React, { useEffect, useState } from "react"
-import { Group, Project } from "@prisma/client"
+import { Group, Project, TotalScope } from "@prisma/client"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +30,111 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import Link from "next/link"
 import debounce from "lodash/debounce";
+
+
+type EditableCellProps = {
+  value: number;
+  column: string;
+  id: number;
+};
+
+const EditableCell: React.FC<EditableCellProps> = ({ value, column, id }) => {
+  const [inputValue, setInputValue] = useState(value.toString());
+  const { toast } = useToast();
+
+  const updateValue = async (newValue: string) => {
+    try {
+      const response = await axios.patch('/api/productivitytable', {
+        id,
+        [column]: parseFloat(newValue),
+      });
+      toast({
+        description: `${column} Quantity Updated Successfully, Value: ${response.data[column]}`,
+      });
+    } catch (error) {
+      console.log(`Error while updating ${column} data`);
+      toast({
+        variant: 'destructive',
+        description: `Could not update ${column} data, Value: ${newValue}`,
+      });
+    }
+  };
+
+  const debouncedUpdateValue = debounce(updateValue, 2000);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    debouncedUpdateValue(newValue);
+  };
+
+  return (
+    <div className="text-center">
+      <input className="w-[60px]" value={inputValue} onChange={handleChange} />
+    </div>
+  );
+};
+
+
+const DataActions = ({row}:{row:{original:Project}}) => {
+  const [openDialogue, setOpenDialogue] = useState<boolean>(false)
+  const {toast} = useToast()
+  const DeleteImage = async () => {
+    try {
+        const response = await axios.delete('/api/dailyquantity',{
+            params:{
+                id:row.original.id
+            }
+        })
+        console.log(response)
+        setOpenDialogue(false)
+        toast({
+          variant:'destructive',
+          description: "Data Deleted Successfully Successfully",
+        })
+    }catch{
+        console.log('error deleting data')
+    }
+  }
+
+  return (
+    <>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => setOpenDialogue(true)} >
+                <Button className="w-[120px]" >Delete</Button>
+            </DropdownMenuItem>
+            <DropdownMenuItem> 
+              <Button className="w-[120px]">
+                <Link href={`/databased/editdailyquantity/${row.original.id}`}>Edit</Link>
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <AlertDialog open={openDialogue}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete this data.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setOpenDialogue(false)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction className="bg-red-500" onClick={DeleteImage}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        </>
+  )
+}
 
 
 
@@ -115,44 +220,8 @@ export const columns: ColumnDef<Project>[] = [
         )
     },
     cell:({row}) => {
-        const initialValue = row.original.Excavation
-        const [value, setValue] = useState(initialValue.toString())
-        const {toast} = useToast()
-
-        const UpdateQty = async (newValue:string) => {
-          try {
-            const resposne = await axios.patch('/api/productivitytable',{
-              id:row.original.id,
-              Excavation:parseFloat(newValue)
-            })
-            console.log(resposne.data)
-            toast({
-              description:`Excavation Quantity Updated Successfully, Value:  ${resposne.data.excavationQty}`
-            })
-          } catch (error) {
-            console.log('Error while updating data')
-            toast({
-              variant:'destructive',
-              description:`Could not update the data, Value:  ${newValue}`
-            })
-          }
-        }
-
-        const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const newValue = e.target.value;
-          setValue(newValue);
-          debouncedUpdateQty(newValue);
-        };
         return (
-            <div className="text-center">
-              <input
-                className="w-[60px]"
-                value={value}
-                onChange={handleChange}
-              />
-            </div>
+          <EditableCell value={row.original.Excavation} column="Excavation" id={row.original.id} />
         )
     }
   },
@@ -165,44 +234,8 @@ export const columns: ColumnDef<Project>[] = [
         )
     },
     cell:({row}) => {
-      const initialValue = row.original.FormWork
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/productivitytable',{
-            id:row.original.id,
-            FormWork:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`FormWork Quantity Updated Successfully, Value:  ${resposne.data.excavationQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
         return (
-          <div className="text-center">
-            <input
-              className="w-[60px]"
-              value={value}
-              onChange={handleChange}
-            />
-        </div>
+          <EditableCell value={row.original.FormWork} column="FormWork" id={row.original.id} />
         )
     }
   },
@@ -215,44 +248,8 @@ export const columns: ColumnDef<Project>[] = [
         )
     },
     cell:({row}) => {
-      const initialValue = row.original.Rebar
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/productivitytable',{
-            id:row.original.id,
-            Rebar:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Rebar Quantity Updated Successfully, Value:  ${resposne.data.rebarQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
         return (
-          <div className="text-center">
-          <input
-            className="w-[60px]"
-            value={value}
-            onChange={handleChange}
-          />
-      </div>
+          <EditableCell value={row.original.Rebar} column="Rebar" id={row.original.id} />
         )
     }
   },
@@ -265,44 +262,8 @@ export const columns: ColumnDef<Project>[] = [
         )
     },
     cell:({row}) => {
-      const initialValue = row.original.Concrete
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/productivitytable',{
-            id:row.original.id,
-            Concrete:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Concrete Quantity Updated Successfully, Value:  ${resposne.data.concreteQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
         return (
-          <div className="text-center">
-          <input
-            className="w-[60px]"
-            value={value}
-            onChange={handleChange}
-          />
-      </div>
+          <EditableCell value={row.original.Concrete} column="Concrete" id={row.original.id} />
         )
     }
   },
@@ -342,62 +303,10 @@ export const columns: ColumnDef<Project>[] = [
     id: "actions",
     header:'Actions',
     cell: ({ row }) => {
-      const image = row.original
-      const [openDialogue, setOpenDialogue] = useState<boolean>(false)
-      const {toast} = useToast()
-      const DeleteImage = async () => {
-        try {
-            const response = await axios.delete('/api/dailyquantity',{
-                params:{
-                    id:row.original.id
-                }
-            })
-            console.log(response)
-            setOpenDialogue(false)
-            toast({
-              variant:'destructive',
-              description: "Data Deleted Successfully Successfully",
-            })
-        }catch{
-            console.log('error deleting data')
-        }
-      }
+
       return (
         <>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => setOpenDialogue(true)} >
-                <Button className="w-[120px]" >Delete</Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem> 
-              <Button className="w-[120px]">
-                <Link href={`/databased/editdailyquantity/${row.original.id}`}>Edit</Link>
-              </Button>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <AlertDialog open={openDialogue}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete this data.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setOpenDialogue(false)}>Cancel</AlertDialogCancel>
-              <AlertDialogAction className="bg-red-500" onClick={DeleteImage}>Delete</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
+          <DataActions row={row} />
         </>
       )
     },

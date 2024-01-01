@@ -5,7 +5,7 @@ import { columns } from "./Cloumns"
 import { DataTable } from "./DataTable"
 import axios from 'axios'
 import { useQuery } from 'react-query'
-import { ImageT, Group } from '../types'
+import { ImageT } from '@/lib/types'
 
 type Props = {}
 

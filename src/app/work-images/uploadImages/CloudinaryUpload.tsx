@@ -149,10 +149,10 @@ const UploadForm = () => {
             options={transformedData}
             styles={{
                 control: (baseStyles, state) => ({
-                    ...baseStyles,
-                    padding:'4px 0px 4px 0px',
-                    margin:'15px 0px 4px 0px',
-                    borderRadius:'5px',
+                ...baseStyles,
+                // padding: '4px 0px 4px 0px',
+                // margin: '15px 0px 4px 0px',
+                // borderRadius: '5px',
                 }),
             }}
             placeholder='Select Image Group'

@@ -31,6 +31,133 @@ import { useToast } from '@/components/ui/use-toast'
 import Link from "next/link"
 import debounce from "lodash/debounce";
 
+type EditableCellProps = {
+  value: number;
+  column: string;
+  id: number;
+};
+
+const EditableCell: React.FC<EditableCellProps> = ({ value, column, id }) => {
+  const [inputValue, setInputValue] = useState(value.toString());
+  const { toast } = useToast();
+
+  const updateValue = async (newValue: string) => {
+    try {
+      const response = await axios.patch('/api/dailytable', {
+        id,
+        [column]: parseFloat(newValue),
+      });
+      toast({
+        description: `${column} Quantity Updated Successfully, Value: ${response.data[column]}`,
+      });
+    } catch (error) {
+      console.log(`Error while updating ${column} data`);
+      toast({
+        variant: 'destructive',
+        description: `Could not update ${column} data, Value: ${newValue}`,
+      });
+    }
+  };
+
+  const debouncedUpdateValue = debounce(updateValue, 2000);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    debouncedUpdateValue(newValue);
+  };
+
+  return (
+    <div className="text-center">
+      <input className="w-[60px]" value={inputValue} onChange={handleChange} />
+    </div>
+  );
+};
+
+type DataCellProps = {
+  row: {
+    original: DailyProductivity
+  };
+  columnType: "group" | "category";
+};
+
+const DataCell: React.FC<DataCellProps> = ({ row, columnType }) => {
+  const { data, error, isLoading, refetch } = useQuery<Group[]>(
+    columnType === "group" ? 'groupdata' : 'allcategorydata',
+    {
+      queryFn: () => axios.get(columnType === "group" ? '/api/group' : '/api/category').then((res) => res.data),
+      staleTime: 60 * 1000,
+      retry: 3,
+    }
+  );
+
+  const name = data?.find((item) => item.id === row.original[`${columnType}Id`])?.name;
+  const id = row.original[`${columnType}Id`];
+
+  return <div>{name}{id}</div>;
+}
+
+const DataActions = ({row}:{row:{original:DailyProductivity}}) => {
+  const image = row.original
+  const [openDialogue, setOpenDialogue] = useState<boolean>(false)
+  const {toast} = useToast()
+  const DeleteImage = async () => {
+    try {
+        const response = await axios.delete('/api/dailyquantity',{
+            params:{
+                id:row.original.id
+            }
+        })
+        console.log(response)
+        setOpenDialogue(false)
+        toast({
+          variant:'destructive',
+          description: "Data Deleted Successfully Successfully",
+        })
+    }catch{
+        console.log('error deleting data')
+    }
+  }
+
+  return (
+    <>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => setOpenDialogue(true)} >
+                <Button className="w-[120px]" >Delete</Button>
+            </DropdownMenuItem>
+            <DropdownMenuItem> 
+              <Button className="w-[120px]">
+                <Link href={`/databased/editdailyquantity/${row.original.id}`}>Edit</Link>
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <AlertDialog open={openDialogue}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete this data.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setOpenDialogue(false)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction className="bg-red-500" onClick={DeleteImage}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        </>
+  )
+}
+
 
 
 export const columns: ColumnDef<DailyProductivity>[] = [
@@ -64,14 +191,8 @@ export const columns: ColumnDef<DailyProductivity>[] = [
     },
     header: "Group",
     cell:({row}) => {
-        const {data: groupData = [], error: groupDatanError, isLoading: groupDataLoading, refetch:refetchgroupData} = useQuery<Group[]>({
-          queryKey:'groupdata',
-          queryFn: ()=> axios.get('/api/group').then((res) => res.data),
-          staleTime:60 * 1000,
-          retry:3,
-        })
         return(
-          <div>{(groupData?.find((item) => item.id === row.original.groupId))?.name}{row.original.groupId}</div>
+          <div><DataCell row={row} columnType="group" /></div>
         )
     }
   },
@@ -94,14 +215,8 @@ export const columns: ColumnDef<DailyProductivity>[] = [
         )
     },
     cell:({row}) => {
-      const {data: categoryData = [], error: categoryDataError, isLoading: categoryDataLoading, refetch:refetchcategoryData} = useQuery<Category[]>({
-        queryKey:'allcategorydata',
-        queryFn: ()=> axios.get('/api/category').then((res) => res.data),
-        staleTime:60 * 1000,
-        retry:3,
-      })
       return(
-        <div>{(categoryData?.find((item) => item.id === row.original.categoryId))?.name}{row.original.categoryId}</div>
+        <div><DataCell row={row} columnType="category" /></div>
       )
     }
   },
@@ -127,44 +242,8 @@ export const columns: ColumnDef<DailyProductivity>[] = [
         )
     },
     cell:({row}) => {
-        const initialValue = row.original.excavationQty
-        const [value, setValue] = useState(initialValue.toString())
-        const {toast} = useToast()
-
-        const UpdateQty = async (newValue:string) => {
-          try {
-            const resposne = await axios.patch('/api/dailytable',{
-              id:row.original.id,
-              excavationQty:parseFloat(newValue)
-            })
-            console.log(resposne.data)
-            toast({
-              description:`Excavation Quantity Updated Successfully, Value:  ${resposne.data.excavationQty}`
-            })
-          } catch (error) {
-            console.log('Error while updating data')
-            toast({
-              variant:'destructive',
-              description:`Could not update the data, Value:  ${newValue}`
-            })
-          }
-        }
-
-        const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const newValue = e.target.value;
-          setValue(newValue);
-          debouncedUpdateQty(newValue);
-        };
         return (
-            <div className="text-center">
-              <input
-                className="w-[60px]"
-                value={value}
-                onChange={handleChange}
-              />
-            </div>
+          <EditableCell value={row.original.excavationQty} column="excavationQty" id={row.original.id} />
         )
     }
   },
@@ -177,44 +256,8 @@ export const columns: ColumnDef<DailyProductivity>[] = [
         )
     },
     cell:({row}) => {
-      const initialValue = row.original.formWorkQty
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/dailytable',{
-            id:row.original.id,
-            formWorkQty:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`FormWork Quantity Updated Successfully, Value:  ${resposne.data.excavationQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
         return (
-          <div className="text-center">
-            <input
-              className="w-[60px]"
-              value={value}
-              onChange={handleChange}
-            />
-        </div>
+          <EditableCell value={row.original.formWorkQty} column="formWorkQty" id={row.original.id} />
         )
     }
   },
@@ -227,44 +270,8 @@ export const columns: ColumnDef<DailyProductivity>[] = [
         )
     },
     cell:({row}) => {
-      const initialValue = row.original.rebarQty
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/dailytable',{
-            id:row.original.id,
-            rebarQty:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Rebar Quantity Updated Successfully, Value:  ${resposne.data.rebarQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
         return (
-          <div className="text-center">
-          <input
-            className="w-[60px]"
-            value={value}
-            onChange={handleChange}
-          />
-      </div>
+          <EditableCell value={row.original.rebarQty} column="rebarQty" id={row.original.id} />
         )
     }
   },
@@ -277,44 +284,8 @@ export const columns: ColumnDef<DailyProductivity>[] = [
         )
     },
     cell:({row}) => {
-      const initialValue = row.original.concreteQty
-      const [value, setValue] = useState(initialValue.toString())
-      const {toast} = useToast()
-
-      const UpdateQty = async (newValue:string) => {
-        try {
-          const resposne = await axios.patch('/api/dailytable',{
-            id:row.original.id,
-            concreteQty:parseFloat(newValue)
-          })
-          console.log(resposne.data)
-          toast({
-            description:`Concrete Quantity Updated Successfully, Value:  ${resposne.data.concreteQty}`
-          })
-        } catch (error) {
-          console.log('Error while updating data')
-          toast({
-            variant:'destructive',
-            description:`Could not update the data, Value:  ${newValue}`
-          })
-        }
-      }
-
-      const debouncedUpdateQty = debounce(UpdateQty, 2000);
-
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setValue(newValue);
-        debouncedUpdateQty(newValue);
-      };
         return (
-          <div className="text-center">
-          <input
-            className="w-[60px]"
-            value={value}
-            onChange={handleChange}
-          />
-      </div>
+          <EditableCell value={row.original.concreteQty} column="concreteQty" id={row.original.id} />
         )
     }
   },
@@ -354,62 +325,9 @@ export const columns: ColumnDef<DailyProductivity>[] = [
     id: "actions",
     header:'Actions',
     cell: ({ row }) => {
-      const image = row.original
-      const [openDialogue, setOpenDialogue] = useState<boolean>(false)
-      const {toast} = useToast()
-      const DeleteImage = async () => {
-        try {
-            const response = await axios.delete('/api/dailyquantity',{
-                params:{
-                    id:row.original.id
-                }
-            })
-            console.log(response)
-            setOpenDialogue(false)
-            toast({
-              variant:'destructive',
-              description: "Data Deleted Successfully Successfully",
-            })
-        }catch{
-            console.log('error deleting data')
-        }
-      }
       return (
         <>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => setOpenDialogue(true)} >
-                <Button className="w-[120px]" >Delete</Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem> 
-              <Button className="w-[120px]">
-                <Link href={`/databased/editdailyquantity/${row.original.id}`}>Edit</Link>
-              </Button>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <AlertDialog open={openDialogue}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete this data.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setOpenDialogue(false)}>Cancel</AlertDialogCancel>
-              <AlertDialogAction className="bg-red-500" onClick={DeleteImage}>Delete</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
+          <DataActions row={row} />
         </>
       )
     },
