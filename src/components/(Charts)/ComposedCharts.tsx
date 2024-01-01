@@ -18,18 +18,29 @@ interface TransformedDataItem {
   Cumulative_Indirect_Value: number;
 }
 
+type ActualData = {
+  _sum:{
+    Nos:number
+  },
+  Month:string
+  category:string
+}
+
 const ComposedCharts = (props: Props) => {
-  const { data: AllMonthlydata = [], error: AllMonthlydataError, isLoading: isAllMonthlydataLoading, refetch: refetchAllMonthlydata } = useQuery<resourceData[]>({
+  const { data: AllMonthlydata = [], error: AllMonthlydataError, isLoading: isAllMonthlydataLoading, refetch: refetchAllMonthlydata } = useQuery<ActualData[]>({
     queryKey: 'AllMonthlydata',
     queryFn: () => axios.get('/api/allmonthlydata').then((res) => res.data),
     staleTime: 60 * 1000,
     retry: 3,
   });
 
+  // console.log(AllMonthlydata)
+
   const transformedData: Record<string, TransformedDataItem> = {};
 
   AllMonthlydata.forEach((item) => {
-    const { Month, category, Nos } = item;
+    const { Month, category, _sum } = item;
+    console.log(item)
 
     if (!transformedData[Month]) {
       transformedData[Month] = {
@@ -42,11 +53,11 @@ const ComposedCharts = (props: Props) => {
     }
 
     if (category === 'Direct') {
-      transformedData[Month].Direct_Value = Nos ?? 0;
-      transformedData[Month].Cumulative_Direct_Value += Nos ?? 0;
+      transformedData[Month].Direct_Value = _sum.Nos ?? 0;
+      transformedData[Month].Cumulative_Direct_Value += _sum.Nos ?? 0;
     } else if (category === 'Indirect') {
-      transformedData[Month].Indirect_Value = Nos ?? 0;
-      transformedData[Month].Cumulative_Indirect_Value += Nos ?? 0;
+      transformedData[Month].Indirect_Value = _sum.Nos ?? 0;
+      transformedData[Month].Cumulative_Indirect_Value += _sum.Nos ?? 0;
     }
   });
 
