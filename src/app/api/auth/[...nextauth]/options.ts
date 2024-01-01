@@ -13,7 +13,8 @@ export const options:NextAuthOptions = {
         })
     ],
     pages:{
-        signIn: '/signin'
+        signIn: '/signin',
+        error:'/error'
     },
     
     session:{
