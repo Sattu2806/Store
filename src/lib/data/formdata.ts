@@ -14,6 +14,39 @@
 // ]
 
 
+export const ProjectMileStone = [
+    {
+      description: 'Project Initiation',
+      startDate: '2023-01-01T00:00:00Z',
+      endDate: '2023-02-15T23:59:59Z',
+    },
+    {
+      description: 'Engineering',
+      startDate: '2023-02-16T00:00:00Z',
+      endDate: '2023-04-30T23:59:59Z',
+    },
+    {
+      description: 'Construction',
+      startDate: '2023-05-01T00:00:00Z',
+      endDate: '2023-07-15T23:59:59Z',
+    },
+    {
+      description: 'Material Completion',
+      startDate: '2023-07-16T00:00:00Z',
+      endDate: '2023-09-30T23:59:59Z',
+    },
+    {
+      description: 'Commissioning',
+      startDate: '2023-10-01T00:00:00Z',
+      endDate: '2023-11-15T23:59:59Z',
+    },
+    {
+      description: 'Startup',
+      startDate: '2023-11-16T00:00:00Z',
+      endDate: '2023-12-30T23:59:59Z',
+    },
+  ];
+  
 export const long_lead_item = [
     {
         "ItemID": "R-1234",

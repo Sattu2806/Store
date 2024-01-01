@@ -19,6 +19,7 @@ import AllCardComponents from '../../../components/(cards)/AllCardComponents';
 import NCRChart from '@/components/(Charts)/NCRChart';
 import ChartPiePlan from '@/components/(Charts)/ChartPiePlan';
 import ChartPieActual from '../../../components/(Charts)/ChartPieActual';
+import ProjectMileStoneTable from '@/components/(Tables)/ProjectMileStoneTable';
 
 type Props = {
 
@@ -71,6 +72,9 @@ const Dashboard = (props:Props) => {
         </div>
         <div className='grid md:grid-cols-2 gap-10 mt-3'>
             <LongLeadTable/>
+        </div>
+        <div className='grid md:grid-cols-2 gap-10 mt-3'>
+            <ProjectMileStoneTable/>
         </div>
     </div>
   );
