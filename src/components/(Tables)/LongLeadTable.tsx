@@ -22,13 +22,13 @@ const LongLeadTable = (props: Props) => {
         <TableCaption>Long Lead Item Table</TableCaption>
         <TableHeader>
             <TableRow className='bg-gray-50'>
-            <TableHead className="w-[100px]">ItemID</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Manufacturer</TableHead>
-            <TableHead className="w-[50px]">LeadTime (Weeks)</TableHead>
+            <TableHead className="w-[80px]">ItemID</TableHead>
+            <TableHead className="w-[240px]">Description</TableHead>
+            <TableHead className="w-[140px]">Manufacturer</TableHead>
+            <TableHead className="w-[30px]">LeadTime (Weeks)</TableHead>
             <TableHead className="">OrderDate</TableHead>
             <TableHead className="w-[80px]">Expected DeliveryDate</TableHead>
-            <TableHead className="w-[80px]">Status</TableHead>
+            <TableHead className="w-[140px]">Status</TableHead>
             <TableHead className="w-[350px]">Remarks</TableHead>
             </TableRow>
         </TableHeader>

@@ -169,3 +169,13 @@ export interface Image {
 }
 
 
+export interface TotalScopeAggregateResult {
+  _sum: {
+    totalFoundations: number;
+    concreteQty: number;
+    excavationQty: number;
+    rebarQty: number;
+  };
+}
+
+

@@ -71,8 +71,8 @@ const Charts = ({data, label,color}: Props) => {
                 dataKey="month"
                 stroke="#888888"
                 fontSize={12}
-                tickLine={false}
-                axisLine={false}
+                // tickLine={false}
+                // axisLine={false}
                 style={{
                     fontWeight: '600',
                     color:"black"

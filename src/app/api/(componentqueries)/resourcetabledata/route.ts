@@ -12,6 +12,9 @@ export async function GET(request: Request) {
 
     if(Category === 'All'){
         const response = await prisma.resourceData.findMany({
+            orderBy: {
+                category: 'asc',
+            },
         })
         return NextResponse.json(response)
     }
