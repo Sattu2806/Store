@@ -168,6 +168,18 @@ export interface Image {
   groupId: number;
 }
 
+export interface ProjectMileStone {
+  description:string
+  startDate:Date
+  endDate:Date
+  ProjectMileStoneInfo:{
+    month  :number
+    year   :number
+    barwidth  :number
+    barleftpostion :number
+  }
+}
+
 
 export interface TotalScopeAggregateResult {
   _sum: {

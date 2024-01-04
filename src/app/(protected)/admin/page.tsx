@@ -3,10 +3,21 @@
 import { admin } from "@/actions/admin";
 import { RoleGate } from "@/components/auth/role-gate";
 import { FormSuccess } from "@/components/form-success";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { UserRole } from "@prisma/client";
+import { User, UserRole } from "@prisma/client";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
+import axios from "axios";
+import { useQuery } from "react-query";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const AdminPage = () => {
   const onServerActionClick = () => {
@@ -22,19 +33,44 @@ const AdminPage = () => {
       })
   }
   
-  const onApiRouteClick = () => {
-    fetch("/api/admin")
-      .then((response) => {
-        if (response.ok) {
-          toast.success("Allowed API Route!");
-        } else {
-          toast.error("Forbidden API Route!");
+//   const onApiRouteClick = () => {
+//     fetch("/api/admin")
+//       .then((response) => {
+//         if (response.ok) {
+//           toast.success("Allowed API Route!");
+//         } else {
+//           toast.error("Forbidden API Route!");
+//         }
+//       })
+//   }
+
+  const {data: Users , error: UserError, isLoading: isUserLoading, refetch:refetchUser} = useQuery<User[]>({
+    queryKey:'users',
+    queryFn: async () => {
+        try {
+          const res = await axios.get('/api/admin');
+          return res.data;
+        } catch (error) {
+          throw new Error('Failed to fetch data');
         }
-      })
-  }
+    },
+    staleTime:60 * 1000,
+    retry:3,
+})
+
+if(!Users){
+    return (
+        <div></div>
+    )
+}
+
+const ChangeRole = () => {
+
+}
+
 
   return (
-    <Card className="w-[600px]">
+    <Card className="max-w-[800px] mx-auto my-4">
       <CardHeader>
         <p className="text-2xl font-semibold text-center">
           🔑 Admin
@@ -45,24 +81,28 @@ const AdminPage = () => {
           <FormSuccess
             message="You are allowed to see this content!"
           />
+        {Users.map((user,index)=>(
+            <div key={index} className="flex items-center justify-between rounded-md shadow-sm p-3 py-4">
+                <p className="text-sm font-medium">
+                    {user.name}
+                </p>
+                <p className="text-sm font-medium">
+                    {user.email}
+                </p>
+                <Select>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder={user.role} />
+                    </SelectTrigger>
+                    <SelectContent >
+                        <SelectGroup>
+                        <SelectItem value="ADMIN">ADMIN</SelectItem>
+                        <SelectItem value="USER">USER</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>
+        ))}
         </RoleGate>
-        <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-md">
-          <p className="text-sm font-medium">
-            Admin-only API Route
-          </p>
-          <Button onClick={onApiRouteClick}>
-            Click to test
-          </Button>
-        </div>
-
-        <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-md">
-          <p className="text-sm font-medium">
-            Admin-only Server Action
-          </p>
-          <Button onClick={onServerActionClick}>
-            Click to test
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );

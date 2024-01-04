@@ -187,3 +187,21 @@ model ImageGroup {
   name    String
   Image   Image[]
 }
+
+model ProjectMileStone {
+  id      Int      @id @default(autoincrement())
+  description     String
+  startDate       DateTime
+  endDate         DateTime
+  ProjectMileStoneInfo      ProjectMileStoneInfo[]
+}
+
+model ProjectMileStoneInfo {
+  id             Int         @id @default(autoincrement())
+  ProjectMileStoneId     Int
+  month          Int?
+  year           Int?
+  barwidth       Float?
+  barleftposition Float?
+  ProjectMileStone       ProjectMileStone    @relation(fields: [ProjectMileStoneId], references: [id], onDelete: Cascade)         
+}

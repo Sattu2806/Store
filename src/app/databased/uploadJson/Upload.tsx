@@ -8,6 +8,7 @@ import UploadTotalQuantity from './UploadTotalQuantity'
 import UploadManpowerData from './UploadManpowerData'
 import UploadMonthlyData from './UploadMonthlyData'
 import UploadProjectData from './UploadProject'
+import UploadProjectMileStone from './UploadProjectMileStone'
 
 type Props = {}
 
@@ -29,6 +30,8 @@ const Upload = (props: Props) => {
             return <UploadManpowerData />;
         case 'monthly':
             return <UploadMonthlyData />;
+        case 'UploadProjectMileStone':
+            return <UploadProjectMileStone />;
         case 'project':
         default:
             return <UploadProjectData />;
@@ -60,6 +63,10 @@ const Upload = (props: Props) => {
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="monthly" id="monthly" />
             <Label htmlFor="monthly" className='text-xl'>Monthly</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+            <RadioGroupItem value="UploadProjectMileStone" id="UploadProjectMileStone" />
+            <Label htmlFor="UploadProjectMileStone" className='text-xl'>UploadProjectMileStone</Label>
         </div>
         </RadioGroup>
         {renderSelectedComponent()}

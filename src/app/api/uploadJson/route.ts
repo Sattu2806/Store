@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prismadb"
 import { DailyQuantitySchema } from "@/ZodSchema/QuantitySchema";
 import { headers } from 'next/headers'
-import { DailyQuantity, ManpowerData, MonthlyData, Project, TotalQuantity, TradeData } from "@/lib/types";
+import { DailyQuantity, ManpowerData, MonthlyData, Project, ProjectMileStone, TotalQuantity, TradeData } from "@/lib/types";
 
 export async function GET(request: Request) {  
     try {
@@ -86,6 +86,28 @@ export async function POST(request:NextRequest, response:NextResponse){
                 data:body
             })
             return NextResponse.json(project, {status:201})
+        } catch (error) {
+            console.error(`Error while processing ${Type} data:`, error);
+            return NextResponse.error()
+        }
+    }
+    else if(Type === 'ProjectMileStone'){
+        try {
+            const body : ProjectMileStone = await request.json()
+            console.log(body)
+            const projectMileStone = await prisma.projectMileStone.create({
+                data:{
+                    description:body.description,
+                    startDate:body.startDate,
+                    endDate:body.endDate,
+                    ProjectMileStoneInfo:{
+                        createMany:{
+                            data:body.ProjectMileStoneInfo
+                        }
+                    }
+                },
+            })
+            return NextResponse.json(projectMileStone, {status:201})
         } catch (error) {
             console.error(`Error while processing ${Type} data:`, error);
             return NextResponse.error()
