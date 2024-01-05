@@ -64,10 +64,21 @@ if(!Users){
     )
 }
 
-const ChangeRole = () => {
-
-}
-
+const changeRole = async (userId: string, newRole: UserRole) => {
+    try {
+      const response = await axios.put(`/api/admin/${userId}`,
+       { role: newRole }
+       );
+      if (response.data.success) {
+        toast.success(`Role changed to ${newRole} for user ${userId}`);
+      } else {
+        toast.error(`Failed to change role for user ${userId}`);
+      }
+      refetchUser();
+    } catch (error) {
+      toast.error('Error changing user role');
+    }
+};
 
   return (
     <Card className="max-w-[800px] mx-auto my-4">
@@ -89,17 +100,17 @@ const ChangeRole = () => {
                 <p className="text-sm font-medium">
                     {user.email}
                 </p>
-                <Select>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder={user.role} />
-                    </SelectTrigger>
-                    <SelectContent >
-                        <SelectGroup>
-                        <SelectItem value="ADMIN">ADMIN</SelectItem>
-                        <SelectItem value="USER">USER</SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                <Select onValueChange={(selectedRole:UserRole) => changeRole(user.id, selectedRole)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder={user.role} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="ADMIN">ADMIN</SelectItem>
+                    <SelectItem value="USER">USER</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
         ))}
         </RoleGate>
