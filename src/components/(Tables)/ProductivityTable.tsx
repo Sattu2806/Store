@@ -45,6 +45,12 @@ const ProductivityTable= ({
         retry:3,
     })
 
+    if(!productivityData){
+      return (
+        <Skeleton/>
+      )
+    }
+
     useEffect(() => {
       refetchproductivityData()
     }, [selectedMonth, selectedOption])

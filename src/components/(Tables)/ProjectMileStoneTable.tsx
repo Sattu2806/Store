@@ -12,6 +12,7 @@ import { Card } from '../ui/card';
 import { useQuery } from 'react-query';
 import { ProjectMileStone, ProjectMileStoneInfo } from '@prisma/client';
 import axios from 'axios';
+import { Skeleton } from '../ui/skeleton';
 
 interface ProjectMil extends ProjectMileStone {
     data:ProjectMileStone,
@@ -30,6 +31,12 @@ const ProjectMileStoneTable = () => {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
     ];
+
+    if(!ProjectMileStoneData){
+        return (
+          <Skeleton/>
+        )
+      }
 
     const uniqueYears = Array.from(new Set(ProjectMileStoneData.flatMap(item => item.ProjectMileStoneInfo.map(info => info.year))));
 

@@ -2,6 +2,7 @@ import axios from 'axios'
 import React from 'react'
 import { useQuery } from 'react-query'
 import Charts from './Charts'
+import { Skeleton } from '../ui/skeleton'
 
 type Props = {}
 
@@ -24,6 +25,12 @@ const ProductivityCharts = (props: Props) => {
         staleTime:60 * 1000,
         retry:3,
     })
+
+    if(!quantitymonthData){
+        return (
+            <Skeleton/>
+        )
+    }
 
     const {formWorkMonthData, concreteMonthData, excavationMonthData, rebarMonthData}  = quantitymonthData
   return (

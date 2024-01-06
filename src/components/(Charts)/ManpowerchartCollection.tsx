@@ -2,6 +2,7 @@ import axios from 'axios';
 import React from 'react'
 import { useQuery } from 'react-query'
 import ManpowerCharts from './ManpowerChart';
+import { Skeleton } from '../ui/skeleton';
 
 type Props = {}
 
@@ -23,6 +24,12 @@ const ManpowerchartCollection = (props: Props) => {
         staleTime:60 * 1000,
         retry:3,
     })
+
+    if(!ManpowerApiData){
+      return (
+        <Skeleton/>
+      )
+    }
 
     const direct = ManpowerApiData
     ?.filter((data) => data.category === 'Direct')

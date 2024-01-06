@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import { Toaster } from "@/components/ui/toaster"
 import QueryClientProvider from '../components/QueryClientProvider'
 import Provider from '@/components/Provider'
+import { Toaster as SonnerToast } from "@/components/ui/sonner"
 
 
 
@@ -26,6 +27,7 @@ export default function RootLayout({
         <Provider>
           <QueryClientProvider>
           <Toaster/>
+          <SonnerToast />
           <Navbar/>
             {children}
           </QueryClientProvider>

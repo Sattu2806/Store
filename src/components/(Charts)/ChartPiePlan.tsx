@@ -105,7 +105,7 @@ const ChartPiePlan = (props: Props) => {
             onClick={(entry, index) => {handleCellClick(entry, index); setopenDialogue(true); setSelectedGroup('Plan')}}
             className="border-none outline-none"
           >
-            {data.map((entry, index) => {
+            {data?.map((entry, index) => {
               return(
                 <Cell  className="cursor-pointer outline-none" key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               )

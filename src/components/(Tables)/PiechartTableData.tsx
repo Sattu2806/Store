@@ -34,7 +34,7 @@ const PiechartTableData= ({
     setopenDialogue,
 }: Props) => {
     const {data: manpowerapiData = [], error: manpowerapiDataError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<resourceData[]>({
-        queryKey:'manpowerdata',
+        queryKey:'manpowerdata1',
         queryFn: ()=> axios.get('/api/manpowerdatachart', {
             params:{
                 Category:selectedOption,
@@ -44,6 +44,12 @@ const PiechartTableData= ({
         staleTime:60 * 1000,
         retry:3,
     })
+
+    if(!manpowerapiData){
+      return (
+        <Skeleton/>
+      )
+    }
 
     const uniqueYearMonthPairs = Array.from(new Set(manpowerapiData.map(item => `${item.Month}-${item.Year}`)))
     const uniqueCategoryTradePairs = Array.from(new Set(manpowerapiData.map(item => `${item.category}-${item.Trade}`)));

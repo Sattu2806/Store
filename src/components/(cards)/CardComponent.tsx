@@ -22,10 +22,10 @@ const CardComponent = ({totalActual, total, label, unit}: Props) => {
                     Total
                 </CardTitle>
                 <div className="text-md font-medium text-center">
-                    {label === 'Excavation' ? total._sum?.Excavation?.toFixed(0) : null}
-                    {label === 'FormWork' ? total._sum?.FormWork?.toFixed(0) : null}
-                    {label === 'Rebar' ? total._sum?.Rebar?.toFixed(0) : null}
-                    {label === 'Concrete' ? total._sum?.Concrete?.toFixed(0) : null}
+                    {label === 'Excavation' ? total?._sum?.Excavation?.toFixed(0) : null}
+                    {label === 'FormWork' ? total?._sum?.FormWork?.toFixed(0) : null}
+                    {label === 'Rebar' ? total?._sum?.Rebar?.toFixed(0) : null}
+                    {label === 'Concrete' ? total?._sum?.Concrete?.toFixed(0) : null}
                     {unit}
                 </div>
             </CardContent>
@@ -34,10 +34,10 @@ const CardComponent = ({totalActual, total, label, unit}: Props) => {
                 Completed
             </CardTitle>
             <div className="text-md font-semibold whitespace-pre text-center">
-                {label === 'Excavation' ? totalActual._sum.excavationQty?.toFixed(0) : null}
-                {label === 'FormWork' ? totalActual._sum.totalFoundations?.toFixed(0) : null}
-                {label === 'Rebar' ? totalActual._sum.rebarQty?.toFixed(0) : null}
-                {label === 'Concrete' ? totalActual._sum.concreteQty?.toFixed(0) : null}
+                {label === 'Excavation' ? totalActual?._sum.excavationQty?.toFixed(0) : null}
+                {label === 'FormWork' ? totalActual?._sum.totalFoundations?.toFixed(0) : null}
+                {label === 'Rebar' ? totalActual?._sum.rebarQty?.toFixed(0) : null}
+                {label === 'Concrete' ? totalActual?._sum.concreteQty?.toFixed(0) : null}
                 {unit}
             </div>
             </CardContent>
@@ -46,10 +46,10 @@ const CardComponent = ({totalActual, total, label, unit}: Props) => {
                 Balance
             </CardTitle>
             <div className="text-md font-semibold">
-                {label === 'Excavation' ? (total._sum?.Excavation !== null ? (total._sum?.Excavation - totalActual._sum?.excavationQty) : null)?.toFixed(0) : null}
-                {label === 'FormWork' ? (total._sum?.FormWork !== null ? (total._sum?.FormWork - totalActual._sum?.totalFoundations):null)?.toFixed(0) : null}
-                {label === 'Rebar' ? (total._sum?.Rebar !== null ? (total._sum?.Rebar - totalActual._sum?.rebarQty):null)?.toFixed(0) : null}
-                {label === 'Concrete' ? (total._sum?.Concrete !== null ? (total._sum?.Concrete - totalActual._sum?.concreteQty):null)?.toFixed(0) : null}
+                {label === 'Excavation' ? (total?._sum?.Excavation !== null ? (total?._sum?.Excavation - totalActual?._sum?.excavationQty) : null)?.toFixed(0) : null}
+                {label === 'FormWork' ? (total?._sum?.FormWork !== null ? (total?._sum?.FormWork - totalActual?._sum?.totalFoundations):null)?.toFixed(0) : null}
+                {label === 'Rebar' ? (total?._sum?.Rebar !== null ? (total?._sum?.Rebar - totalActual?._sum?.rebarQty):null)?.toFixed(0) : null}
+                {label === 'Concrete' ? (total?._sum?.Concrete !== null ? (total?._sum?.Concrete - totalActual?._sum?.concreteQty):null)?.toFixed(0) : null}
                 {unit}
             </div>
         </CardContent>

@@ -42,6 +42,12 @@ const MnapowerTableData = ({
         retry:3,
     })
 
+    if(!manpowerapiData){
+      return (
+        <Skeleton/>
+      )
+    }
+
     const uniqueYearMonthPairs = Array.from(new Set(manpowerapiData.map(item => `${item.Month}-${item.Year}`)))
     const uniqueCategoryTradePairs = Array.from(new Set(manpowerapiData.map(item => `${item.category}-${item.Trade}`)));
 
