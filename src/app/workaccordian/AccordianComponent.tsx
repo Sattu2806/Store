@@ -40,9 +40,9 @@ const AccordianComponent = (props: Props) => {
                     <p className='font-medium text-lg'>Description</p> 
                     <p className='font-medium text-lg'>Weight</p> 
                 </AccordionContent>
-                {item.Descriptions.map((description, index1) => (
-                <AccordionContent key={index1} className='text-lg flex items-center justify-between space-x-4 border-b-[1.5px] border-blue-200 py-2 px-3'>
-                    <p>{index + 1}. {description.Description}</p> 
+                {item.Descriptions.map((description, inner_index) => (
+                <AccordionContent key={inner_index} className='text-lg flex items-center justify-between space-x-4 border-b-[1.5px] border-blue-200 py-2 px-3'>
+                    <p>{inner_index + 1}. {description.Description}</p> 
                     <p>{description.Weight * 100} %</p> 
                 </AccordionContent>
                 ))}
