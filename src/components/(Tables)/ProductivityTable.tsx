@@ -45,15 +45,16 @@ const ProductivityTable= ({
         retry:3,
     })
 
+    useEffect(() => {
+      refetchproductivityData()
+    }, [selectedMonth, selectedOption])
+    
     if(!productivityData){
       return (
         <Skeleton/>
       )
     }
 
-    useEffect(() => {
-      refetchproductivityData()
-    }, [selectedMonth, selectedOption])
 
 
     const calculateTotal = () => {

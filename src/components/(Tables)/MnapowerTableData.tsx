@@ -41,6 +41,9 @@ const MnapowerTableData = ({
         staleTime:60 * 1000,
         retry:3,
     })
+    useEffect(() => {
+      refetchmanpowerapiData()
+  },[selectedOption])
 
     if(!manpowerapiData){
       return (
@@ -56,9 +59,7 @@ const MnapowerTableData = ({
         setSelectedOption(event);
     };
 
-    useEffect(() => {
-        refetchmanpowerapiData()
-    },[selectedOption])
+
  
   return (
     <div>

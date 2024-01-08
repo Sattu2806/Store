@@ -44,6 +44,9 @@ const PiechartTableData= ({
         staleTime:60 * 1000,
         retry:3,
     })
+    useEffect(() => {
+      refetchmanpowerapiData()
+  },[selectedOption, setSelectedOption, selectedGroup])
 
     if(!manpowerapiData){
       return (
@@ -59,9 +62,7 @@ const PiechartTableData= ({
         setSelectedOption(event);
     };
 
-    useEffect(() => {
-        refetchmanpowerapiData()
-    },[selectedOption, setSelectedOption, selectedGroup])
+
     
     console.log(selectedGroup)
 
