@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
 import { signOut, useSession } from 'next-auth/react'
+import { UserRole } from '@prisma/client'
 
 
 type Props = {}
@@ -33,7 +34,9 @@ const Navbar = (props: Props) => {
             <Link href='/variants' className='font-medium hover:opacity-60'>Variants</Link> */}
             <Link href='/databased/dashboard' className='font-medium hover:opacity-60'>Dashbord</Link>
             <Link href='/work-images' className='font-medium hover:opacity-60'>Work Images</Link>
-            <Link href='/databased/uploadJson' className='font-medium hover:opacity-60'>Upload Data</Link>
+            {Session?.user.role !== UserRole.USER  && (
+                <Link href='/databased/uploadJson' className='font-medium hover:opacity-60'>Upload Data</Link>
+            )}
             {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <DropdownMenuLabel className='text-base flex items-center font-medium hover:opacity-60 cursor-pointer'>Uploads<ChevronDown className="h-[1.2rem] w-[1.2rem]" /></DropdownMenuLabel>
@@ -78,6 +81,9 @@ const Navbar = (props: Props) => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+            {Session?.user.role === UserRole.SUPERADMIN && (
+                <Link href='admin' className='font-medium hover:opacity-60'>Admin</Link>
+            )}
             </div>
             {Session && (
             <div className='flex items-center justify-between space-x-5'>

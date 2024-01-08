@@ -88,7 +88,7 @@ const changeRole = async (userId: string, newRole: UserRole) => {
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
-        <RoleGate allowedRole={UserRole.ADMIN}>
+        <RoleGate allowedRole={UserRole.SUPERADMIN}>
           <FormSuccess
             message="You are allowed to see this content!"
           />

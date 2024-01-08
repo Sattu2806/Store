@@ -9,10 +9,13 @@ import UploadManpowerData from './UploadManpowerData'
 import UploadMonthlyData from './UploadMonthlyData'
 import UploadProjectData from './UploadProject'
 import UploadProjectMileStone from './UploadProjectMileStone'
+import { currentRole } from '@/lib/auth'
+import { UserRole } from '@prisma/client'
+import { RoleGate } from '@/components/auth/role-gate'
 
 type Props = {}
 
-const Upload = (props: Props) => {
+const Upload = async (props: Props) => {
     const [selectedUpload, setSelectedUpload] = useState<string>('project')
     const handleUploadTypeChange = (value: string) => {
         setSelectedUpload(value);
@@ -37,7 +40,9 @@ const Upload = (props: Props) => {
             return <UploadProjectData />;
         }
     };
+
   return (
+    <RoleGate allowedRole={UserRole.ADMIN || UserRole.SUPERADMIN}>
     <div className='max-w-[1280px] mx-auto my-4'>
         <RadioGroup className='flex items-center space-x-5 ' value={selectedUpload} onValueChange={handleUploadTypeChange} defaultValue="option-one">
         <div className="flex items-center space-x-2 ">
@@ -71,6 +76,7 @@ const Upload = (props: Props) => {
         </RadioGroup>
         {renderSelectedComponent()}
     </div>
+    </RoleGate>
   )
 }
 

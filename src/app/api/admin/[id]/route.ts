@@ -6,7 +6,7 @@ import { currentUser } from "@/lib/auth";
 export async function PUT(request: NextRequest,{ params }: { params: { id: string } }) {
   const role = await currentRole();
 
-  if (role === UserRole.ADMIN) {
+  if (role === UserRole.SUPERADMIN) {
     const UserId = params.id
     const body = await request.json();
 

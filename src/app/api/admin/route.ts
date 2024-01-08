@@ -7,7 +7,7 @@ export async function GET() {
   const role = await currentRole();
   const User = await currentUser()
 
-  if (role === UserRole.ADMIN) {
+  if (role === UserRole.SUPERADMIN) {
     const users = await prisma?.user.findMany({
       where: {
         id: {
