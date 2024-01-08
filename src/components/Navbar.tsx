@@ -82,7 +82,7 @@ const Navbar = (props: Props) => {
                 </DropdownMenuContent>
             </DropdownMenu>
             {Session?.user.role === UserRole.SUPERADMIN && (
-                <Link href='admin' className='font-medium hover:opacity-60'>Admin</Link>
+                <Link href='/admin' className='font-medium hover:opacity-60'>Admin</Link>
             )}
             </div>
             {Session && (
