@@ -72,8 +72,8 @@ export const {
       return session;
     },
     async jwt({ token }) {
-      if (!token.sub) return token;
-
+      if (!token.sub ) return token;
+      
       const existingUser = await getUserById(token.sub);
 
       if (!existingUser) return token;

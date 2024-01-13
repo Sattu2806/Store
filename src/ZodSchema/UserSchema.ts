@@ -13,7 +13,7 @@ export const SettingsSchema = z.object({
     if (data.password && !data.newPassword) {
       return false;
     }
-
+    
     return true;
   }, {
     message: "New password is required!",

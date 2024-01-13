@@ -30,4 +30,5 @@ const DailyQuantitySchema = z.object({
   concreteQty: z.number(),
 });
 
+
 export { GroupSchema, CategorySchema, TotalQuantitySchema, DailyQuantitySchema };

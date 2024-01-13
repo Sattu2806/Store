@@ -74,6 +74,9 @@ const Navbar = (props: Props) => {
                         <Link className='w-full' href='/databased/category'>Category Form</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
+                        <Link className='w-full' href='/databased/longlead'>Long Lead</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
                         <Link className='w-full' href='/databased/totalquantity'>Total Quantity Form</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
