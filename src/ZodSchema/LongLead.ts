@@ -5,7 +5,7 @@ import {z} from "zod"
 export const LongLeadItemSchema = z.object({
     image: z.string(),
     country: z.string(),
-    category: z.string(),
+    categoryId: z.number(),
     vendor: z.string(),
     description: z.string(),
     qty: z.number().int(),
@@ -22,3 +22,10 @@ export const LongLeadItemSchema = z.object({
     finalInspection:z.optional(z.enum([FinalInspectionStatus.Completed,FinalInspectionStatus.Ongoing,FinalInspectionStatus.Pending])),
     deliveryToSite:z.optional(z.enum([DeliveryToSiteStatus.CustomClearance,DeliveryToSiteStatus.Delivered,DeliveryToSiteStatus.Pending, DeliveryToSiteStatus.UnderShipment]))
   });
+
+export const LongLeadCategorySchema  = z.object({
+    name: z.string().min(2, {
+      message: "name must be at least 2 characters.",
+    }),
+})
+  

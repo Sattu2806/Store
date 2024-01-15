@@ -254,7 +254,8 @@ model LongLeadItem {
   id                   Int       @id @default(autoincrement())
   image                String
   country              String
-  category             String
+  categoryId            Int
+  LongLeadItemCategory LongLeadItemCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   vendor               String
   description          String
   qty                  Int
@@ -270,4 +271,10 @@ model LongLeadItem {
   manufacturingStatus  ManufacturingStatus?
   finalInspection      FinalInspectionStatus?
   deliveryToSite       DeliveryToSiteStatus?
+}
+
+model LongLeadItemCategory {
+  id                   Int       @id @default(autoincrement())
+  name                String
+  LongLeadItems       LongLeadItem[]
 }
