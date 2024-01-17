@@ -24,7 +24,6 @@ import { CalendarIcon, Loader2 } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { cn } from "@/lib/utils"
 import { Card, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { FiUploadCloud } from 'react-icons/fi'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Imageupload } from '@/actions/cloudinaryupload'
@@ -40,16 +39,20 @@ import {
 import { useQuery } from 'react-query'
 import { DeliveryToSiteStatus, FinalInspectionStatus, LongLeadItemCategory, ManufacturingStatus, POStatus, RFQStatus, ReceivedQuotationStatus, TechnicalEvaluationandPRStatus } from '@prisma/client'
 import { GetLongLeadCategory } from '@/actions/(forms)/longleadcategory'
-import { useFormStatus } from 'react-dom'
+import { useRouter } from 'next/navigation'
+import { FormError } from '@/components/form-error'
+import { FormSuccess } from '@/components/form-success'
   
 
 type Props = {}
 
 const LongLeadForm = (props: Props) => {
+    const [error, setError] = useState<string | undefined>("");
+    const [success, setSuccess] = useState<string | undefined>("");
     const [file, SetFile] = useState<File>();
     const [fileUrl, setFileUrl] = useState<string | undefined > (undefined)
     const options = useMemo(() => countryList().getData(), [])
-    const status = useFormStatus();
+    const router = useRouter()
 
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,28 +73,28 @@ const LongLeadForm = (props: Props) => {
     const form = useForm<z.infer<typeof LongLeadItemSchema>>({
         resolver: zodResolver(LongLeadItemSchema),
         defaultValues: {
-            "image":'/'
+            "image":''
         },
     })
 
     const UploadImage = async () => {
-        console.log('Uploading')
+        console.log('Uploading');
         if (file) {
             const formData = new FormData();
             formData.append('file', file);
             try {
-                const result = await Imageupload({ formData });
-                console.log("result", result);
-                form.setValue('image', result);
-                return result
+                const res = await Imageupload({ formData });
+                console.log(res);
+                form.setValue('image', res);
+                return res;
             } catch (error) {
                 console.log('Error uploading Image');
-                return null
+                return null;
             }
         }
     };
 
-    const {data: LongLeadCategory, error: LongLeadCategoryError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<LongLeadItemCategory[]>({
+    const {data: LongLeadCategory = [], error: LongLeadCategoryError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<LongLeadItemCategory[]>({
         queryKey:'longleadcategory',
         queryFn: ()=> GetLongLeadCategory().then((res) => res),
         staleTime:60 * 1000,
@@ -101,13 +104,29 @@ const LongLeadForm = (props: Props) => {
 
 
     const onSubmit = async (values: z.infer<typeof LongLeadItemSchema>) => {
-        const result = await UploadImage();
-        if(!result) {
-            return
+        setError("");
+        setSuccess("");
+        try {
+            const result = await UploadImage();
+            console.log(result);
+            if (!result) {
+                setError("Could not Upload Image");
+                return;
+            }
+    
+            const response = await MakeLongLead(values);
+            console.log(response);
+    
+            if (response.success) {
+                form.reset();
+                router.push("/databased/longleadlist");
+                setSuccess(response.success)
+            }
+        } catch (error) {
+            console.error("An error occurred:", error);
+            setError("Could not create product");
         }
-        const response = await MakeLongLead(values)
-        console.log(response)
-    }
+    };
     
   return (
     <div>
@@ -159,7 +178,7 @@ const LongLeadForm = (props: Props) => {
                 <FormItem>
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                <Select onValueChange={(value) => field.onChange(parseInt(value, 10))} >
+                <Select onValueChange={(value) => field.onChange(parseInt(value, 10))}  defaultValue={field.value?.toString()}>
                     <FormControl>
                     <SelectTrigger>
                         <SelectValue placeholder="Select a Category" />
@@ -208,7 +227,7 @@ const LongLeadForm = (props: Props) => {
                 <FormItem>
                 <FormLabel>Vendor</FormLabel>
                 <FormControl>
-                    <Input autoComplete='off' placeholder="vendor" {...field} />
+                    <Input autoComplete='off' placeholder="vendor" defaultValue={field.value} {...field} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -221,7 +240,7 @@ const LongLeadForm = (props: Props) => {
                 <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                    <Input autoComplete='off' placeholder="description" {...field} />
+                    <Input autoComplete='off' placeholder="description" defaultValue={field.value} {...field} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -234,7 +253,7 @@ const LongLeadForm = (props: Props) => {
                 <FormItem>
                 <FormLabel>Qty</FormLabel>
                 <FormControl>
-                    <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} />
+                    <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} defaultValue={field.value} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -246,7 +265,7 @@ const LongLeadForm = (props: Props) => {
             render={({ field }) => (
                 <FormItem>
                 <FormLabel>Unit</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange}  defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a Unit" />
@@ -350,210 +369,28 @@ const LongLeadForm = (props: Props) => {
             render={({ field }) => (
                 <FormItem>
                 <FormLabel>Delivery Mode</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                    <Input autoComplete='off' placeholder="Delivery Mode" {...field} />
+                  <SelectTrigger>
+                    <SelectValue className='placeholder:opacity-50' placeholder="Delivery Mode" />
+                  </SelectTrigger>
                 </FormControl>
+                <SelectContent>
+                  <SelectItem value="Sea">By Sea</SelectItem>
+                  <SelectItem value="Air">By Air</SelectItem>
+                  <SelectItem value="Land">By Land</SelectItem>
+                </SelectContent>
+              </Select>
                 <FormMessage />
                 </FormItem>
             )}
             />
             </div>
-            <Separator className='my-7'/>
-            <div className="grid md:grid-cols-2 md:gap-10 gap-5">
-                <FormField
-                control={form.control}
-                name="technicalEvaluation"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Technical Evaluation Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue className='placeholder:opacity-50'  />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        <SelectItem value={TechnicalEvaluationandPRStatus.Preparation}>{TechnicalEvaluationandPRStatus.Preparation}</SelectItem>
-                        <SelectItem value={TechnicalEvaluationandPRStatus.UnderApproval}>{TechnicalEvaluationandPRStatus.UnderApproval}</SelectItem>
-                        <SelectItem value={TechnicalEvaluationandPRStatus.Completed}>{TechnicalEvaluationandPRStatus.Completed}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            {form.watch("technicalEvaluation") === TechnicalEvaluationandPRStatus.Completed && (
-            <FormField
-                control={form.control}
-                name="prStatus"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>PR Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue  />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        <SelectItem value={TechnicalEvaluationandPRStatus.Preparation}>{TechnicalEvaluationandPRStatus.Preparation}</SelectItem>
-                        <SelectItem value={TechnicalEvaluationandPRStatus.UnderApproval}>{TechnicalEvaluationandPRStatus.UnderApproval}</SelectItem>
-                        <SelectItem value={TechnicalEvaluationandPRStatus.Completed}>{TechnicalEvaluationandPRStatus.Completed}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            )}
-            {form.watch("prStatus") === TechnicalEvaluationandPRStatus.Completed && (
-            <FormField
-                control={form.control}
-                name="rfqStatus"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>RFQ Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue  />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        <SelectItem value={RFQStatus.Pending}>{RFQStatus.Pending}</SelectItem>
-                        <SelectItem value={RFQStatus.Senttovendor}>{RFQStatus.Senttovendor}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            )}
-            {form.watch("rfqStatus") === RFQStatus.Senttovendor && (
-            <FormField
-                control={form.control}
-                name="receivedQuotation"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>received Quotation</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue  />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        <SelectItem value={ReceivedQuotationStatus.Pending}>{ReceivedQuotationStatus.Pending}</SelectItem>
-                        <SelectItem value={ReceivedQuotationStatus.Vendorselected}>{ReceivedQuotationStatus.Vendorselected}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            )}
-            {form.watch("receivedQuotation") === ReceivedQuotationStatus.Vendorselected && (
-            <FormField
-                control={form.control}
-                name="poStatus"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>PO Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue  />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        <SelectItem value={POStatus.Pending}>{POStatus.Pending}</SelectItem>
-                        <SelectItem value={POStatus.UnderPreparation}>{POStatus.UnderPreparation}</SelectItem>
-                        <SelectItem value={POStatus.Placed}>{POStatus.Placed}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            )}
-            {form.watch("poStatus") === POStatus.Placed && (
-            <FormField
-                control={form.control}
-                name="manufacturingStatus"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Manufacturing Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue  />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        <SelectItem value={ManufacturingStatus.Pending}>{ManufacturingStatus.Pending}</SelectItem>
-                        <SelectItem value={ManufacturingStatus.QualityTest}>{ManufacturingStatus.QualityTest}</SelectItem>
-                        <SelectItem value={ManufacturingStatus.Started}>{ManufacturingStatus.Started}</SelectItem>
-                        <SelectItem value={ManufacturingStatus.Completed}>{ManufacturingStatus.Completed}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            )}
-            {form.watch("manufacturingStatus") === ManufacturingStatus.Completed && (
-            <FormField
-                control={form.control}
-                name="finalInspection"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>final Inspection</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue  />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        <SelectItem value={FinalInspectionStatus.Ongoing}>{FinalInspectionStatus.Ongoing}</SelectItem>
-                        <SelectItem value={FinalInspectionStatus.Pending}>{FinalInspectionStatus.Pending}</SelectItem>
-                        <SelectItem value={FinalInspectionStatus.Completed}>{FinalInspectionStatus.Completed}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            )}
-            {form.watch("finalInspection") === FinalInspectionStatus.Completed && (
-            <FormField
-                control={form.control}
-                name="deliveryToSite"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>delivery To Site</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue  />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        <SelectItem value={DeliveryToSiteStatus.CustomClearance}>{DeliveryToSiteStatus.CustomClearance}</SelectItem>
-                        <SelectItem value={DeliveryToSiteStatus.Pending}>{DeliveryToSiteStatus.Pending}</SelectItem>
-                        <SelectItem value={DeliveryToSiteStatus.UnderShipment}>{DeliveryToSiteStatus.UnderShipment}</SelectItem>
-                        <SelectItem value={DeliveryToSiteStatus.Delivered}>{DeliveryToSiteStatus.Delivered}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-            )}
-            </div>
+        <FormError message={error} />
+        <FormSuccess message={success} />
         {form.formState.isSubmitting ? (
-              <Button disabled className='mt-2' size='lg'>
-                <Loader2 className="mr-2 h-4 animate-spin w-full" />
+              <Button disabled className='mt-2 w-full flex items-center justify-center' size='lg'>
+                <Loader2 className="mr-2 h-4 animate-spin" />
                 Please wait
               </Button>
           ):(

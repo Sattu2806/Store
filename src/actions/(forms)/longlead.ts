@@ -16,3 +16,12 @@ export const MakeLongLead = async (values: z.infer<typeof LongLeadItemSchema>) =
         return { error: "Could not create Long Lead Item", }
     }
 }
+
+export const GetLongLead = async () => {
+    try {
+        const response = await prisma.longLeadItem.findMany({});
+        return {success: response}
+    } catch (error) {
+        throw new Error("Could not fetch Long Lead Categories");
+    }   
+}
