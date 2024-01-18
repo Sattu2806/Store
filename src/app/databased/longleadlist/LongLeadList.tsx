@@ -2,33 +2,71 @@ import React from 'react'
 import prisma from "@/lib/prismadb"
 import LongLeadItem from './LongLeadItem'
 import { SearchLongSchemaType } from './LongLeadSideBar'
-import { Prisma } from '@prisma/client'
 
 type Props = {
   filterValues: SearchLongSchemaType
 }
 
 const LongLeadList = async ({filterValues:{
-  q
+  q,category, country, delivery
 }}: Props) => {
 
   const searchString =q?.split(" ").filter((word) => word.length > 0).join(" & ")
-
-  // const searchFilter = Prisma.lon = searchString ? {
-  //   OR:[
-  //     {description:{search: searchString}}
-  //   ]
-  // }
-  // :{}
   console.log(searchString)
 
   const longleads = await prisma.longLeadItem.findMany({
-    where:{
-      description:{
-        search:searchString
-      }
-    }
-  })
+    where: {
+      OR: [
+        {
+          description: {
+            search: searchString,
+          },
+        },
+        {
+          deliveryMode: {
+            search: searchString,
+          },
+        },
+        {
+          vendor: {
+            search: searchString,
+          },
+        },
+        {
+          country:{
+            search:searchString
+          }
+        },
+        {
+          LongLeadItemCategory: {
+            name: {
+              search: searchString,
+            },
+          },
+        },
+      ],
+      AND:[
+        {
+          deliveryMode:{
+            equals:delivery
+          }
+        },
+        {
+          country:{
+            equals:country
+          }
+        },
+        {
+          LongLeadItemCategory:{
+            name:{
+              equals:category
+            }
+          }
+        },
+      ]
+    },
+  });
+  
   return (
     <div className='grow space-y-4'>
       {longleads.map((longlead) => (

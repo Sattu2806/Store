@@ -13,7 +13,7 @@ const LongLeadItem = ({longlead}: Props) => {
   return (
     <article className='flex gap-3 rounded-lg border p-5 hover:bg-muted/60'>
         <Image
-            src={longlead.image ? longlead.image : "" }
+            src={longlead.image ? longlead.image : "/no-image.jpg" }
             alt={longlead.description ? longlead.description : "Image"}
             width={250}
             height={250}

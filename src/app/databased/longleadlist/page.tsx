@@ -13,12 +13,15 @@ type Props = {}
 interface PageProps {
     searchParams:{
         q?:string
+        category?:string
+        country?:string
+        delivery?:string
     }
 }
 
-const page = ({searchParams:{q}}: PageProps) => {
+const page = ({searchParams:{q, category, country, delivery}}: PageProps) => {
     const filterValues: SearchLongSchemaType  = {
-        q
+        q, category, country, delivery
     } 
   return (
     <div className='max-w-[1280px] mx-auto my-10 relative'>
