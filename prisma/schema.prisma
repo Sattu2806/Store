@@ -208,42 +208,42 @@ model ProjectMileStoneInfo {
   ProjectMileStone       ProjectMileStone    @relation(fields: [ProjectMileStoneId], references: [id], onDelete: Cascade)         
 }
 
-enum TechnicalEvaluationandPRStatus {
+enum TechnicalPR {
   Preparation
   UnderApproval
   Completed
 }
 
-enum RFQStatus {
+enum RFQ {
   Senttovendor
   Pending
 }
 
-enum ReceivedQuotationStatus {
+enum ReceivedQuotation {
   Vendorselected 
   Pending
 }
 
-enum POStatus {
+enum PO {
   UnderPreparation
   Placed
   Pending
 }
 
-enum ManufacturingStatus {
+enum Manufacturing {
   Started
   QualityTest 
   Pending
   Completed 
 }
 
-enum FinalInspectionStatus {
+enum FinalInspection {
   Ongoing 
   Completed
   Pending
 }
 
-enum DeliveryToSiteStatus {
+enum DeliveryToSite {
   UnderShipment
   CustomClearance
   Delivered 
@@ -264,8 +264,8 @@ model LongLeadItem {
   deliveryDate         DateTime
   requiredAtSiteDate   DateTime
   deliveryMode         String
-  technicalEvaluation  TechnicalEvaluationandPRStatus?
-  prStatus             TechnicalEvaluationandPRStatus?
+  technicalEvaluation  TechnicalEvaluationStatus?
+  prStatus             PRStatus?
   rfqStatus            RFQStatus?
   receivedQuotation    ReceivedQuotationStatus?
   poStatus             POStatus?
@@ -278,4 +278,61 @@ model LongLeadItemCategory {
   id                   Int       @id @default(autoincrement())
   name                String
   LongLeadItems       LongLeadItem[]
+}
+
+
+model TechnicalEvaluationStatus {
+  id        Int       @id @default(autoincrement())
+  status    TechnicalPR
+  longleadId Int @unique
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+}
+
+model PRStatus {
+  id        Int       @id @default(autoincrement())
+  status    TechnicalPR
+  longleadId Int @unique
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+}
+
+model RFQStatus {
+  id        Int       @id @default(autoincrement())
+  status    RFQ
+  longleadId Int @unique
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+}
+
+model ReceivedQuotationStatus {
+  id        Int       @id @default(autoincrement())
+  status    ReceivedQuotation
+  longleadId Int @unique
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+}
+
+model POStatus {
+  id        Int       @id @default(autoincrement())
+  status    PO
+  longleadId Int @unique
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+}
+
+model ManufacturingStatus {
+  id        Int       @id @default(autoincrement())
+  status    Manufacturing
+  longleadId Int @unique
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+}
+
+model FinalInspectionStatus {
+  id        Int       @id @default(autoincrement())
+  status    FinalInspection
+  longleadId Int @unique
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+}
+
+model DeliveryToSiteStatus {
+  id        Int       @id @default(autoincrement())
+  status    DeliveryToSite
+  longleadId Int @unique
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
 }

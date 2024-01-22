@@ -1,82 +1,86 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
-import { LongLeadItemSchema } from '@/ZodSchema/LongLead'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import {z} from "zod"
+import * as z from "zod"
 import { Button } from "@/components/ui/button"
+import { format } from "date-fns"
+import { CalendarIcon } from 'lucide-react'
+import { Calendar } from '@/components/ui/calendar'
+import { cn } from "@/lib/utils"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { FormError } from '@/components/form-error'
+import { FormSuccess } from '@/components/form-success'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { CalendarIcon, Loader2 } from 'lucide-react'
-import { Calendar } from '@/components/ui/calendar'
-import { cn } from "@/lib/utils"
-import { Card, CardTitle } from '@/components/ui/card'
-import { FiUploadCloud } from 'react-icons/fi'
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { Imageupload } from '@/actions/cloudinaryupload'
-import { MakeLongLead } from '@/actions/(forms)/longlead'
-import countryList from 'react-select-country-list'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import { Card, CardTitle} from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useQuery } from 'react-query'
-import { LongLeadItemCategory } from '@prisma/client'
-import { GetLongLeadCategory } from '@/actions/(forms)/longleadcategory'
+import { Category, Group, LongLeadItemCategory,} from '@prisma/client'
+import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
-import { FormError } from '@/components/form-error'
-import { FormSuccess } from '@/components/form-success'
-  
-
-type Props = {}
-
-const LongLeadForm = (props: Props) => {
-    const [error, setError] = useState<string | undefined>("");
-    const [success, setSuccess] = useState<string | undefined>("");
-    const [file, SetFile] = useState<File>();
-    const [fileUrl, setFileUrl] = useState<string | undefined > (undefined)
-    const options = useMemo(() => countryList().getData(), [])
-    const router = useRouter()
+import { Loader2 } from 'lucide-react'
+import { LongLeadItemSchema } from '@/ZodSchema/LongLead'
+import { LongLeadItem, } from '@/lib/types'
+import countryList from 'react-select-country-list'
+import { GetLongLeadCategory } from '@/actions/(forms)/longleadcategory'
+import { Imageupload } from '@/actions/cloudinaryupload'
+import { Cross2Icon } from '@radix-ui/react-icons'
+import { FiUploadCloud } from 'react-icons/fi'
+import { MakeLongLead, UpdatedLongLead } from '@/actions/(forms)/longlead'
 
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
-        SetFile(file);
-        if(fileUrl){
-            URL.revokeObjectURL(fileUrl)
-        }
+type Props = {
+  data:LongLeadItem
+}
 
-        if(file){
-            const url = URL.createObjectURL(file)
-            setFileUrl(url)
-        }else{
-            setFileUrl(undefined)
-        }
-    };
-    
+const EditLongLeadForm = ({data}: Props) => {
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
+  const [file, SetFile] = useState<File>();
+  const [fileUrl, setFileUrl] = useState<string | undefined > (undefined)
+  const options = useMemo(() => countryList().getData(), [])
+
+  useEffect(() => {
+    setFileUrl(data.image)
+  },[])
+
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0]
+      SetFile(file);
+      if(fileUrl){
+          URL.revokeObjectURL(fileUrl)
+      }
+
+      if(file){
+          const url = URL.createObjectURL(file)
+          setFileUrl(url)
+      }else{
+          setFileUrl(undefined)
+      }
+  };
+  const {toast} = useToast()
+  const router = useRouter()
+
     const form = useForm<z.infer<typeof LongLeadItemSchema>>({
         resolver: zodResolver(LongLeadItemSchema),
         defaultValues: {
-            "image":''
+          ...data
         },
-    })
-
+      })
     const UploadImage = async () => {
         console.log('Uploading');
         if (file) {
@@ -94,38 +98,45 @@ const LongLeadForm = (props: Props) => {
         }
     };
 
-    const {data: LongLeadCategory = [], error: LongLeadCategoryError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData} = useQuery<LongLeadItemCategory[]>({
-        queryKey:'longleadcategory',
-        queryFn: ()=> GetLongLeadCategory().then((res) => res),
-        staleTime:60 * 1000,
-        retry:3,
-    })
-
-
+    const {data: LongLeadCategory = [], error: LongLeadCategoryError, isLoading: ismanpowerapiDataLoading, refetch:refetchmanpowerapiData}
+     = useQuery<LongLeadItemCategory[]>({
+      queryKey:'longleadcategory',
+      queryFn: ()=> GetLongLeadCategory().then((res) => res),
+      staleTime:60 * 1000,
+      retry:3,
+  })
 
     const onSubmit = async (values: z.infer<typeof LongLeadItemSchema>) => {
         setError("");
         setSuccess("");
         try {
-            UploadImage().then((res) => {
-                if(!res) return
-                form.setValue('image', res)
-            })
+            const result = await UploadImage();
+            console.log(result);
+            if (!result) {
+                setError("Could not Upload Image");
+                return;
+            }
     
-            const response = await MakeLongLead(values);
+            const response = await UpdatedLongLead(values,data.id);
             console.log(response);
     
-            if (response?.success) {
+            if (response.success) {
                 form.reset();
                 router.push("/databased/longleadlist");
-                setSuccess(response?.success)
+                setSuccess(response.success)
             }
         } catch (error) {
             console.error("An error occurred:", error);
             setError("Could not create product");
         }
     };
-    
+
+    const DeleteImage = () => {
+        setFileUrl(undefined)
+        SetFile(undefined)
+    }
+
+    console.log(data.image)
   return (
     <div>
         <Card className='p-4 my-4'>
@@ -133,20 +144,17 @@ const LongLeadForm = (props: Props) => {
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} >
             <div className='w-full h-[400px] border border-dashed rounded-md border-gray-700 relative mb-4'>  
-                {fileUrl && file ? (
+                {fileUrl || file ? (
                     <div className='flex gap-6 items-center w-full h-full overflow-hidden'>
-                        {file.type.startsWith("image/") ? (
                             <div className='rounded-md overflow-hidden w-full relative'>
                                 <img
                                     src={fileUrl} 
                                     className=''
-                                    alt={file.name} />
+                                    alt={fileUrl} />
                             </div>
-                        ):(
-                            <div className='rounded-md overflow-hidden relative'>
-                                <video className='h-full' src={fileUrl} autoPlay loop muted></video>
-                            </div>
-                        )}
+                                <p className='absolute top-1 right-1 z-10 bg-neutral-100 p-1 rounded-full' onClick={DeleteImage}>
+                                    <Cross2Icon color='red' fontSize={20}/>
+                                </p>
                     </div>
                 ):(
                 <label htmlFor="image" className='absolute top-0 left-0 bottom-0 right-0 cursor-pointer flex items-center flex-col justify-center'>
@@ -176,7 +184,7 @@ const LongLeadForm = (props: Props) => {
                 <FormItem>
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                <Select onValueChange={(value) => field.onChange(parseInt(value, 10))}  defaultValue={field.value?.toString()}>
+                <Select onValueChange={(value) => field.onChange(parseInt(value, 10))} value={field.value.toString()} >
                     <FormControl>
                     <SelectTrigger>
                         <SelectValue placeholder="Select a Category" />
@@ -199,7 +207,7 @@ const LongLeadForm = (props: Props) => {
             render={({ field }) => (
                 <FormItem>
                 <FormLabel>Country</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                     <SelectTrigger>
                         <SelectValue placeholder="Select a Country" />
@@ -225,7 +233,7 @@ const LongLeadForm = (props: Props) => {
                 <FormItem>
                 <FormLabel>Vendor</FormLabel>
                 <FormControl>
-                    <Input autoComplete='off' placeholder="vendor"  {...field} />
+                    <Input autoComplete='off' placeholder="vendor" {...field} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -251,7 +259,7 @@ const LongLeadForm = (props: Props) => {
                 <FormItem>
                 <FormLabel>Qty</FormLabel>
                 <FormControl>
-                    <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} defaultValue={field.value} />
+                    <Input type='number' autoComplete="off" placeholder="quantity" onChange={(e) => field.onChange(parseFloat(e.target.value))} value={field.value} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -263,7 +271,7 @@ const LongLeadForm = (props: Props) => {
             render={({ field }) => (
                 <FormItem>
                 <FormLabel>Unit</FormLabel>
-                <Select onValueChange={field.onChange}  defaultValue={field.value}>
+                <Select onValueChange={field.onChange}  value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a Unit" />
@@ -367,7 +375,7 @@ const LongLeadForm = (props: Props) => {
             render={({ field }) => (
                 <FormItem>
                 <FormLabel>Delivery Mode</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue className='placeholder:opacity-50' placeholder="Delivery Mode" />
@@ -401,4 +409,4 @@ const LongLeadForm = (props: Props) => {
   )
 }
 
-export default LongLeadForm
+export default EditLongLeadForm

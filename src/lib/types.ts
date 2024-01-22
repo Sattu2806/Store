@@ -190,4 +190,74 @@ export interface TotalScopeAggregateResult {
   };
 }
 
+export type LongLeadItemCategory = {
+  id: number;
+  name: string;
+  LongLeadItems: LongLeadItem[]; // Assuming you have a type for LongLeadItem
+};
+
+// // You can reuse the LongLeadItem type from the previous response
+// export type LongLeadItem = {
+//   id: number;
+//   image: string;
+//   country: string;
+//   categoryId: number;
+//   vendor: string;
+//   description: string;
+//   qty: number;
+//   unit: string;
+//   deliveryDate: Date;
+//   requiredAtSiteDate: Date;
+//   deliveryMode: string;
+// };
+
+
+import { LongLeadItem as LongLeadItemModel } from '@prisma/client';
+
+export type LongLeadItem = Omit<LongLeadItemModel, 'LongLeadItemCategory'> & {
+  LongLeadItemCategory: {
+    id: number;
+    name: string;
+  };
+  technicalEvaluation: {
+    id: number;
+    status: 'Preparation' | 'UnderApproval' | 'Completed';
+    longleadId: number;
+  } | null;
+  prStatus: {
+    id: number;
+    status: 'Preparation' | 'UnderApproval' | 'Completed';
+    longleadId: number;
+  } | null;
+  rfqStatus: {
+    id: number;
+    status: 'Senttovendor' | 'Pending';
+    longleadId: number;
+  } | null;
+  receivedQuotation: {
+    id: number;
+    status: 'Vendorselected' | 'Pending';
+    longleadId: number;
+  } | null;
+  poStatus: {
+    id: number;
+    status: 'UnderPreparation' | 'Placed' | 'Pending';
+    longleadId: number;
+  } | null;
+  manufacturingStatus: {
+    id: number;
+    status: 'Started' | 'QualityTest' | 'Pending' | 'Completed';
+    longleadId: number;
+  } | null;
+  finalInspection: {
+    id: number;
+    status: 'Ongoing' | 'Completed' | 'Pending';
+    longleadId: number;
+  } | null;
+  deliveryToSite: {
+    id: number;
+    status: 'UnderShipment' | 'CustomClearance' | 'Delivered' | 'Pending';
+    longleadId: number;
+  } | null;
+};
 
