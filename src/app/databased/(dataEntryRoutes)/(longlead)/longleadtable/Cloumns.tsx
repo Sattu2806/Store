@@ -18,6 +18,18 @@ import { LongLeadItem } from "@/lib/types"
 import { updateStatus } from "@/actions/(forms)/longlead"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 
 
 type DataCellProps = {
@@ -297,27 +309,36 @@ const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row, table }) => {
       break;
   }
 
+  type UpdateStatusResponse = { success: string; error?: undefined } | { error: string; success?: undefined };
+
+
   const [disableStatus, setDisableStatus] = useState<boolean>(shouldDisable);
   const [selectedStatus, setSelectedStatus] = useState<string | undefined>(status);
-  const router = useRouter()
+  const [openDialogue, setOpenDialogue] = useState<boolean>(false)
+  const [updating, setUpdating] = useState<boolean>(false)
+  const [result, setresult] = useState<UpdateStatusResponse>()
 
   useEffect(() => {
     setDisableStatus(shouldDisable);
   }, [shouldDisable]);
 
   const handleStatusChange = (value: string) => {
+    setUpdating(true)
     setSelectedStatus(value);
-    updateStatus(statusKey, value, row.original.id, ).then((res) => console.log(res.success)).finally(() => {
-      table?.options?.meta?.updateData()
+    updateStatus(statusKey, value, row.original.id, ).then((res) => { 
+      setresult(res)
+      setOpenDialogue(true); 
+      table?.updateData()
     })
-    router.refresh()
+    setUpdating(false)
   };
+
 
 
   return (
     <div>
       <Select value={selectedStatus} onValueChange={(value) => handleStatusChange(value)}>
-        <SelectTrigger  disabled={disableStatus} className="w-[180px]">
+        <SelectTrigger  disabled={disableStatus} className={`w-[180px] ${updating ? "pointer-events-none":""}`}>
           <SelectValue placeholder={status ? status : "Status"} />
         </SelectTrigger>
         <SelectContent>
@@ -328,6 +349,18 @@ const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row, table }) => {
           ))}
         </SelectContent>
       </Select>
+      <AlertDialog open={openDialogue}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogDescription className={`${result?.success ? "text-green-500" : "text-red-500"}`}>
+            {result?.error} {result?.success}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel color="green" onClick={() => setOpenDialogue(false)}>Cancel</AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     </div>
   );
 };

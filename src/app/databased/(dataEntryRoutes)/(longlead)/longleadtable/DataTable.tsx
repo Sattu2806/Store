@@ -40,7 +40,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  refetchData
+  refetchData,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -69,13 +69,11 @@ export function DataTable<TData, TValue>({
         },
         meta:{
           updateData: () => {
-            console.log("updateData called");
             refetchData();
           }
         }
     })
 
-    console.log(table.getHeaderGroups())
 
   return (
     <div>

@@ -1,6 +1,5 @@
 'use client'
 import { DailyProductivity, LongLeadItem } from '@prisma/client'
-import axios from 'axios'
 import React from 'react'
 import { useQuery } from 'react-query'
 import { DataTable} from './DataTable'
@@ -20,7 +19,6 @@ const LongLeadTable = (props: Props) => {
         retry:3
      })
      const handleStatusChange = () => {
-      console.log('Refetched')
       refetchLongLeadData();
     };
   return (
