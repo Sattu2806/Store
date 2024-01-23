@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select"
 import { LongLeadItem } from "@/lib/types"
 import { updateStatus } from "@/actions/(forms)/longlead"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 
 type DataCellProps = {
@@ -66,6 +68,18 @@ export const columns: ColumnDef<LongLeadItem>[] = [
         enableHiding: false,
       },
   {
+    accessorKey: "image",
+    id:'image',
+    header: "Image",
+    cell:({row}) => {
+        return(
+          <div className="w-[150px] aspect-square flex items-center justify-center">
+            <Image src={row.original.image} width={150} height={150} alt="" className="object-cover rounded-sm"/>
+          </div>
+        )
+    }
+  },
+  {
     accessorKey: "categoryId",
     id:'categoryId',
     accessorFn: (originalRow) => {
@@ -75,6 +89,16 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     cell:({row}) => {
         return(
           <div className="w-[100px]"><DataCell row={row} columnType="group" /></div>
+        )
+    }
+  },
+  {
+    accessorKey: "description",
+    id:'description',
+    header: "Description",
+    cell:({row}) => {
+        return(
+          <div className="w-[100px]">{row.original.description}</div>
         )
     }
   },
@@ -92,10 +116,11 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     accessorKey: "technicalEvaluation",
     id:'technicalEvaluation',
     header: "Technical Evaluation",
-    cell:({row}) => {
+    cell:({row, table}) => {
         return(
           <div>
-            <StatusCells row={row} statusKey="technicalEvaluation" />
+            
+            <StatusCells row={row} table={table.options.meta} statusKey="technicalEvaluation" />
           </div>
         )
     }
@@ -104,10 +129,10 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     accessorKey: "prStatus",
     id:'prStatus',
     header: "PR Status",
-    cell:({row}) => {
+    cell:({row, table}) => {
         return(
           <div>
-            <StatusCells row={row} statusKey="prStatus" />
+            <StatusCells row={row} table={table.options.meta} statusKey="prStatus" />
           </div>
         )
     }
@@ -116,10 +141,10 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     accessorKey: "rfqStatus",
     id:'rfqStatus',
     header: "RFQ Status",
-    cell:({row}) => {
+    cell:({row, table}) => {
         return(
           <div>
-            <StatusCells row={row} statusKey="rfqStatus" />
+            <StatusCells row={row} table={table.options.meta} statusKey="rfqStatus" />
           </div>
         )
     }
@@ -128,10 +153,10 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     accessorKey: "receivedQuotation",
     id:'receivedQuotation',
     header: "Received Quotation",
-    cell:({row}) => {
+    cell:({row, table}) => {
         return(
           <div>
-            <StatusCells row={row} statusKey="receivedQuotation" />
+            <StatusCells row={row} table={table.options.meta} statusKey="receivedQuotation" />
           </div>
         )
     }
@@ -140,10 +165,10 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     accessorKey: "poStatus",
     id:'poStatus',
     header: "PO Status",
-    cell:({row}) => {
+    cell:({row, table}) => {
         return(
           <div>
-            <StatusCells row={row} statusKey="poStatus" />
+            <StatusCells row={row} table={table.options.meta} statusKey="poStatus" />
           </div>
         )
     }
@@ -152,10 +177,10 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     accessorKey: "manufacturingStatus",
     id:'manufacturingStatus',
     header: "manufacturing Status",
-    cell:({row}) => {
+    cell:({row, table}) => {
         return(
           <div>
-            <StatusCells row={row} statusKey="manufacturingStatus" />
+            <StatusCells row={row} table={table.options.meta} statusKey="manufacturingStatus" />
           </div>
         )
     }
@@ -164,10 +189,10 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     accessorKey: "finalInspection",
     id:'finalInspection',
     header: "Final Inspection",
-    cell:({row}) => {
+    cell:({row, table}) => {
         return(
           <div>
-            <StatusCells row={row} statusKey="finalInspection" />
+            <StatusCells row={row} table={table.options.meta} statusKey="finalInspection" />
           </div>
         )
     }
@@ -176,10 +201,10 @@ export const columns: ColumnDef<LongLeadItem>[] = [
     accessorKey: "deliveryToSite",
     id:'deliveryToSite',
     header: "Delivery To Site",
-    cell:({row}) => {
+    cell:({row, table}) => {
         return(
           <div>
-            <StatusCells row={row} statusKey="deliveryToSite" />
+            <StatusCells row={row} table={table.options.meta} statusKey="deliveryToSite" />
           </div>
         )
     }
@@ -193,9 +218,10 @@ type StatusCellsProps = {
   row: {
     original: LongLeadItem
   };
+  table:any
 };
 
-const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row }) => {
+const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row, table }) => {
   let enumValues: string[] = [];
   let status: string | undefined;
   let shouldDisable: boolean = false;
@@ -230,7 +256,7 @@ const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row }) => {
       shouldDisable =
         row.original.technicalEvaluation?.status !== "Completed" ||
         row.original.prStatus?.status !== "Completed" ||
-        row.original.rfqStatus?.status !== "Senttovendor";
+        row.original.rfqStatus?.status !== "Senttovendor" ||
         row.original.receivedQuotation?.status !== "Vendorselected";
       status = row.original.poStatus?.status;
       break;
@@ -239,9 +265,9 @@ const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row }) => {
       shouldDisable =
         row.original.technicalEvaluation?.status !== "Completed" ||
         row.original.prStatus?.status !== "Completed" ||
-        row.original.rfqStatus?.status !== "Senttovendor";
-        row.original.receivedQuotation?.status !== "Vendorselected";
-        row.original.poStatus?.status !== "Placed";
+        row.original.rfqStatus?.status !== "Senttovendor" ||
+        row.original.receivedQuotation?.status !== "Vendorselected" ||
+        row.original.poStatus?.status !== "Placed"
       status = row.original.manufacturingStatus?.status;
       break;
     case "finalInspection":
@@ -249,9 +275,9 @@ const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row }) => {
       shouldDisable =
         row.original.technicalEvaluation?.status !== "Completed" ||
         row.original.prStatus?.status !== "Completed" ||
-        row.original.rfqStatus?.status !== "Senttovendor";
-        row.original.receivedQuotation?.status !== "Vendorselected";
-        row.original.poStatus?.status !== "Placed";
+        row.original.rfqStatus?.status !== "Senttovendor" ||
+        row.original.receivedQuotation?.status !== "Vendorselected" ||
+        row.original.poStatus?.status !== "Placed" ||
         row.original.manufacturingStatus?.status !== "Completed";
       status = row.original.finalInspection?.status;
       break;
@@ -260,9 +286,9 @@ const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row }) => {
       shouldDisable =
         row.original.technicalEvaluation?.status !== "Completed" ||
         row.original.prStatus?.status !== "Completed" ||
-        row.original.rfqStatus?.status !== "Senttovendor";
-        row.original.receivedQuotation?.status !== "Vendorselected";
-        row.original.poStatus?.status !== "Placed";
+        row.original.rfqStatus?.status !== "Senttovendor" ||
+        row.original.receivedQuotation?.status !== "Vendorselected" ||
+        row.original.poStatus?.status !== "Placed" ||
         row.original.manufacturingStatus?.status !== "Completed" ||
         row.original.finalInspection?.status !== "Completed";
       status = row.original.deliveryToSite?.status;
@@ -273,6 +299,7 @@ const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row }) => {
 
   const [disableStatus, setDisableStatus] = useState<boolean>(shouldDisable);
   const [selectedStatus, setSelectedStatus] = useState<string | undefined>(status);
+  const router = useRouter()
 
   useEffect(() => {
     setDisableStatus(shouldDisable);
@@ -280,15 +307,17 @@ const StatusCells: React.FC<StatusCellsProps> = ({ statusKey, row }) => {
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
-    updateStatus(statusKey, value, row.original.id, ).then((res) => console.log(res.success))
+    updateStatus(statusKey, value, row.original.id, ).then((res) => console.log(res.success)).finally(() => {
+      table?.options?.meta?.updateData()
+    })
+    router.refresh()
   };
 
-  console.log(disableStatus);
 
   return (
     <div>
       <Select value={selectedStatus} onValueChange={(value) => handleStatusChange(value)}>
-        <SelectTrigger disabled={disableStatus} className="w-[180px]">
+        <SelectTrigger  disabled={disableStatus} className="w-[180px]">
           <SelectValue placeholder={status ? status : "Status"} />
         </SelectTrigger>
         <SelectContent>

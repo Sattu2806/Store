@@ -78,19 +78,16 @@ export const GetLongLead = async () => {
 
 
 export const updateStatus = async (statusKey: string, status: string, id: number) => {
-    const statusMap: Record<string, any> = {
-      technicalEvaluation: { technicalEvaluation: { upsert: { create: { status: status as TechnicalPR }, update: { status: status as TechnicalPR } } } },
-      prStatus: { prStatus: { upsert: { create: { status: status as TechnicalPR }, update: { status: status as TechnicalPR } } } },
-      rfqStatus: { rfqStatus: { upsert: { create: { status: status as RFQ }, update: { status: status as RFQ } } } },
-      receivedQuotation: { receivedQuotation: { upsert: { create: { status: status as ReceivedQuotation }, update: { status: status as ReceivedQuotation } } } },
-      poStatus: { poStatus: { upsert: { create: { status: status as PO }, update: { status: status as PO } } } },
-      manufacturingStatus: { manufacturingStatus: { upsert: { create: { status: status as Manufacturing }, update: { status: status as Manufacturing } } } },
-      finalInspection: { finalInspection: { upsert: { create: { status: status as FinalInspection }, update: { status: status as FinalInspection } } } },
-      deliveryToSite: { deliveryToSite: { upsert: { create: { status: status as DeliveryToSite }, update: { status: status as DeliveryToSite } } } },
+    const updateOperation: Record<string, any> = {
+        [statusKey]: {
+          upsert: {
+            create: { status },
+            update: { status },
+          },
+        },
     };
   
-    const updateOperation = statusMap[statusKey];
-  
+    
     if (updateOperation) {
       await prisma.longLeadItem.update({
         where: { id },

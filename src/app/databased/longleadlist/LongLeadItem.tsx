@@ -1,8 +1,9 @@
 'use client'
-import { LongLeadItem as LongLeadType } from '@prisma/client'
 import Image from 'next/image'
 import React, { useMemo } from 'react'
 import countryList from 'react-select-country-list'
+import Stepper from './Stepper'
+import { LongLeadItem as LongLeadType } from '@/lib/types'
 
 type Props = {
     longlead:LongLeadType
@@ -30,6 +31,9 @@ const LongLeadItem = ({longlead}: Props) => {
                 <p className='text-muted-foreground'>Currect Expected Delivery: {new Date(longlead.deliveryDate).toDateString()}</p>
                 <p className='text-muted-foreground'>Delivery Mode: {longlead.deliveryMode}</p>
             </div>
+        </div>
+        <div>
+            <Stepper data={longlead}/>
         </div>
     </article>
   )

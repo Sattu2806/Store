@@ -65,6 +65,16 @@ const LongLeadList = async ({filterValues:{
         },
       ]
     },
+    include:{
+      deliveryToSite:true,
+      finalInspection:true,
+      manufacturingStatus:true,
+      poStatus:true,
+      prStatus:true,
+      technicalEvaluation:true,
+      receivedQuotation:true,
+      rfqStatus:true  
+    }
   });
   
   return (

@@ -19,13 +19,16 @@ const LongLeadTable = (props: Props) => {
         staleTime:60 * 1000,
         retry:3
      })
-     console.log(LongLeadData)
+     const handleStatusChange = () => {
+      console.log('Refetched')
+      refetchLongLeadData();
+    };
   return (
     <div className='max-w-[1280px] mx-auto'>
         {isLongLeadDataLoading ? (
             <TableSkeleton/>
         ):(
-        <DataTable columns={columns} data={LongLeadData} />
+        <DataTable columns={columns} data={LongLeadData} refetchData = {handleStatusChange} />
         )}
     </div>
   )

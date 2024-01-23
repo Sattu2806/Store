@@ -34,11 +34,13 @@ import * as React from "react"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  refetchData: () => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  refetchData
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -65,9 +67,15 @@ export function DataTable<TData, TValue>({
           columnVisibility,
           rowSelection,
         },
+        meta:{
+          updateData: () => {
+            console.log("updateData called");
+            refetchData();
+          }
+        }
     })
 
-    // console.log(table.getColumn("category")?.getFilterValue())
+    console.log(table.getHeaderGroups())
 
   return (
     <div>
