@@ -285,54 +285,70 @@ model TechnicalEvaluationStatus {
   id        Int       @id @default(autoincrement())
   status    TechnicalPR
   longleadId Int @unique
-  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id], onDelete: Cascade)
 }
 
 model PRStatus {
   id        Int       @id @default(autoincrement())
   status    TechnicalPR
   longleadId Int @unique
-  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id], onDelete: Cascade)
 }
 
 model RFQStatus {
   id        Int       @id @default(autoincrement())
   status    RFQ
   longleadId Int @unique
-  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id], onDelete: Cascade)
 }
 
 model ReceivedQuotationStatus {
   id        Int       @id @default(autoincrement())
   status    ReceivedQuotation
   longleadId Int @unique
-  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id], onDelete: Cascade)
 }
 
 model POStatus {
   id        Int       @id @default(autoincrement())
   status    PO
   longleadId Int @unique
-  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id], onDelete: Cascade)
 }
 
 model ManufacturingStatus {
   id        Int       @id @default(autoincrement())
   status    Manufacturing
   longleadId Int @unique
-  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id], onDelete: Cascade)
 }
 
 model FinalInspectionStatus {
   id        Int       @id @default(autoincrement())
   status    FinalInspection
   longleadId Int @unique
-  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id], onDelete: Cascade)
 }
 
 model DeliveryToSiteStatus {
   id        Int       @id @default(autoincrement())
   status    DeliveryToSite
   longleadId Int @unique
-  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  longLeadItem LongLeadItem @relation(fields: [longleadId], references: [id], onDelete: Cascade)
 }

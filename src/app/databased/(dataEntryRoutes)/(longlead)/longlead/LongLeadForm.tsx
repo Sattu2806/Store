@@ -110,6 +110,7 @@ const LongLeadForm = (props: Props) => {
             UploadImage().then((res) => {
                 if(!res) return
                 form.setValue('image', res)
+                form.setValue('image', res)
             })
     
             const response = await MakeLongLead(values);

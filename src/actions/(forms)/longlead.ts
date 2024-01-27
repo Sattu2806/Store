@@ -79,26 +79,28 @@ export const GetLongLead = async () => {
 
 export const updateStatus = async (statusKey: string, status: string, id: number) => {
     const updateOperation: Record<string, any> = {
-        [statusKey]: {
-          upsert: {
-            create: { status },
-            update: { status },
-          },
+      [statusKey]: {
+        upsert: {
+          create: { status },
+          update: { status, updatedAt: new Date() },
         },
+      },
     };
-  
-    
-    if (updateOperation) {
-      await prisma.longLeadItem.update({
-        where: { id },
-        data: updateOperation,
-      });
-      return { success: "Status Change Successfully" };
-    } else {
-      console.log(`Unsupported status key: ${statusKey}`);
+    try {
+      if (updateOperation) {
+        await prisma.longLeadItem.update({
+          where: { id },
+          data: updateOperation,
+        });
+        console.log('adcd')
+        return { success: "Status Change Successfully" };
+      } else {
+        console.log(`Unsupported status key: ${statusKey}`);
+        return { error: "Status Change Error" };
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
       return { error: "Status Change Error" };
     }
   };
-  
-  
   

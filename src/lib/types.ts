@@ -223,41 +223,57 @@ export type LongLeadItem = Omit<LongLeadItemModel, 'LongLeadItemCategory'> & {
     id: number;
     status: 'Preparation' | 'UnderApproval' | 'Completed';
     longleadId: number;
+    createdAt: Date
+    updatedAt: Date
   } | null;
   prStatus: {
     id: number;
     status: 'Preparation' | 'UnderApproval' | 'Completed';
     longleadId: number;
+    createdAt: Date
+    updatedAt: Date
   } | null;
   rfqStatus: {
     id: number;
     status: 'Senttovendor' | 'Pending';
     longleadId: number;
+    createdAt: Date
+    updatedAt: Date
   } | null;
   receivedQuotation: {
     id: number;
     status: 'Vendorselected' | 'Pending';
     longleadId: number;
+    createdAt: Date
+    updatedAt: Date
   } | null;
   poStatus: {
     id: number;
     status: 'UnderPreparation' | 'Placed' | 'Pending';
     longleadId: number;
+    createdAt: Date
+    updatedAt: Date
   } | null;
   manufacturingStatus: {
     id: number;
     status: 'Started' | 'QualityTest' | 'Pending' | 'Completed';
     longleadId: number;
+    createdAt: Date
+    updatedAt: Date
   } | null;
   finalInspection: {
     id: number;
     status: 'Ongoing' | 'Completed' | 'Pending';
     longleadId: number;
+    createdAt: Date
+    updatedAt: Date
   } | null;
   deliveryToSite: {
     id: number;
     status: 'UnderShipment' | 'CustomClearance' | 'Delivered' | 'Pending';
     longleadId: number;
+    createdAt: Date
+    updatedAt: Date
   } | null;
 };
 
