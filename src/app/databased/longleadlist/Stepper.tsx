@@ -1,8 +1,6 @@
 import { LongLeadItem } from '@/lib/types'
 import React from 'react'
 import {TechnicalPR ,RFQ, ReceivedQuotation, PO, Manufacturing, FinalInspection, DeliveryToSite} from '@prisma/client'
-import {Timeline, TimelineEvent} from 'react-event-timeline'
-import { Cross2Icon } from '@radix-ui/react-icons'
 import { Check } from 'lucide-react'
 
 type Props = {
@@ -98,7 +96,7 @@ type StatusCellsProps = {
   
     return (
       <div>
-        <Timeline>
+        {/* <Timeline>
           <TimelineEvent
             title={label}
             createdAt={updatedAt ? new Date(updatedAt).toDateString() :  ( createdAt ? new Date(createdAt).toDateString(): "")} 
@@ -107,7 +105,19 @@ type StatusCellsProps = {
           >
             <p className='capitalize font-normal'>{status}</p>
           </TimelineEvent>
-        </Timeline>
+        </Timeline> */}
+        <div className='flex items-center space-x-4'>
+          <div className='relative flex flex-col items-center' >
+          <p className='h-[50px] w-[3px] bg-gray-400'></p>
+            <p className=' rounded-full w-[35px] h-[35px] border-[2px] border-neutral-300 flex items-center justify-center'><i className={`material-icons md-18 text-green-500 ${status ? "" : "hidden"}`}><Check/></i></p>
+            <p className='h-[25px] w-[3px] bg-gray-400'></p>
+          </div>
+          <div className='text-sm mt-10 '>
+            <p className='font-medium'>{updatedAt ? new Date(updatedAt).toDateString() :  ( createdAt ? new Date(createdAt).toDateString(): "")}</p>
+            <p>{label}</p>
+            <p className='capitalize font-normal bg-slate-100 px-3 py-1 rounded'>{status}</p>
+          </div>
+        </div>
       </div>
     );
   };
