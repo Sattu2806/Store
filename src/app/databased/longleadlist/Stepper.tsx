@@ -2,6 +2,8 @@ import { LongLeadItem } from '@/lib/types'
 import React from 'react'
 import {TechnicalPR ,RFQ, ReceivedQuotation, PO, Manufacturing, FinalInspection, DeliveryToSite} from '@prisma/client'
 import { Check } from 'lucide-react'
+import { ScrollArea } from "@/components/ui/scroll-area"
+
 
 type Props = {
     data: LongLeadItem
@@ -12,7 +14,7 @@ const Stepper = ({data}: Props) => {
 console.log(data)
 
   return (
-    <div className='max-h-[250px] w-[200px] overflow-y-auto'>
+    <ScrollArea className="h-[300px] w-[350px] rounded-md border p-4">
         <StatusCells statusKey="technicalEvaluation" data={data} label='Technical Evaluation' />
         <StatusCells statusKey="prStatus" data={data} label='Purchase Requisition' />
         <StatusCells statusKey="rfqStatus" data={data} label='Quotation Request	' />
@@ -21,7 +23,7 @@ console.log(data)
         <StatusCells statusKey="manufacturingStatus" data={data} label='Manufacturing ' />
         <StatusCells statusKey="finalInspection" data={data} label='Inspection' />
         <StatusCells statusKey="deliveryToSite" data={data} label='Delivery' />
-    </div>
+    </ScrollArea>
   )
 }
 
@@ -108,14 +110,14 @@ type StatusCellsProps = {
         </Timeline> */}
         <div className='flex items-center space-x-4'>
           <div className='relative flex flex-col items-center' >
-          <p className='h-[50px] w-[3px] bg-gray-400'></p>
-            <p className=' rounded-full w-[35px] h-[35px] border-[2px] border-neutral-300 flex items-center justify-center'><i className={`material-icons md-18 text-green-500 ${status ? "" : "hidden"}`}><Check/></i></p>
-            <p className='h-[25px] w-[3px] bg-gray-400'></p>
+          <p className={`h-[50px] w-[4px]  ${status ? "bg-green-500" : "bg-gray-400"}`}></p>
+            <p className={`w-[25px] h-[25px]   flex items-center justify-center ${status ? "bg-green-500" : "border-[2px] border-neutral-300"} `}><i className={`material-icons md-18 text-green-400 p-1 ${status ? "" : "hidden"}`}><Check className='text-white'/></i></p>
+            <p className={`h-[50px] w-[4px] bg-gray-400 ${status ? "bg-green-500" : "bg-gray-400"}`}></p>
           </div>
           <div className='text-sm mt-10 '>
             <p className='font-medium'>{updatedAt ? new Date(updatedAt).toDateString() :  ( createdAt ? new Date(createdAt).toDateString(): "")}</p>
             <p>{label}</p>
-            <p className='capitalize font-normal bg-slate-100 px-3 py-1 rounded'>{status}</p>
+            <p className='capitalize font-normal bg-slate-100 px-3 py-1 rounded mt-1'>{status}</p>
           </div>
         </div>
       </div>
