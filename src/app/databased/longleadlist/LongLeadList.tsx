@@ -81,7 +81,7 @@ const LongLeadList = async ({filterValues:{
     <div className='grow space-y-4'>
       {longleads.map((longlead) => (
         <div key={longlead.id}>
-          <LongLeadItem longlead={longlead}/>
+          {/* <LongLeadItem longlead={longlead}/> */}
         </div>
       ))}
     </div>
