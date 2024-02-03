@@ -15,7 +15,7 @@ import { RoleGate } from '@/components/auth/role-gate'
 
 type Props = {}
 
-const Upload = async (props: Props) => {
+const Upload = (props: Props) => {
     const [selectedUpload, setSelectedUpload] = useState<string>('project')
     const handleUploadTypeChange = (value: string) => {
         setSelectedUpload(value);
