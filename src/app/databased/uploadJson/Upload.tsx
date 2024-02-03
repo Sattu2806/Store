@@ -42,7 +42,7 @@ const Upload = (props: Props) => {
     };
 
   return (
-    <RoleGate allowedRole={UserRole.ADMIN || UserRole.SUPERADMIN}>
+    // <RoleGate allowedRole={UserRole.ADMIN || UserRole.SUPERADMIN}>
     <div className='max-w-[1280px] mx-auto my-4'>
         <RadioGroup className='flex items-center space-x-5 ' value={selectedUpload} onValueChange={handleUploadTypeChange} defaultValue="option-one">
         <div className="flex items-center space-x-2 ">
@@ -55,15 +55,15 @@ const Upload = (props: Props) => {
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="daily" id="daily" />
-            <Label htmlFor="daily" className='text-xl'>Daily</Label>
+            <Label htmlFor="daily" className='text-xl'>DailyProductivity</Label>
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="total" id="total" />
-            <Label htmlFor="total" className='text-xl'>Total</Label>
+            <Label htmlFor="total" className='text-xl'>TotalScope</Label>
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="manpower" id="manpower" />
-            <Label htmlFor="manpower" className='text-xl'>Manpower</Label>
+            <Label htmlFor="manpower" className='text-xl'>Resource</Label>
         </div>
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="monthly" id="monthly" />
@@ -76,7 +76,7 @@ const Upload = (props: Props) => {
         </RadioGroup>
         {renderSelectedComponent()}
     </div>
-    </RoleGate>
+    // </RoleGate>
   )
 }
 
