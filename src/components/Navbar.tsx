@@ -84,6 +84,25 @@ const Navbar = (props: Props) => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <DropdownMenuLabel className='text-base flex items-center font-medium hover:opacity-60 cursor-pointer'>Long Lead<ChevronDown className="h-[1.2rem] w-[1.2rem]" /></DropdownMenuLabel>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem>
+                        <Link className='w-full' href='/databased/longlead'>LongLead Form</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link className='w-full' href='/databased/longleadcategory'>LongLead Category Form</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link className='w-full' href='/databased/longleadtable'>LongLead Table</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <Link className='w-full' href='/databased/longleadlist'>LongLead List</Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
             {Session?.user.role === UserRole.SUPERADMIN && (
                 <Link href='/admin' className='font-medium hover:opacity-60'>Admin</Link>
             )}

@@ -73,7 +73,8 @@ const LongLeadList = async ({filterValues:{
       prStatus:true,
       technicalEvaluation:true,
       receivedQuotation:true,
-      rfqStatus:true  
+      rfqStatus:true,
+      LongLeadItemCategory:true
     }
   });
   
@@ -81,7 +82,7 @@ const LongLeadList = async ({filterValues:{
     <div className='grow space-y-4'>
       {longleads.map((longlead) => (
         <div key={longlead.id}>
-          {/* <LongLeadItem longlead={longlead}/> */}
+          <LongLeadItem longlead={longlead}/>
         </div>
       ))}
     </div>

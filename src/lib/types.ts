@@ -212,68 +212,35 @@ export type LongLeadItemCategory = {
 // };
 
 
-import { LongLeadItem as LongLeadItemModel } from '@prisma/client';
+import { DeliveryToSiteStatus, FinalInspectionStatus, LongLeadItem as LongLeadItemModel, ManufacturingStatus, POStatus, PRStatus, RFQStatus, ReceivedQuotationStatus, TechnicalEvaluationStatus, TechnicalPR, } from '@prisma/client';
 
-export type LongLeadItem = Omit<LongLeadItemModel, 'LongLeadItemCategory'> & {
-  LongLeadItemCategory: {
-    id: number;
-    name: string;
-  };
-  technicalEvaluation: {
-    id: number;
-    status: 'Preparation' | 'UnderApproval' | 'Completed';
-    longleadId: number;
-    createdAt: Date
-    updatedAt: Date
-  } | null;
-  prStatus: {
-    id: number;
-    status: 'Preparation' | 'UnderApproval' | 'Completed';
-    longleadId: number;
-    createdAt: Date
-    updatedAt: Date
-  } | null;
-  rfqStatus: {
-    id: number;
-    status: 'Senttovendor' | 'Pending';
-    longleadId: number;
-    createdAt: Date
-    updatedAt: Date
-  } | null;
-  receivedQuotation: {
-    id: number;
-    status: 'Vendorselected' | 'Pending';
-    longleadId: number;
-    createdAt: Date
-    updatedAt: Date
-  } | null;
-  poStatus: {
-    id: number;
-    status: 'UnderPreparation' | 'Placed' | 'Pending';
-    longleadId: number;
-    createdAt: Date
-    updatedAt: Date
-  } | null;
-  manufacturingStatus: {
-    id: number;
-    status: 'Started' | 'QualityTest' | 'Pending' | 'Completed';
-    longleadId: number;
-    createdAt: Date
-    updatedAt: Date
-  } | null;
-  finalInspection: {
-    id: number;
-    status: 'Ongoing' | 'Completed' | 'Pending';
-    longleadId: number;
-    createdAt: Date
-    updatedAt: Date
-  } | null;
-  deliveryToSite: {
-    id: number;
-    status: 'UnderShipment' | 'CustomClearance' | 'Delivered' | 'Pending';
-    longleadId: number;
-    createdAt: Date
-    updatedAt: Date
-  } | null;
-};
+// export interface ExtendedLongLeadItem extends LongLeadItemModel {
+//   category?: LongLeadItemCategory;
+//   technicalEvaluation: TechnicalPR;
+//   prStatus:TechnicalPR;
+//   rfqStatus:
+// }
 
+
+export interface LongLeadItem {
+  id: number;
+  image: string;
+  country: string;
+  categoryId: number;
+  // LongLeadItemCategory: LongLeadItemCategory;
+  vendor: string;
+  description: string;
+  qty: number;
+  unit: string;
+  deliveryDate: Date;
+  requiredAtSiteDate: Date;
+  deliveryMode: string;
+  technicalEvaluation: TechnicalEvaluationStatus | null;
+  prStatus: PRStatus | null;
+  rfqStatus: RFQStatus | null;
+  receivedQuotation: ReceivedQuotationStatus | null;
+  poStatus: POStatus | null;
+  manufacturingStatus: ManufacturingStatus | null;
+  finalInspection: FinalInspectionStatus | null;
+  deliveryToSite: DeliveryToSiteStatus | null;
+}
