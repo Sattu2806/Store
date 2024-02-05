@@ -7,8 +7,9 @@ export async function GET(request: Request) {
     const group = searchParams.get('group')
     console.log(Date)
 
-    if(!Date){
-        return NextResponse.json([])
+    if (!Date) {
+        // Return a 400 Bad Request status code since Date is missing
+        return NextResponse.error();
     }
 
     const month = Date.split('-')[0]
@@ -16,20 +17,22 @@ export async function GET(request: Request) {
 
     try {
         const bymonthmanpower = await prisma.resourceData.groupBy({
-            by:['category'],
+            by: ['category'],
             _sum: {
-                Nos:true
+                Nos: true
             },
-            where:{
-                Month:month,
-                Year:parseInt(year),
-                Group:group
+            where: {
+                Month: month,
+                Year: parseInt(year),
+                Group: group
             }
         })
-        return NextResponse.json(bymonthmanpower)
+
+        // Return a 200 OK status code along with the data
+        return NextResponse.json(bymonthmanpower, { status: 200 });
     } catch (error) {
-      console.error("Error fetching manpowedata data:", error)
-      return NextResponse.error()
+        console.error("Error fetching manpowedata data:", error);
+        // Return a 500 Internal Server Error status code for other errors
+        return NextResponse.error();
     }
 }
-  
