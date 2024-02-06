@@ -102,7 +102,7 @@ const CardDialogue = ({opendialogue, setopenDialogue}: Props) => {
   return (
     <div className='relative'>
         <Dialog open={opendialogue.excavationQty || opendialogue.formWorkQty || opendialogue.rebarQty || opendialogue.concreteQty}>
-            <DialogContent className=' max-md:h-[500px] h-[600px] max-w-[1280px] fixed left-[50%] top-[50%] z-50 grid w-full max-md:max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg'>
+            <DialogContent className=' max-md:h-full max-md:w-full h-[600px] max-w-[1280px] fixed left-[50%] top-[50%] z-50 grid w-full max-md:max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg'>
             <div className='flex items-center space-x-6 overflow-x-scroll pt-10'>
                 <Select value={selectedGroup} onValueChange={(value) => setSelectedGroup(value)}>
                     <SelectTrigger className="w-[180px]">
@@ -148,7 +148,6 @@ const CardDialogue = ({opendialogue, setopenDialogue}: Props) => {
               })}
              className="absolute right-4 top-4 mb-2 rounded-sm md:opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                 <Cross2Icon className="max-md:hidden h-5 w-5 text-red-500 font-semibold" />
-                <Button className='md:hidden bg-blue-500'>Close</Button>
                 <span className="sr-only">Close</span>
             </div>
             {isTable1DataLoading ? (
@@ -192,6 +191,12 @@ const CardDialogue = ({opendialogue, setopenDialogue}: Props) => {
                 </TableFooter>
                 </Table>
             )}
+            <Button onClick={() => setopenDialogue({
+                excavationQty :false,
+                formWorkQty  :false,
+                rebarQty       :false,
+                concreteQty   :false
+              })} className='md:hidden bg-blue-500 w-full mt-4'>Close</Button>
             </DialogContent>
         </Dialog>
     </div>
