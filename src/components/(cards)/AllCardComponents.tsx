@@ -40,7 +40,7 @@ const AllCardComponents = (props: Props) => {
     console.log('Total',totalScopeQt)
 
   return (
-    <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:sticky top-0 z-20 py-2 bg-white '>
+    <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:sticky top-0 z-20 py-2 bg-white '>
         <div onClick={() => setopenDialogue({ ...opendialogue, excavationQty: true })}>
             <CardComponent total={totalValues} totalActual ={totalScopeQt} label='Excavation' unit = {<>M<sup>3</sup></>} />
         </div>

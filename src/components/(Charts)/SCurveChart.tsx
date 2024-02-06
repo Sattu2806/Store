@@ -38,7 +38,7 @@ const SCurveChart = (props: Props) => {
 
 
   return (
-    <div>
+    <div >
       <Card className="relative px-2 h-[430px]">
         <CardHeader className='text-lg text-center font-semibold'>Project Overall S-Curve (Cutt of current {currentMonth})</CardHeader>
         <Button size='sm' className='my-1 absolute top-14 right-3'    onClick={(e) => {

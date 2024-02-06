@@ -15,7 +15,6 @@ const ProgressBar = (props: Props) => {
         <div className={`h-full ${props.color} transition-all text-center`}
         style={{width:`${props.progress}%`}}
         >
-            {/* {props.progress}% */}
         </div>
     </div>
     <p className='col-span-1'>{props.progress}%</p>

@@ -1,4 +1,4 @@
-import { PieChart, Pie, Sector, Cell, Label, LabelList, Tooltip } from "recharts";
+import { PieChart, Pie, Sector, Cell, Label, LabelList, Tooltip, ResponsiveContainer } from "recharts";
 import React, { useEffect, useState } from "react";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
@@ -107,8 +107,9 @@ const {data: piemanpowerapiDataPlan = [], error: piemanpowerapiDataErrorPlan, is
     <div >
       <Card className=" relative py-3">
         <p className="text-center text-xl font-semibold mt-2">Actual Vs Planned Resources</p>
-        <div className="flex items-center justify-between gap-10">
-        <PieChart width={800} height={430} margin={{top:0, bottom:0}}>
+        <div className="lg:flex max-md:flex-col items-center justify-between gap-10" >
+        <ResponsiveContainer height={430} className='my-6'>
+        <PieChart >
           <Pie
             data={piedataActual}
             innerRadius={90}
@@ -117,7 +118,7 @@ const {data: piemanpowerapiDataPlan = [], error: piemanpowerapiDataErrorPlan, is
             paddingAngle={5}
             dataKey="total"
             onClick={(entry, index) => {handleCellClick(entry, index); setopenDialogue(true); setSelectedGroup('Actual')}}
-            className="border-none outline-none"
+            className="border-none outline-none "
           >
             {data.map((entry, index) => {
               return(
@@ -129,7 +130,9 @@ const {data: piemanpowerapiDataPlan = [], error: piemanpowerapiDataErrorPlan, is
             <Tooltip/>
           </Pie>
         </PieChart>
-        <PieChart width={800} height={430} margin={{top:0, bottom:0}}>
+        </ResponsiveContainer>
+        <ResponsiveContainer height={430} className='my-6'>
+        <PieChart >
           <Pie
             data={piedataPlan}
             innerRadius={90}
@@ -150,10 +153,11 @@ const {data: piemanpowerapiDataPlan = [], error: piemanpowerapiDataErrorPlan, is
             <Tooltip/>
           </Pie>
         </PieChart>
-        <p className="absolute bottom-3 left-[20%] text-lg font-medium border-[1px] border-blue-400 rounded-sm px-4 py-1">Actual</p>
-        <p className="absolute bottom-3 right-[20%] text-lg font-medium border-[1px] border-blue-400 rounded-sm px-4 py-1">Plan</p>
+        </ResponsiveContainer>
+        <p className="absolute lg:bottom-3 lg:left-[20%] max-lg:left-[40%] max-lg:bottom-[45%] text-lg font-medium border-[1px] border-blue-400 rounded-sm px-4 py-1">Actual</p>
+        <p className="absolute bottom-3 lg:right-[20%] max-lg:right-[40%] text-lg font-medium border-[1px] border-blue-400 rounded-sm px-4 py-1">Plan</p>
         </div>
-        <div className="absolute top-5 right-5 ">
+        <div className="absolute md:top-5 right-5 top-16 ">
         <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(value)}>
               <SelectTrigger className="w-[180px] border-black">
                   <SelectValue placeholder="Select Group" />
